@@ -1,0 +1,12 @@
+# Database exports - keep structure, ignore sensitive data
+nexoralabs_data_only.sql
+nexoralabs_database_backup.sql
+
+# Keep these files in version control:
+# - README.md
+# - nexoralabs_structure_only.sql  
+# - restore_database.sh
+
+# Temporary files
+*.tmp
+*.log

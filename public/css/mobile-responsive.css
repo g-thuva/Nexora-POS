@@ -1,0 +1,566 @@
+/* ============================================
+   MOBILE RESPONSIVE STYLES FOR NEXORALABS
+   ============================================ */
+
+/* Mobile-First Responsive Utilities */
+.min-width-0 {
+    min-width: 0 !important;
+}
+
+.flex-fill {
+    flex: 1 1 auto !important;
+}
+
+.text-truncate {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+/* Base Mobile Styles */
+@media (max-width: 768px) {
+    
+    /* Container Adjustments */
+    .container-xl {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    /* Page Header Mobile */
+    .page-header {
+        padding: 1rem 0 !important;
+    }
+    
+    .page-header .page-title {
+        font-size: 1.5rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .page-pretitle {
+        font-size: 0.875rem !important;
+    }
+    
+    /* Card Improvements */
+    .card {
+        margin-bottom: 1rem !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+    }
+    
+    .card-header {
+        padding: 1rem !important;
+    }
+    
+    .card-body {
+        padding: 1rem !important;
+    }
+    
+    /* Row Cards Mobile Stack */
+    .row-cards .col-sm-6,
+    .row-cards .col-lg-3,
+    .row-cards .col-lg-4,
+    .row-cards .col-xl-3 {
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Dashboard Stats Cards */
+    .card-sm .card-body {
+        padding: 0.75rem !important;
+    }
+    
+    /* Button Groups Mobile */
+    .btn-group {
+        flex-direction: column !important;
+    }
+    
+    .btn-group .btn {
+        margin-bottom: 0.5rem !important;
+        border-radius: 0.375rem !important;
+    }
+    
+    /* Table Responsive */
+    .table-responsive {
+        border-radius: 0.5rem !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    .table {
+        font-size: 0.875rem !important;
+        white-space: nowrap !important;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.5rem 0.75rem !important;
+    }
+    
+    /* Form Controls */
+    .form-control {
+        font-size: 1rem !important;
+        padding: 0.75rem !important;
+    }
+    
+    .form-select {
+        font-size: 1rem !important;
+        padding: 0.75rem !important;
+    }
+    
+    /* Navigation Mobile */
+    .navbar-nav .nav-link {
+        padding: 0.75rem 1rem !important;
+        font-size: 0.95rem !important;
+        border-radius: 0.375rem !important;
+        margin-bottom: 0.25rem !important;
+    }
+    
+    .navbar-nav .nav-link:hover,
+    .navbar-nav .nav-link:focus {
+        background-color: rgba(0,0,0,0.05) !important;
+    }
+    
+    .navbar-nav .nav-link.active {
+        background-color: rgba(13, 110, 253, 0.1) !important;
+        color: #0d6efd !important;
+    }
+    
+    /* Dropdown Mobile */
+    .dropdown-menu {
+        font-size: 0.9rem !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+        border-radius: 0.5rem !important;
+        padding: 0.5rem !important;
+        margin-top: 0.25rem !important;
+        min-width: 280px !important;
+    }
+    
+    .dropdown-item {
+        padding: 0.75rem 1rem !important;
+        border-radius: 0.375rem !important;
+        margin-bottom: 0.125rem !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    
+    .dropdown-item:hover,
+    .dropdown-item:focus {
+        background-color: rgba(13, 110, 253, 0.1) !important;
+    }
+    
+    .dropdown-item-icon {
+        margin-right: 0.75rem !important;
+        opacity: 0.7 !important;
+    }
+    
+    .dropdown-divider {
+        margin: 0.5rem 0 !important;
+    }
+    
+    .dropdown-menu-columns {
+        display: block !important;
+    }
+    
+    .dropdown-menu-column {
+        width: 100% !important;
+    }
+    
+    /* Navbar Brand Mobile */
+    .navbar-brand-text {
+        font-size: 1.25rem !important;
+    }
+    
+    /* Avatar Mobile */
+    .avatar {
+        width: 2rem !important;
+        height: 2rem !important;
+    }
+    
+    .avatar-lg {
+        width: 3rem !important;
+        height: 3rem !important;
+    }
+    
+    /* Modal Mobile */
+    .modal-dialog {
+        margin: 1rem !important;
+        max-width: calc(100% - 2rem) !important;
+    }
+    
+    .modal-header {
+        padding: 1rem !important;
+    }
+    
+    .modal-body {
+        padding: 1rem !important;
+    }
+    
+    .modal-footer {
+        padding: 1rem !important;
+        flex-direction: column !important;
+    }
+    
+    .modal-footer .btn {
+        width: 100% !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .modal-footer .btn:last-child {
+        margin-bottom: 0 !important;
+    }
+    
+    /* Badge Mobile */
+    .badge {
+        font-size: 0.75rem !important;
+        padding: 0.25rem 0.5rem !important;
+    }
+    
+    /* Progress Mobile */
+    .progress {
+        height: 0.5rem !important;
+    }
+    
+    /* Pagination Mobile */
+    .pagination {
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+    }
+    
+    .page-link {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.875rem !important;
+    }
+    
+    /* Tabs Mobile */
+    .nav-tabs {
+        flex-direction: column !important;
+        border-bottom: none !important;
+    }
+    
+    .nav-tabs .nav-link {
+        border-radius: 0.375rem !important;
+        margin-bottom: 0.25rem !important;
+        text-align: center !important;
+    }
+    
+    /* Alert Mobile */
+    .alert {
+        padding: 1rem !important;
+        margin-bottom: 1rem !important;
+        border-radius: 0.5rem !important;
+    }
+    
+    /* Breadcrumb Mobile */
+    .breadcrumb {
+        padding: 0.5rem 0 !important;
+        margin-bottom: 1rem !important;
+        font-size: 0.875rem !important;
+        flex-wrap: wrap !important;
+    }
+    
+    .breadcrumb-item {
+        max-width: 150px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+    
+    /* Quick Actions Mobile */
+    .quick-actions .card {
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .quick-actions .btn {
+        width: 100% !important;
+        justify-content: flex-start !important;
+        text-align: left !important;
+        padding: 0.75rem 1rem !important;
+    }
+    
+    .quick-actions .btn .icon {
+        margin-right: 0.75rem !important;
+    }
+    
+    /* Statistics Cards Mobile */
+    .stats-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 1rem !important;
+    }
+    
+    .stats-card {
+        padding: 1rem !important;
+        text-align: center !important;
+    }
+    
+    .stats-card .h1 {
+        font-size: 1.5rem !important;
+    }
+    
+    .stats-card .h2 {
+        font-size: 1.25rem !important;
+    }
+    
+    /* Sales Performance Mobile */
+    .sales-performance .row {
+        margin: 0 !important;
+    }
+    
+    .sales-performance .col-sm-4 {
+        padding: 0.5rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Recent Orders Table Mobile */
+    .recent-orders-table {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    .recent-orders-table .table {
+        min-width: 600px !important;
+    }
+    
+    /* Customer Avatar Mobile */
+    .customer-info {
+        display: flex !important;
+        align-items: center !important;
+        min-width: 150px !important;
+    }
+    
+    .customer-info .avatar {
+        margin-right: 0.5rem !important;
+        flex-shrink: 0 !important;
+    }
+    
+    .customer-info .customer-details {
+        min-width: 0 !important;
+    }
+    
+    .customer-name {
+        font-size: 0.875rem !important;
+        font-weight: 600 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    
+    .customer-email {
+        font-size: 0.75rem !important;
+        color: #6c757d !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    
+    /* Status Badge Mobile */
+    .status-badge {
+        font-size: 0.75rem !important;
+        padding: 0.25rem 0.5rem !important;
+        white-space: nowrap !important;
+    }
+    
+    /* Action Buttons Mobile */
+    .action-buttons {
+        display: flex !important;
+        gap: 0.25rem !important;
+        justify-content: center !important;
+    }
+    
+    .action-buttons .btn {
+        padding: 0.375rem 0.5rem !important;
+        font-size: 0.75rem !important;
+    }
+    
+    /* Collapsible Sections Mobile */
+    .collapse-toggle {
+        width: 100% !important;
+        text-align: left !important;
+        padding: 1rem !important;
+        border: none !important;
+        background: transparent !important;
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+    }
+    
+    .collapse-toggle:hover,
+    .collapse-toggle:focus {
+        background-color: rgba(0,0,0,0.05) !important;
+    }
+    
+    .collapse-toggle .icon {
+        transition: transform 0.2s ease !important;
+    }
+    
+    .collapse-toggle[aria-expanded="true"] .icon {
+        transform: rotate(180deg) !important;
+    }
+    
+    /* Footer Mobile */
+    .footer {
+        padding: 1rem 0 !important;
+        text-align: center !important;
+    }
+    
+    .footer .container-xl {
+        padding: 0 1rem !important;
+    }
+    
+    /* Print Styles for Mobile */
+    @media print {
+        .d-print-none {
+            display: none !important;
+        }
+        
+        .container-xl {
+            width: 100% !important;
+            max-width: none !important;
+        }
+        
+        .card {
+            break-inside: avoid !important;
+        }
+    }
+}
+
+/* ============================================
+   TABLET STYLES (768px - 992px)
+   ============================================ */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    
+    .container-xl {
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+    }
+    
+    .card-body {
+        padding: 1.25rem !important;
+    }
+    
+    .stats-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 1rem !important;
+    }
+    
+    .recent-orders-table .table {
+        font-size: 0.9rem !important;
+    }
+}
+
+/* ============================================
+   SMALL MOBILE STYLES (up to 480px)
+   ============================================ */
+@media (max-width: 480px) {
+    
+    /* Extra small screens adjustments */
+    .container-xl {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+    
+    .page-title {
+        font-size: 1.25rem !important;
+    }
+    
+    .card-header .h3 {
+        font-size: 1rem !important;
+    }
+    
+    .btn {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.875rem !important;
+    }
+    
+    .btn-sm {
+        padding: 0.375rem 0.75rem !important;
+        font-size: 0.75rem !important;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .navbar-brand-text {
+        display: none !important;
+    }
+    
+    .modal-dialog {
+        margin: 0.5rem !important;
+        max-width: calc(100% - 1rem) !important;
+    }
+    
+    /* Hide less important columns on very small screens */
+    .table .d-none-xs {
+        display: none !important;
+    }
+}
+
+/* ============================================
+   TOUCH DEVICE IMPROVEMENTS
+   ============================================ */
+@media (pointer: coarse) {
+    
+    /* Larger touch targets */
+    .btn {
+        min-height: 44px !important;
+        min-width: 44px !important;
+    }
+    
+    .nav-link {
+        min-height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    
+    .dropdown-item {
+        min-height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    
+    /* Better hover states for touch */
+    .btn:hover,
+    .btn:focus {
+        transform: translateY(-1px) !important;
+        transition: transform 0.1s ease !important;
+    }
+    
+    /* Improved form controls for touch */
+    .form-control {
+        min-height: 44px !important;
+    }
+    
+    .form-select {
+        min-height: 44px !important;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY IMPROVEMENTS
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .card {
+        border: 2px solid #000 !important;
+    }
+    
+    .btn {
+        border: 2px solid !important;
+    }
+    
+    .table {
+        border: 1px solid #000 !important;
+    }
+    
+    .table th,
+    .table td {
+        border: 1px solid #000 !important;
+    }
+}

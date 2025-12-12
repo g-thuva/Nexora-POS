@@ -1,0 +1,44 @@
+/* Custom Invoice Styles */
+
+/* Remove gray background from totals */
+.invoice-content .bg-active {
+    background: none !important;
+    color: #262525 !important;
+    font-weight: 600;
+}
+
+/* Make grand total more prominent */
+.invoice-content .table tr.bg-active:last-child {
+    border-top: 2px solid #262525;
+    font-size: 1.1em;
+}
+
+/* Enhance table borders */
+.invoice-content .table td,
+.invoice-content .table th {
+    border: 1px solid #e9ecef !important;
+}
+
+/* Make totals right-aligned */
+.invoice-content .table td:last-child {
+    text-align: right;
+}
+
+/* Bold labels in totals section */
+.invoice-content .table tr.bg-active td:first-child {
+    font-weight: 600;
+}
+
+/* Print styles */
+@media print {
+    .invoice-content .bg-active {
+        background: none !important;
+        color: #262525 !important;
+        font-weight: 600;
+    }
+
+    .invoice-content .table tr.bg-active:last-child {
+        border-top: 2px solid #262525;
+        font-size: 1.1em;
+    }
+}

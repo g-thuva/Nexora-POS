@@ -1,0 +1,141 @@
+<div class="card">
+    <div class="card-header">
+        <div>
+            <h3 class="card-title">
+                {{ __('Orders') }}
+            </h3>
+        </div>
+
+        <div class="card-actions">
+            <x-action.create route="{{ route('orders.create') }}" />
+        </div>
+    </div>
+
+    <div class="card-body border-bottom py-3">
+        <div class="d-flex">
+            <div class="text-secondary">
+                Show
+                <div class="mx-2 d-inline-block">
+                    <select wire:model.live="perPage" class="form-select form-select-sm" aria-label="result per page">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="25">25</option>
+                    </select>
+                </div>
+                entries
+            </div>
+            <div class="ms-auto text-secondary">
+                Search:
+                <div class="ms-2 d-inline-block">
+                    <input type="text" wire:model.live="search" class="form-control form-control-sm" aria-label="Search invoice">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <x-spinner.loading-spinner/>
+
+    <div class="table-responsive">
+        <table wire:loading.remove class="table table-bordered card-table table-vcenter text-nowrap datatable">
+            <thead class="thead-light">
+                <tr>
+                    <th class="align-middle text-center w-1">
+                        {{ __('No.') }}
+                    </th>
+                    <th scope="col" class="align-middle text-center">
+                        <a wire:click.prevent="sortBy('invoice_no')" href="#" role="button">
+                            {{ __('Invoice No.') }}
+                            @include('inclues._sort-icon', ['field' => 'invoice_no'])
+                        </a>
+                    </th>
+                    <th scope="col" class="align-middle text-center">
+                        <a wire:click.prevent="sortBy('customer_id')" href="#" role="button">
+                            {{ __('Customer') }}
+                            @include('inclues._sort-icon', ['field' => 'customer_id'])
+                        </a>
+                    </th>
+                    <th scope="col" class="align-middle text-center">
+                        <a wire:click.prevent="sortBy('order_date')" href="#" role="button">
+                            {{ __('Date') }}
+                            @include('inclues._sort-icon', ['field' => 'order_date'])
+                        </a>
+                    </th>
+                    <th scope="col" class="align-middle text-center">
+                        <a wire:click.prevent="sortBy('payment_type')" href="#" role="button">
+                            {{ __('Paymet') }}
+                            @include('inclues._sort-icon', ['field' => 'payment_type'])
+                        </a>
+                    </th>
+                    <th scope="col" class="align-middle text-center">
+                        <a wire:click.prevent="sortBy('total')" href="#" role="button">
+                            {{ __('Total') }}
+                            @include('inclues._sort-icon', ['field' => 'total'])
+                        </a>
+                    </th>
+                    <th scope="col" class="align-middle text-center">
+                        {{ __('Action') }}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            @forelse ($orders as $order)
+                <tr>
+                    <td class="align-middle text-center">
+                        {{ $loop->iteration }}
+                    </td>
+                    <td class="align-middle text-center">
+                        {{ $order->invoice_no }}
+                    </td>
+                    <td class="align-middle">
+                        {{ $order->customer->name }}
+                    </td>
+                    <td class="align-middle text-center">
+                        {{ $order->order_date->format('d-m-Y') }}
+                    </td>
+                    <td class="align-middle text-center">
+                        {{ $order->payment_type }}
+                    </td>
+                    <td class="align-middle text-center">
+                        {{ Number::currency($order->total, 'LKR') }}
+                    </td>
+                    <td class="align-middle text-center" style="width: 15%">
+                        <button class="btn btn-icon btn-outline-primary" onclick="viewOrderInModal({{ $order->id }})" title="View Order Details" data-bs-toggle="modal" data-bs-target="#orderReceiptModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/>
+                                <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"/>
+                            </svg>
+                        </button>
+                        <x-button.edit class="btn-icon" route="{{ route('orders.edit', $order) }}"/>
+                        <a href="{{ route('orders.download-pdf-bill', $order) }}" class="btn btn-icon btn-outline-success" title="Print PDF Bill" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M17 17h2a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-14a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h2"/>
+                                <path d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4"/>
+                                <path d="M7 13m0 2a2 2 0 0 1 2 -2h6a2 2 0 0 1 2 2v4a2 2 0 0 1 -2 2h-6a2 2 0 0 1 -2 -2z"/>
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td class="align-middle text-center" colspan="7">
+                        No results found
+                    </td>
+                </tr>
+            @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card-footer d-flex align-items-center">
+        <p class="m-0 text-secondary">
+            Showing <span>{{ $orders->firstItem() }}</span> to <span>{{ $orders->lastItem() }}</span> of <span>{{ $orders->total() }}</span> entries
+        </p>
+
+        <ul class="pagination m-0 ms-auto">
+            {{ $orders->links() }}
+        </ul>
+    </div>
+</div>
