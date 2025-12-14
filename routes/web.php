@@ -61,6 +61,7 @@ Route::middleware(['auth'])->group(function () {
     // Inventory Management (Manager and Shop Owner)
     Route::middleware(['role:inventory_access', 'shop.tenant'])->group(function () {
         Route::resource('/customers', CustomerController::class);
+        Route::post('/customers/{customer}/update', [CustomerController::class, 'updateAjax'])->name('customers.update.ajax');
         Route::resource('/categories', CategoryController::class);
         Route::resource('/units', UnitController::class);
 
@@ -94,6 +95,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
         Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
         Route::put('/orders/update/{order}', [OrderController::class, 'update'])->name('orders.update');
+        Route::post('/orders/items/{item}/update', [OrderController::class, 'updateOrderItem'])->name('orders.items.update');
     Route::get('/orders/{orderId}/download-pdf-bill', [OrderController::class, 'downloadPdfBill'])->name('orders.download-pdf-bill');
 
         // API routes for real-time sync

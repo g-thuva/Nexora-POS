@@ -33,19 +33,17 @@ class KpiService
         $key = $this->cacheKey('order_kpis');
         $ttl = $this->ttl('KPI_CACHE_TTL', 60);
         return Cache::remember($key, $ttl, function () {
-            // Query orders_summary_cache table directly (singleton row with id=1)
-            $row = DB::table('orders_summary_cache')->where('id', 1)->first();
-            if (!$row) {
-                return (object) [
-                    'total_orders' => 0,
-                    'total_amount' => 0,
-                    'completed_count' => 0,
-                    'pending_count' => 0,
-                    'cancelled_count' => 0,
-                    'updated_at' => null,
-                ];
-            }
-            return $row;
+            // Calculate KPIs directly from orders table
+            $orders = DB::table('orders');
+
+            return (object) [
+                'total_orders' => $orders->count(),
+                'total_amount' => $orders->sum('total'),
+                'completed_count' => $orders->where('order_status', 'complete')->count(),
+                'pending_count' => $orders->where('order_status', 'pending')->count(),
+                'cancelled_count' => $orders->where('order_status', 'cancelled')->count(),
+                'updated_at' => $orders->max('updated_at'),
+            ];
         });
     }
 

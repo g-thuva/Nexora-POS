@@ -4,30 +4,29 @@
 
 @section('content')
     <div class="page-header d-print-none">
-        <div class="container-fluid">
-            <div class="row g-2 align-items-center">
-                <div class="col">
-                    <div class="page-pretitle">
-                        Sales Management
-                    </div>
-                    <h2 class="page-title">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24"
-                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M7 9m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
-                                        <path d="M14 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                        <path d="M17 9v-2a2 2 0 0 0 -2 -2h-10a2 2 0 0 0 -2 2v6a2 2 0 0 0 2 2h2" />
-                        </svg>
-                        Orders Management
-                    </h2>
-                    <p class="text-muted">Manage orders, track payments, and monitor order status</p>
+        <div class="row g-2 align-items-center">
+            <div class="col">
+                <div class="page-pretitle">
+                    Sales Management
                 </div>
-                <div class="col-auto ms-auto d-print-none">
-                    <div class="btn-list">
-                        <a href="{{ route('orders.create') }}" class="btn btn-success d-none d-sm-inline-block">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16"
-                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                <h2 class="page-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24"
+                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M7 9m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+                                    <path d="M14 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                    <path d="M17 9v-2a2 2 0 0 0 -2 -2h-10a2 2 0 0 0 -2 2v6a2 2 0 0 0 2 2h2" />
+                    </svg>
+                    Orders Management
+                </h2>
+                <p class="text-muted">Manage orders, track payments, and monitor order status</p>
+            </div>
+            <div class="col-auto ms-auto d-print-none">
+                <div class="btn-list">
+                    <a href="{{ route('orders.create') }}" class="btn btn-success d-none d-sm-inline-block">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16"
+                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                 stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                 <path
@@ -66,267 +65,100 @@
         </div>
     </div>
 
-    <div class="page-body">
-    <!-- Show all users for the shop -->
-    @if(isset($shopUsers) && safe_count($shopUsers))
-            <div class="container-fluid mb-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title mb-0">Users for this Shop</h4>
-                    </div>
-                    <div class="card-body py-2">
-                        <div class="row g-2">
-                            @foreach($shopUsers as $shopUser)
-                                <div class="col-auto">
-                                    <span class="badge bg-secondary">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="14" height="14" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="7" r="4"/><path d="M5.5 21h13a2 2 0 0 0 2-2c0-3.866-3.582-7-8-7s-8 3.134-8 7a2 2 0 0 0 2 2z"/></svg>
-                                        {{ $shopUser->name }} <span class="text-muted small">({{ $shopUser->getRoleDisplayName() }})</span>
-                                    </span>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
+    @if ($orders->isEmpty())
+        <x-empty title="No orders found"
+            message="Try adjusting your search or filter to find what you're looking for."
+            button_label="{{ __('Add your first Order') }}" button_route="{{ route('orders.create') }}" />
+    @else
+        <x-alert />
+
+        <!-- Orders List Table -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Orders</h3>
+                <div class="card-actions">
+                    <a href="{{ route('orders.create') }}" class="btn btn-primary btn-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16"
+                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M12 5l0 14" />
+                            <path d="M5 12l14 0" />
+                        </svg>
+                        Add Order
+                    </a>
                 </div>
             </div>
-        @endif
 
-        @if ($orders->isEmpty())
-            <div class="container-fluid">
-                <!-- Stats Cards Row - Credit Sales Style -->
-                <div class="row g-3 mb-4">
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="card card-sm">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-auto">
-                                        <span class="bg-success text-white avatar">0</span>
-                                    </div>
-                                    <div class="col">
-                                        <div class="font-weight-medium">
-                                            Total Orders
-                                        </div>
-                                        <div class="text-muted">
-                                            LKR 0.00
-                                        </div>
-                                    </div>
+            <!-- Advanced Filters Section -->
+            <div class="card-body border-bottom py-3">
+                <form method="GET" action="{{ route('orders.index') }}" id="filterForm">
+                    <!-- Search and Date Filter Row -->
+                            <div class="row g-2 mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Search</label>
+                                    <input type="text" name="search" class="form-control"
+                                           placeholder="Invoice No., Customer Name, Phone Number"
+                                           value="{{ request('search') }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Date From</label>
+                                    <input type="date" name="filter_date_from" class="form-control"
+                                           value="{{ request('filter_date_from') }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Date To</label>
+                                    <input type="date" name="filter_date_to" class="form-control"
+                                           value="{{ request('filter_date_to') }}">
+                                </div>
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <circle cx="10" cy="10" r="7"/>
+                                            <line x1="21" y1="21" x2="15" y2="15"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <a href="{{ route('orders.index') }}" class="btn btn-outline-danger w-100" title="Reset Filters">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/>
+                                            <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/>
+                                        </svg>
+                                    </a>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="card card-sm">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-auto">
-                                        <span class="bg-primary text-white avatar">0</span>
-                                    </div>
-                                    <div class="col">
-                                        <div class="font-weight-medium">
-                                            Completed
-                                        </div>
-                                        <div class="text-muted">
-                                            LKR 0.00
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="card card-sm">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-auto">
-                                        <span class="bg-warning text-white avatar">0</span>
-                                    </div>
-                                    <div class="col">
-                                        <div class="font-weight-medium">
-                                            Pending
-                                        </div>
-                                        <div class="text-muted">
-                                            LKR 0.00
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="card card-sm">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-auto">
-                                        <span class="bg-danger text-white avatar">0</span>
-                                    </div>
-                                    <div class="col">
-                                        <div class="font-weight-medium">
-                                            Cancelled
-                                        </div>
-                                        <div class="text-muted">
-                                            0
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <x-empty title="No orders found"
-                    message="Try adjusting your search or filter to find what you're looking for."
-                    button_label="{{ __('Add your first Order') }}" button_route="{{ route('orders.create') }}" />
-            </div>
-        @else
-            <div class="container-fluid">
-                <!-- Stats Cards Row - Credit Sales Style -->
-                <div class="row g-3 mb-4">
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="card card-sm">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-auto">
-                                        <span class="bg-success text-white avatar">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
-                                                height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                stroke="currentColor" fill="none" stroke-linecap="round"
-                                                stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <path d="M12 5l0 14" />
-                                                <path d="M5 12l14 0" />
-                                            </svg>
-                                        </span>
-                                    </div>
-                                    <div class="col">
-                                        <div class="font-weight-medium">
-                                            Total Orders
-                                        </div>
-                                        <div class="text-muted">
-                                            LKR {{ number_format(($orders_total_amount_cents ?? 0) / 100, 2) }}
-                                        </div>
+                            <!-- Entries per page Row -->
+                            <div class="row g-2">
+                                <div class="col-md-12 d-flex justify-content-end">
+                                    <div class="text-muted">
+                                        Show
+                                        <select name="per_page" class="form-select form-select-sm d-inline-block w-auto mx-2" onchange="this.form.submit()">
+                                            <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                                            <option value="20" {{ request('per_page', 20) == 20 ? 'selected' : '' }}>20</option>
+                                            <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                                            <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+                                        </select>
+                                        entries
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="card card-sm">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-auto">
-                                        <span class="bg-primary text-white avatar">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
-                                                height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                stroke="currentColor" fill="none" stroke-linecap="round"
-                                                stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <path d="M5 12l5 5l10 -10" />
-                                            </svg>
-                                        </span>
-                                    </div>
-                                    <div class="col">
-                                        <div class="font-weight-medium">
-                                            Completed
-                                        </div>
-                                        <div class="text-muted">
-                                            LKR {{ number_format(($completed_total_amount_cents ?? 0) / 100, 2) }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="card card-sm">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-auto">
-                                        <span class="bg-warning text-white avatar">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
-                                                height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                stroke="currentColor" fill="none" stroke-linecap="round"
-                                                stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <circle cx="12" cy="12" r="9" />
-                                                <path d="M12 8v4" />
-                                                <path d="M12 16h.01" />
-                                            </svg>
-                                        </span>
-                                    </div>
-                                    <div class="col">
-                                        <div class="font-weight-medium">
-                                            Pending
-                                        </div>
-                                        <div class="text-muted">
-                                            LKR {{ number_format(($pending_total_amount_cents ?? 0) / 100, 2) }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="card card-sm">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-auto">
-                                        <span class="bg-danger text-white avatar">{{ $cancelled_count ?? 0 }}</span>
-                                    </div>
-                                    <div class="col">
-                                        <div class="font-weight-medium">
-                                            Cancelled
-                                        </div>
-                                        <div class="text-muted">
-                                            {{ $cancelled_count ?? 0 }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <x-alert />
+                    <!-- Loading indicator -->
+                    <div id="loading-indicator" class="text-center py-4" style="display: none;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
 
-                <!-- Orders List Table -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Orders</h3>
-                        <div class="card-actions">
-                            <a href="{{ route('orders.create') }}" class="btn btn-primary btn-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16"
-                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M12 5l0 14" />
-                                    <path d="M5 12l14 0" />
-                                </svg>
-                                Add Order
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body border-bottom py-3">
-                        <div class="d-flex">
-                            <div class="text-muted">
-                                Show
-                                <div class="mx-2 d-inline-block">
-                                    <select class="form-control form-control-sm">
-                                        <option value="10">10</option>
-                                        <option value="25">25</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
-                                    </select>
-                                </div>
-                                entries
-                            </div>
-                            <div class="ms-auto text-muted">
-                                Search:
-                                <div class="ms-2 d-inline-block">
-                                    <input type="text" class="form-control form-control-sm"
-                                        placeholder="Search orders..." aria-label="Search orders">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Table Content Wrapper for AJAX -->
+                    <div id="orders-table-content">
                     <div class="table-responsive">
                         <table class="table card-table table-vcenter text-nowrap datatable">
                             <thead>
@@ -442,25 +274,10 @@
                             </li>
                         </ul>
                     </div>
+                    </div><!-- End orders-table-content -->
                 </div>
             </div>
-        @endif
-    </div>
-
-    <!-- Order Receipt Modal -->
-    <div class="modal fade" id="orderReceiptModal" tabindex="-1" aria-labelledby="orderReceiptModalLabel">
-        <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
-            <div class="modal-content"
-                style="border-radius: 12px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
-                <div class="modal-header" style="border-bottom: 1px solid #dee2e6; padding: 15px 20px;">
-                    <h5 class="modal-title" id="orderReceiptModalLabel">Order Receipt</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="closeOrderReceiptModal()"
-                        aria-label="Close" title="Close"></button>
-                </div>
-                <div class="modal-body p-0">
-                    <div class="receipt-container" id="order-receipt-content">
-                        <div class="text-center p-4">
-                            <div class="spinner-border text-primary" role="status">
+    @endif
                                 <span class="visually-hidden">Loading...</span>
                             </div>
                             <p class="mt-2 text-muted">Loading order details...</p>
@@ -472,6 +289,98 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        // AJAX search with debounce
+        let searchTimeout;
+        const searchInput = document.querySelector('input[name="search"]');
+        const filterForm = document.getElementById('filterForm');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const tableContent = document.getElementById('orders-table-content');
+
+        function fetchOrders(url = null) {
+            const formData = new FormData(filterForm);
+            const params = new URLSearchParams(formData);
+            const fetchUrl = url || `{{ route('orders.index') }}?${params.toString()}`;
+
+            // Show loading indicator
+            if (loadingIndicator) loadingIndicator.style.display = 'block';
+            if (tableContent) tableContent.style.opacity = '0.5';
+
+            fetch(fetchUrl, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'text/html'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                // Parse the HTML response
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newContent = doc.querySelector('#orders-table-content');
+
+                if (newContent && tableContent) {
+                    tableContent.innerHTML = newContent.innerHTML;
+
+                    // Update URL without page reload
+                    if (history.pushState) {
+                        history.pushState(null, null, fetchUrl);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching orders:', error);
+            })
+            .finally(() => {
+                // Hide loading indicator
+                if (loadingIndicator) loadingIndicator.style.display = 'none';
+                if (tableContent) tableContent.style.opacity = '1';
+            });
+        }
+
+        // Responsive search with debounce
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function() {
+                    fetchOrders();
+                }, 500); // Wait 500ms after user stops typing
+            });
+        }
+
+        // Handle form submission
+        if (filterForm) {
+            filterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                fetchOrders();
+            });
+        }
+
+        // Handle per page change
+        const perPageSelect = document.querySelector('select[name="per_page"]');
+        if (perPageSelect) {
+            perPageSelect.removeAttribute('onchange');
+            perPageSelect.addEventListener('change', function() {
+                fetchOrders();
+            });
+        }
+
+        // Handle pagination clicks
+        document.addEventListener('click', function(e) {
+            const paginationLink = e.target.closest('.pagination a');
+            if (paginationLink && !paginationLink.parentElement.classList.contains('disabled')) {
+                e.preventDefault();
+                const url = paginationLink.getAttribute('href');
+                if (url && url !== '#') {
+                    fetchOrders(url);
+                }
+            }
+        });
+    </script>
+    @endpush
 @endsection
 
 @push('page-scripts')

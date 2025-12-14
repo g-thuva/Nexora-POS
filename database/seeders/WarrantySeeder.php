@@ -14,6 +14,7 @@ class WarrantySeeder extends Seeder
     {
         $warranties = [
             ['name' => 'No Warranty', 'slug' => 'no-warranty', 'duration' => '0', 'years' => '0'],
+            ['name' => '3 Months', 'slug' => '3-months', 'duration' => '3', 'years' => '0.25'],
             ['name' => '6 Months', 'slug' => '6-months', 'duration' => '6', 'years' => '0.5'],
             ['name' => '1 Year', 'slug' => '1-year', 'duration' => '12', 'years' => '1'],
             ['name' => '2 Years', 'slug' => '2-years', 'duration' => '24', 'years' => '2'],

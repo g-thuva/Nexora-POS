@@ -21,7 +21,7 @@ use FPDF;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
     // Remove UserScope so all orders for the shop are visible to all users
     // Eager-load relations used by the index view to avoid N+1 queries
@@ -48,8 +48,52 @@ class OrderController extends Controller
             }
         }
 
+        // Apply filters
+        // Search filter - invoice number, customer name, phone number
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('invoice_no', 'like', "%{$search}%")
+                  ->orWhereHas('customer', function($customerQuery) use ($search) {
+                      $customerQuery->where('name', 'like', "%{$search}%")
+                                   ->orWhere('phone', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Customer filter
+        if ($request->filled('filter_customer')) {
+            $query->where('customer_id', $request->filter_customer);
+        }
+
+        // Date range filter
+        if ($request->filled('filter_date_from')) {
+            $query->whereDate('order_date', '>=', $request->filter_date_from);
+        }
+        if ($request->filled('filter_date_to')) {
+            $query->whereDate('order_date', '<=', $request->filter_date_to);
+        }
+
+        // Month filter
+        if ($request->filled('filter_month')) {
+            $query->whereMonth('order_date', $request->filter_month);
+        }
+
+        // Year filter
+        if ($request->filled('filter_year')) {
+            $query->whereYear('order_date', $request->filter_year);
+        }
+
         // Paginate orders to avoid loading large collections into memory
-        $orders = $query->latest()->paginate(20);
+        $perPage = $request->get('per_page', 20);
+        $orders = $query->latest()->paginate($perPage)->withQueryString();
+
+        // Get customers for dropdown (scoped to shop)
+        $customersQuery = Customer::query();
+        if ($shop) {
+            $customersQuery->where('shop_id', $shop->id);
+        }
+        $customers = $customersQuery->orderBy('name')->get(['id', 'name']);
 
         // Provide KPI totals to the view (use KpiService for shop-scoped KPIs)
         $kpiService = new \App\Services\KpiService();
@@ -67,10 +111,19 @@ class OrderController extends Controller
         $completedTotalCents = $query->clone()->where('order_status', OrderStatus::COMPLETE)->sum('total');
         $pendingTotalCents = $query->clone()->where('order_status', OrderStatus::PENDING)->sum('total');
 
+        // Check if this is an AJAX request
+        if ($request->ajax() || $request->wantsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+            // Return only the table content for AJAX requests
+            return view('orders.partials.table', [
+                'orders' => $orders,
+            ])->render();
+        }
+
         return view('orders.index', [
             'orders' => $orders,
             'shop' => $shop,
             'shopUsers' => $shopUsers,
+            'customers' => $customers,
             'orders_total_amount_cents' => $ordersTotalCents,
             'completed_total_amount_cents' => $completedTotalCents,
             'pending_total_amount_cents' => $pendingTotalCents,
@@ -171,18 +224,18 @@ class OrderController extends Controller
             $total = $subTotal - $discountAmount + $serviceCharges;
 
             $orderData['total_products'] = count($cartItems);
-            $orderData['sub_total'] = (int) round($subTotal * 100); // Convert to cents
-            $orderData['discount_amount'] = (int) round($discountAmount * 100);
-            $orderData['service_charges'] = (int) round($serviceCharges * 100);
-            $orderData['total'] = (int) round($total * 100);
-            $orderData['due'] = max(0, (int) round($total * 100) - (int) round($request->pay * 100));
+            $orderData['sub_total'] = round($subTotal, 2);
+            $orderData['discount_amount'] = round($discountAmount, 2);
+            $orderData['service_charges'] = round($serviceCharges, 2);
+            $orderData['total'] = round($total, 2);
+            $orderData['due'] = max(0, round($total, 2) - round($request->pay, 2));
 
             // Handle payment amount based on payment type
             if ($request->payment_type === 'Credit Sales') {
                 // For credit sales, payment amount is the initial payment (if any)
                 $initialPayment = (float) ($request->initial_payment ?? 0);
-                $orderData['pay'] = (int) round($initialPayment * 100);
-                $orderData['due'] = (int) round($total * 100) - (int) round($initialPayment * 100);
+                $orderData['pay'] = round($initialPayment, 2);
+                $orderData['due'] = round($total, 2) - round($initialPayment, 2);
 
                 // Validate customer is selected for credit sales
                 if (empty($orderData['customer_id'])) {
@@ -200,8 +253,8 @@ class OrderController extends Controller
                 }
             } else {
                 // For regular payments
-                $orderData['pay'] = (int) round($request->pay * 100);
-                $orderData['due'] = max(0, (int) round($total * 100) - (int) round($request->pay * 100));
+                $orderData['pay'] = round($request->pay, 2);
+                $orderData['due'] = max(0, round($total, 2) - round($request->pay, 2));
             }
 
             // Resolve default Walk-In Customer if not provided (only for non-credit sales)
@@ -263,8 +316,8 @@ class OrderController extends Controller
                     'warranty_name' => $warrantyName,
                     'warranty_duration' => $warrantyDuration,
                     'quantity' => $item['quantity'],
-                    'unitcost' => (int) round($item['price'] * 100), // Convert to cents
-                    'total' => (int) round($item['total'] * 100), // Convert to cents
+                    'unitcost' => round($item['price'], 2),
+                    'total' => round($item['total'], 2),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -460,6 +513,7 @@ class OrderController extends Controller
 
         return view('orders.show', [
             'order' => $order,
+            'warranties' => \App\Models\Warranty::all(['id', 'name', 'duration']),
         ]);
     }
 
@@ -469,8 +523,9 @@ class OrderController extends Controller
 
         return view('orders.edit', [
             'order' => $order,
-            'customers' => Customer::all(['id', 'name', 'phone']),
+            'customers' => Customer::all(['id', 'name', 'phone', 'email', 'address', 'account_holder', 'account_number', 'bank_name']),
             'products' => Product::with(['category', 'unit'])->get(),
+            'warranties' => \App\Models\Warranty::all(['id', 'name', 'duration']),
         ]);
     }
 
@@ -479,35 +534,203 @@ class OrderController extends Controller
         DB::beginTransaction();
 
         try {
-            // Update order status to complete and reduce stock
-            if ($order->order_status !== OrderStatus::COMPLETE) {
-                // Use StockService to adjust stock for the order
-                try {
-                    $stockService = app(\App\Services\StockService::class);
-                    $stockService->adjustStockAfterOrder($order->id);
-                } catch (\Exception $e) {
-                    \Log::error('Failed to adjust stock after order on complete', [
-                        'order_id' => $order->id,
-                        'error' => $e->getMessage()
-                    ]);
-                    throw $e;
+            // Validate the request
+            $validated = $request->validate([
+                'customer_id' => 'required|exists:customers,id',
+                'order_date' => 'required|date',
+                'payment_type' => 'required|string',
+                'discount_amount' => 'nullable|numeric|min:0',
+                'products' => 'required|array|min:1',
+                'products.*.id' => 'nullable|exists:order_details,id',
+                'products.*.product_id' => 'required|exists:products,id',
+                'products.*.quantity' => 'required|integer|min:1',
+                'products.*.unitcost' => 'required|numeric|min:0',
+                'products.*.serial_number' => 'nullable|string|max:255',
+                'products.*.warranty_id' => 'nullable|exists:warranties,id',
+                'products.*.warranty_years' => 'nullable|integer|min:0|max:100',
+            ]);
+
+            // Update order basic info
+            $order->customer_id = $validated['customer_id'];
+            $order->order_date = $validated['order_date'];
+            $order->payment_type = $validated['payment_type'];
+            $order->discount_amount = $validated['discount_amount'] ?? 0;
+
+            // Calculate totals
+            $subTotal = 0;
+            $totalProducts = 0;
+
+            foreach ($validated['products'] as $productData) {
+                $quantity = $productData['quantity'];
+                $unitcost = $productData['unitcost'];
+                $subTotal += ($quantity * $unitcost);
+                $totalProducts += $quantity;
+            }
+
+            $order->sub_total = $subTotal;
+            $order->total_products = $totalProducts;
+            $order->total = $subTotal - ($validated['discount_amount'] ?? 0);
+            $order->pay = $order->total; // Assuming full payment
+            $order->due = 0;
+
+            $order->save();
+
+            // Get existing order detail IDs
+            $existingDetailIds = $order->details->pluck('id')->toArray();
+            $updatedDetailIds = [];
+
+            // Update or create order details
+            foreach ($validated['products'] as $productData) {
+                $detailId = $productData['id'] ?? null;
+
+                $detailData = [
+                    'order_id' => $order->id,
+                    'product_id' => $productData['product_id'],
+                    'quantity' => $productData['quantity'],
+                    'unitcost' => $productData['unitcost'],
+                    'total' => ($productData['quantity'] * $productData['unitcost']),
+                    'serial_number' => $productData['serial_number'] ?? null,
+                ];
+
+                // Handle warranty
+                if (!empty($productData['warranty_id'])) {
+                    $warranty = \App\Models\Warranty::find($productData['warranty_id']);
+                    if ($warranty) {
+                        $detailData['warranty_id'] = $warranty->id;
+                        $detailData['warranty_name'] = $warranty->name;
+                        $detailData['warranty_duration'] = $warranty->duration;
+                        $detailData['warranty_years'] = null;
+                    }
+                } else if (isset($productData['warranty_years']) && $productData['warranty_years'] > 0) {
+                    $detailData['warranty_id'] = null;
+                    $detailData['warranty_name'] = null;
+                    $detailData['warranty_duration'] = null;
+                    $detailData['warranty_years'] = $productData['warranty_years'];
+                } else {
+                    $detailData['warranty_id'] = null;
+                    $detailData['warranty_name'] = null;
+                    $detailData['warranty_duration'] = null;
+                    $detailData['warranty_years'] = null;
                 }
 
-                $order->update(['order_status' => OrderStatus::COMPLETE]);
+                if ($detailId && in_array($detailId, $existingDetailIds)) {
+                    // Update existing detail
+                    OrderDetails::where('id', $detailId)->update($detailData);
+                    $updatedDetailIds[] = $detailId;
+                } else {
+                    // Create new detail
+                    $newDetail = OrderDetails::create($detailData);
+                    $updatedDetailIds[] = $newDetail->id;
+                }
+            }
+
+            // Delete removed products
+            $detailsToDelete = array_diff($existingDetailIds, $updatedDetailIds);
+            if (!empty($detailsToDelete)) {
+                OrderDetails::whereIn('id', $detailsToDelete)->delete();
             }
 
             DB::commit();
 
             return redirect()
-                ->route('orders.index')
-                ->with('success', 'Order has been completed successfully!');
+                ->route('orders.show', $order)
+                ->with('success', 'Order has been updated successfully!');
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            return redirect()
+                ->back()
+                ->withErrors($e->errors())
+                ->withInput();
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Failed to update order', [
+                'order_id' => $order->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
 
             return redirect()
                 ->back()
-                ->with('error', 'Failed to complete order. Please try again.');
+                ->with('error', 'Failed to update order: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    public function updateOrderItem(Request $request, $itemId)
+    {
+        try {
+            $validated = $request->validate([
+                'serial_number' => 'nullable|string|max:255',
+                'warranty_id' => 'nullable|exists:warranties,id',
+                'warranty_years' => 'nullable|integer|min:0|max:100',
+            ]);
+
+            $orderDetail = OrderDetails::findOrFail($itemId);
+
+            // Check if user has access to this order's shop
+            $order = $orderDetail->order;
+            $user = auth()->user();
+            if (!$user || !$user->canAccessShop($order->shop_id)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized access'
+                ], 403);
+            }
+
+            // Update serial number
+            $orderDetail->serial_number = $validated['serial_number'] ?? null;
+
+            // Handle warranty - priority to warranty_id over warranty_years
+            if (!empty($validated['warranty_id'])) {
+                $warranty = \App\Models\Warranty::find($validated['warranty_id']);
+                if ($warranty) {
+                    $orderDetail->warranty_id = $warranty->id;
+                    $orderDetail->warranty_name = $warranty->name;
+                    $orderDetail->warranty_duration = $warranty->duration;
+                    $orderDetail->warranty_years = null; // Clear custom years if warranty selected
+                }
+            } else if (isset($validated['warranty_years'])) {
+                // Use custom warranty years
+                $orderDetail->warranty_id = null;
+                $orderDetail->warranty_name = null;
+                $orderDetail->warranty_duration = null;
+                $orderDetail->warranty_years = $validated['warranty_years'];
+            } else {
+                // Clear all warranty fields
+                $orderDetail->warranty_id = null;
+                $orderDetail->warranty_name = null;
+                $orderDetail->warranty_duration = null;
+                $orderDetail->warranty_years = null;
+            }
+
+            $orderDetail->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Product details updated successfully',
+                'serial_number' => $orderDetail->serial_number,
+                'warranty_id' => $orderDetail->warranty_id,
+                'warranty_name' => $orderDetail->warranty_name,
+                'warranty_duration' => $orderDetail->warranty_duration,
+                'warranty_years' => $orderDetail->warranty_years,
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed: ' . implode(', ', $e->errors())
+            ], 422);
+        } catch (\Exception $e) {
+            \Log::error('Failed to update order item', [
+                'item_id' => $itemId,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update product details'
+            ], 500);
         }
     }
 

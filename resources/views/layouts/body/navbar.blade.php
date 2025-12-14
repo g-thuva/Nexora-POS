@@ -1,8 +1,8 @@
 
-<header class="navbar-expand-md">
-    <div class="collapse navbar-collapse" id="navbar-menu">
-        <div class="navbar">
-            <div class="container-fluid">
+<header class="navbar-expand-md" style="background-color: #fff;">
+    <div class="collapse navbar-collapse" id="navbar-menu" style="position: static;">
+        <div class="navbar" style="position: static;">
+            <div class="container-xxl" style="position: static;">
                 <ul class="navbar-nav">
                     <li class="nav-item {{ request()->is('dashboard*') ? 'active' : null }}">
                         <a class="nav-link" href="{{ route('dashboard') }}" >
@@ -204,20 +204,6 @@
                         <div class="dropdown-menu">
                             <div class="dropdown-menu-columns">
                                 <div class="dropdown-menu-column">
-                                    @if(Auth::user()->isAdmin())
-                                    <a class="dropdown-item" href="{{ route('admin.shops.index') }}">
-                                        {{ __('All Shops') }}
-                                    </a>
-                                    @elseif(Auth::user()->hasShop())
-                                    <a class="dropdown-item" href="{{ route('admin.shops.show', Auth::user()->shop) }}">
-                                        {{ __('Shop Details') }}
-                                    </a>
-                                    @endif
-                                    @if(Auth::user()->canManageUsers())
-                                    <a class="dropdown-item" href="{{ route('users.index') }}">
-                                        {{ __('Users') }}
-                                    </a>
-                                    @endif
                                     @if(Auth::user()->hasInventoryAccess())
                                     <a class="dropdown-item" href="{{ route('categories.index') }}">
                                         {{ __('Categories') }}

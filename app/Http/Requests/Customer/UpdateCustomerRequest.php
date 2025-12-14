@@ -29,24 +29,38 @@ class UpdateCustomerRequest extends FormRequest
                 'max:1024'
             ],
             'name' => [
-                'required',
+                'nullable',
                 'string',
                 'max:50'
             ],
             'email' => [
-                'required',
+                'nullable',
                 'email',
                 'max:50',
                 Rule::unique('customers', 'email')->ignore($this->customer)->where('shop_id', auth()->user()->getActiveShop()?->id)
             ],
             'phone' => [
-                'required',
+                'nullable',
                 'string',
                 'max:25',
-                Rule::unique('customers', 'phone')->ignore($this->customer)->where('shop_id', auth()->user()->getActiveShop()?->id),
             ],
             'address' => [
-                'required',
+                'nullable',
+                'string',
+                'max:100'
+            ],
+            'account_holder' => [
+                'nullable',
+                'string',
+                'max:100'
+            ],
+            'account_number' => [
+                'nullable',
+                'string',
+                'max:50'
+            ],
+            'bank_name' => [
+                'nullable',
                 'string',
                 'max:100'
             ],

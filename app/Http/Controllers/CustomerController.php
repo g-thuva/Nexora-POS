@@ -117,6 +117,39 @@ class CustomerController extends Controller
             ->with('success', 'Customer has been updated!');
     }
 
+    public function updateAjax(UpdateCustomerRequest $request, Customer $customer)
+    {
+        try {
+            // Update customer details (without photo for AJAX)
+            $customer->update($request->except('photo'));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Customer details updated successfully!',
+                'customer' => [
+                    'id' => $customer->id,
+                    'name' => $customer->name,
+                    'email' => $customer->email,
+                    'phone' => $customer->phone,
+                    'address' => $customer->address,
+                    'account_holder' => $customer->account_holder,
+                    'account_number' => $customer->account_number,
+                    'bank_name' => $customer->bank_name,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Failed to update customer', [
+                'customer_id' => $customer->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update customer details'
+            ], 500);
+        }
+    }
+
     public function destroy(Customer $customer)
     {
         if($customer->photo)

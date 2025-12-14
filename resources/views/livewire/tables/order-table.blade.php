@@ -11,24 +11,84 @@
         </div>
     </div>
 
+    <!-- Advanced Filters Section -->
     <div class="card-body border-bottom py-3">
-        <div class="d-flex">
-            <div class="text-secondary">
-                Show
-                <div class="mx-2 d-inline-block">
-                    <select wire:model.live="perPage" class="form-select form-select-sm" aria-label="result per page">
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="15">15</option>
-                        <option value="25">25</option>
-                    </select>
-                </div>
-                entries
+        <!-- Search Row -->
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label class="form-label">{{ __('Search') }}</label>
+                <input type="text" wire:model.live="search" class="form-control" placeholder="Invoice No., Customer Name, Phone Number">
             </div>
-            <div class="ms-auto text-secondary">
-                Search:
-                <div class="ms-2 d-inline-block">
-                    <input type="text" wire:model.live="search" class="form-control form-control-sm" aria-label="Search invoice">
+            <div class="col-md-3">
+                <label class="form-label">{{ __('Customer') }}</label>
+                <select wire:model.live="filterCustomer" class="form-select">
+                    <option value="">{{ __('All Customers') }}</option>
+                    @foreach($customers as $customer)
+                        <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">{{ __('Month') }}</label>
+                <select wire:model.live="filterMonth" class="form-select">
+                    <option value="">{{ __('All Months') }}</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">{{ __('Year') }}</label>
+                <select wire:model.live="filterYear" class="form-select">
+                    <option value="">{{ __('All Years') }}</option>
+                    @for($year = date('Y'); $year >= date('Y') - 5; $year--)
+                        <option value="{{ $year }}">{{ $year }}</option>
+                    @endfor
+                </select>
+            </div>
+            <div class="col-md-1 d-flex align-items-end">
+                <button wire:click="resetFilters" class="btn btn-outline-danger w-100" title="Reset Filters">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/>
+                        <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Date Range Row -->
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">{{ __('Date From') }}</label>
+                <input type="date" wire:model.live="filterDateFrom" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">{{ __('Date To') }}</label>
+                <input type="date" wire:model.live="filterDateTo" class="form-control">
+            </div>
+            <div class="col-md-6 d-flex align-items-end justify-content-end">
+                <div class="text-secondary me-3">
+                    Show
+                    <div class="mx-2 d-inline-block">
+                        <select wire:model.live="perPage" class="form-select form-select-sm">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                    entries
                 </div>
             </div>
         </div>

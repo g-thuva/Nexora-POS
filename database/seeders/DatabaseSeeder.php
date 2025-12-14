@@ -25,7 +25,6 @@ class DatabaseSeeder extends Seeder
             UnitSeeder::class,
             WarrantySeeder::class,
             SubscriptionPlanSeeder::class,
-            OrderSeeder::class,
         ]);
 
     }

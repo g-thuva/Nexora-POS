@@ -1,7 +1,7 @@
 <header class="navbar-expand-md admin-navbar">
-    <div class="collapse navbar-collapse" id="navbar-menu">
-        <div class="navbar">
-            <div class="container-fluid">
+    <div class="collapse navbar-collapse" id="navbar-menu" style="position: static;">
+        <div class="navbar" style="position: static;">
+            <div class="container-xxl" style="position: static;">
                 <ul class="navbar-nav">
                     <!-- Admin Dashboard -->
                     <li class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : null }}">

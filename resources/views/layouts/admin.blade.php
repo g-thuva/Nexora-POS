@@ -27,31 +27,31 @@
             color: #1f2937 !important;
             text-decoration: none !important;
         }
-        
+
         .navbar-brand:hover .navbar-brand-text {
             color: #1f2937 !important;
             text-decoration: none !important;
         }
-        
+
         /* Admin specific styling */
         .admin-navbar {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-        
+
         .admin-navbar .nav-link {
             color: rgba(255, 255, 255, 0.9) !important;
         }
-        
+
         .admin-navbar .nav-link:hover {
             color: #ffffff !important;
         }
-        
+
         .admin-navbar .nav-link.active {
             color: #ffffff !important;
             background-color: rgba(255, 255, 255, 0.2);
             border-radius: 0.375rem;
         }
-        
+
         .admin-badge {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
@@ -59,6 +59,79 @@
             padding: 0.2rem 0.5rem;
             border-radius: 0.5rem;
             margin-left: 0.5rem;
+        }
+
+        /* Fix navbar dropdown visibility */
+        .navbar-expand-md {
+            overflow: visible !important;
+        }
+
+        .navbar-collapse {
+            overflow: visible !important;
+        }
+
+        .navbar {
+            overflow: visible !important;
+        }
+
+        /* Remove all space constraints from page containers */
+        .page {
+            overflow: visible !important;
+            height: auto !important;
+            min-height: 100vh !important;
+        }
+
+        .page-wrapper {
+            overflow: visible !important;
+            height: auto !important;
+        }
+
+        .page-body {
+            overflow: visible !important;
+            height: auto !important;
+        }
+
+        /* Ensure navbar and header don't have height constraints */
+        header.navbar,
+        header.navbar-expand-md {
+            overflow: visible !important;
+            height: auto !important;
+            max-height: none !important;
+            border: none !important;
+        }
+
+        /* Remove container constraints */
+        .container-xxl {
+            max-width: 100% !important;
+            padding-left: 1.5rem !important;
+            padding-right: 1.5rem !important;
+        }
+
+        /* Remove borders from navbar elements */
+        .navbar,
+        .navbar-collapse {
+            border: none !important;
+        }
+
+        .navbar .dropdown-menu {
+            position: absolute !important;
+            max-height: none !important;
+            overflow-y: visible !important;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e6e8ea !important;
+            z-index: 1030 !important;
+        }
+
+        .navbar .dropdown-menu-columns {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            min-width: 500px !important;
+        }
+
+        .navbar .dropdown-menu-column {
+            flex: 1 1 auto !important;
+            min-width: 200px !important;
+            padding: 0.5rem !important;
         }
     </style>
 
@@ -75,12 +148,14 @@
         @include('layouts.body.admin-navbar')
 
         <div class="page-wrapper">
-            <div>
-                @yield('content')
+            <div class="page-body">
+                <div class="container-xxl">
+                    @yield('content')
+                </div>
             </div>
-        </div>
 
-        @include('layouts.body.footer')
+            @include('layouts.body.footer')
+        </div>
 
     </div>
 
@@ -91,6 +166,6 @@
     <!-- Custom JS for specific page.  -->
     @stack('page-scripts')
     @livewireScripts
-    
+
 </body>
 </html>

@@ -1,44 +1,37 @@
 
-<header class="navbar navbar-expand-md d-print-none" >
-    <div class="container-fluid">
+<header class="navbar navbar-expand-md sticky-top d-print-none" style="z-index: 1100; border: none; overflow: visible !important;">
+    <div class="container-xxl" style="overflow: visible !important;">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
             <a href="{{ url('/') }}" class="d-flex align-items-center">
-                <img src="{{ asset('static/logo.svg') }}" width="32" height="32" alt="NexoraLabs" class="navbar-brand-image me-2">
                 <span class="navbar-brand-text fs-4 fw-bold text-dark">NexoraLabs</span>
             </a>
         </h1>
 
-        <div class="navbar-nav flex-row order-md-last">
-            <div class="nav-item dropdown">
-                <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
-                    <span class="avatar avatar-sm shadow-none"
-                          style="background-image: url({{ Avatar::create(Auth::user()->name)->toBase64() }})">
-                    </span>
-                    <div class="d-none d-xl-block ps-2">
-                        <div>{{ Auth::user()->name }}</div>
-                    </div>
-                </a>
-
-                <div class="dropdown-menu">
-                    <a href="{{ route('profile.edit') }}" class="dropdown-item">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon icon-nexora icon-nexora-settings" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"></path>
-                            <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
-                        </svg>
-                        Account
-                    </a>
-                    <form action="{{ route('logout') }}" method="post">
-                        @csrf
-                        <button type="submit" class="dropdown-item">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon icon-nexora icon-nexora-logout" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" /><path d="M9 12h12l-3 -3" /><path d="M18 15l3 -3" /></svg>
-                            Logout
-                        </button>
-                    </form>
+        <div class="navbar-nav flex-row order-md-last align-items-center" style="position: relative; z-index: 1150; overflow: visible !important; gap: 1rem;">
+            <div class="nav-item d-flex align-items-center">
+                <span class="avatar avatar-sm shadow-none me-2"
+                      style="background-image: url({{ Avatar::create(Auth::user()->name)->toBase64() }})">
+                </span>
+                <div class="d-none d-xl-block">
+                    <div class="small text-muted">{{ Auth::user()->name }}</div>
                 </div>
+            </div>
+            <div class="nav-item">
+                <form action="{{ route('logout') }}" method="post" class="m-0">
+                    @csrf
+                    <button type="submit" class="btn btn-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
+                            <path d="M9 12h12l-3 -3" />
+                            <path d="M18 15l3 -3" />
+                        </svg>
+                        <span class="d-none d-sm-inline ms-1">Logout</span>
+                    </button>
+                </form>
             </div>
         </div>
     </div>

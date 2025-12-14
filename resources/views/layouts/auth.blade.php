@@ -35,7 +35,7 @@
             color: #1f2937 !important;
             text-decoration: none !important;
         }
-        
+
         .navbar-brand:hover .navbar-brand-text {
             color: #1f2937 !important;
             text-decoration: none !important;
@@ -44,7 +44,7 @@
 
     <!-- Custom CSS for specific page.  -->
     @stack('page-styles')
-    
+
     <style>
         /* Enhanced Alert Styling */
         .alert {
@@ -53,45 +53,45 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
         }
-        
+
         .alert-danger {
             background-color: #fef2f2;
             color: #dc2626 !important;
             border-left: 4px solid #dc2626;
         }
-        
+
         .alert-success {
             background-color: #f0fdf4;
             color: #16a34a !important;
             border-left: 4px solid #16a34a;
         }
-        
+
         .alert-title {
             color: inherit !important;
             font-weight: 600;
             margin-bottom: 4px;
         }
-        
+
         .alert .text-muted {
             color: inherit !important;
             opacity: 0.8;
         }
-        
+
         .alert-icon {
             color: inherit !important;
         }
-        
+
         .btn-close {
             color: inherit !important;
         }
-        
+
         /* Login Form Enhancements */
         .card {
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             border: none;
             border-radius: 12px;
         }
-        
+
         .form-control:focus {
             border-color: #3b82f6;
             box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
@@ -104,7 +104,6 @@
         <div class="container container-tight py-4">
             <div class="text-center mb-4">
                 <a href="{{ url('/') }}" class="navbar-brand navbar-brand-autodark d-flex align-items-center justify-content-center">
-                    <img src="{{ asset('static/logo.svg') }}" width="40" height="40" alt="NexoraLabs" class="navbar-brand-image me-2">
                     <span class="navbar-brand-text fs-3 fw-bold text-dark">NexoraLabs</span>
                 </a>
             </div>
