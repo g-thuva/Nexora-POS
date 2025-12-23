@@ -72,9 +72,9 @@ var myBarChart = new Chart(ctx, {
                     max: 15000,
                     maxTicksLimit: 5,
                     padding: 10,
-                    // Include a dollar sign in the ticks
+                    // Include LKR currency in the ticks
                     callback: function(value, index, values) {
-                        return "$" + number_format(value);
+                        return "LKR " + number_format(value);
                     }
                 },
                 gridLines: {
@@ -105,7 +105,7 @@ var myBarChart = new Chart(ctx, {
                 label: function(tooltipItem, chart) {
                     var datasetLabel =
                         chart.datasets[tooltipItem.datasetIndex].label || "";
-                    return datasetLabel + ": $" + number_format(tooltipItem.yLabel);
+                    return datasetLabel + ": LKR " + number_format(tooltipItem.yLabel);
                 }
             }
         }

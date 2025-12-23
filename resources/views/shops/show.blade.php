@@ -254,7 +254,7 @@
                                                             {{ ucfirst($order->order_status->value) }}
                                                         </span>
                                                     </td>
-                                                    <td>${{ number_format($order->total, 2) }}</td>
+                                                    <td>LKR {{ number_format($order->total, 2) }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

@@ -162,7 +162,7 @@
                                         </div>
                                         <div class="col-6">
                                             <div class="text-muted">Selling Price:</div>
-                                            <div class="fw-medium text-success">${{ number_format($product->selling_price, 2) }}</div>
+                                            <div class="fw-medium text-success">LKR {{ number_format($product->selling_price, 2) }}</div>
                                         </div>
                                         @if($product->warranty)
                                         <div class="col-12">
@@ -296,9 +296,9 @@
                                         <div class="text-muted small">Alert: {{ $product->quantity_alert }}</div>
                                     </td>
                                     <td class="text-end">
-                                        <div class="fw-bold text-success">${{ number_format($product->selling_price, 2) }}</div>
+                                        <div class="fw-bold text-success">LKR {{ number_format($product->selling_price, 2) }}</div>
                                         @if($product->buying_price > 0)
-                                            <div class="text-muted small">Cost: ${{ number_format($product->buying_price, 2) }}</div>
+                                            <div class="text-muted small">Cost: LKR {{ number_format($product->buying_price, 2) }}</div>
                                         @endif
                                     </td>
                                     <td>

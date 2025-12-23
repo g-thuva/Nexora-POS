@@ -81,7 +81,7 @@
                                                             </small>
                                                         </div>
                                                         <div class="text-end">
-                                                            <div class="fw-bold text-success">${{ number_format($product->selling_price, 2) }}</div>
+                                                            <div class="fw-bold text-success">LKR {{ number_format($product->selling_price, 2) }}</div>
                                                             <small class="text-muted">Stock: {{ $product->quantity }}</small>
                                                         </div>
                                                     </div>

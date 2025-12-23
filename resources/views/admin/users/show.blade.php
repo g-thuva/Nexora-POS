@@ -275,7 +275,7 @@
                                         <div class="text-muted small">{{ optional($order->order_date)->format('h:i A') }}</div>
                                     </td>
                                     <td>
-                                        <div class="font-weight-medium">${{ number_format($order->total ?? $order->total_amount ?? 0, 2) }}</div>
+                                        <div class="font-weight-medium">LKR {{ number_format($order->total ?? $order->total_amount ?? 0, 2) }}</div>
                                     </td>
                                     <td>
                                         @php

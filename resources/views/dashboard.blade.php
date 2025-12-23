@@ -68,7 +68,7 @@
                                                                     <div class="col">
                                                                         <div class="font-weight-medium text-truncate" title="{{ $shop->name }}">{{ $shop->name }}</div>
                                                                         <div class="h3 m-0 {{ $shop->sales_total > 0 ? 'text-primary' : 'text-muted' }}">
-                                                                            ${{ number_format($shop->sales_total, 2) }}
+                                                                            LKR {{ number_format($shop->sales_total, 2) }}
                                                                         </div>
                                                                         <div class="text-muted small">
                                                                             {{ $shop->completed_orders }} completed orders
@@ -432,11 +432,11 @@
                                                             </span>
                                                         </div>
                                                         <div class="col">
-                                                            <div class="font-weight-medium">${{ number_format($totalAllOrders ?? 0, 2) }}</div>
+                                                            <div class="font-weight-medium">LKR {{ number_format($totalAllOrders ?? 0, 2) }}</div>
                                                             <div class="text-muted">{{ $shopName ?? 'This Shop' }} - Total Sales</div>
                                                             @if(isset($totalSales) && $totalSales > 0)
                                                                 <div class="text-success small">
-                                                                    ${{ number_format($totalSales, 2) }} completed only
+                                                                    LKR {{ number_format($totalSales, 2) }} completed only
                                                                 </div>
                                                             @endif
                                                         </div>
@@ -475,7 +475,7 @@
                                                     </div>
                                                     <div class="col">
                                                         <div class="font-weight-medium">Shop Total Revenue</div>
-                                                        <div class="h2 m-0 text-primary">${{ number_format($totalAllOrders, 2) }}</div>
+                                                        <div class="h2 m-0 text-primary">LKR {{ number_format($totalAllOrders, 2) }}</div>
                                                         <div class="text-muted">All {{ $shopName ?? 'shop' }} orders</div>
                                                     </div>
                                                 </div>
@@ -496,7 +496,7 @@
                                                     </div>
                                                     <div class="col">
                                                         <div class="font-weight-medium">Shop Completed Revenue</div>
-                                                        <div class="h2 m-0 text-success">${{ number_format($totalSales ?? 0, 2) }}</div>
+                                                        <div class="h2 m-0 text-success">LKR {{ number_format($totalSales ?? 0, 2) }}</div>
                                                         <div class="text-muted">{{ $shopName ?? 'Shop' }} completed orders only</div>
                                                     </div>
                                                 </div>
@@ -521,7 +521,7 @@
                                                     <div class="col">
                                                         <div class="font-weight-medium">Shop Average Order</div>
                                                         <div class="h3 m-0 text-orange">
-                                                            ${{ $orders > 0 ? number_format($totalAllOrders / $orders, 2) : '0.00' }}
+                                                            LKR {{ $orders > 0 ? number_format($totalAllOrders / $orders, 2) : '0.00' }}
                                                         </div>
                                                         <div class="text-muted">{{ $shopName ?? 'Shop' }} average per order</div>
                                                     </div>
@@ -545,7 +545,7 @@
                                                     </div>
                                                     <div class="col">
                                                         <div class="font-weight-medium">Shop Pending Revenue</div>
-                                                        <div class="h3 m-0 text-info">${{ number_format(($totalAllOrders ?? 0) - ($totalSales ?? 0), 2) }}</div>
+                                                        <div class="h3 m-0 text-info">LKR {{ number_format(($totalAllOrders ?? 0) - ($totalSales ?? 0), 2) }}</div>
                                                         <div class="text-muted">{{ $shopName ?? 'Shop' }} pending orders</div>
                                                     </div>
                                                 </div>

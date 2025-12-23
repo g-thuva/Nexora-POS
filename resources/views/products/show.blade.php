@@ -92,11 +92,11 @@
                                     </tr>
                                     <tr>
                                         <th class="text-muted">Buying Price</th>
-                                        <td class="fw-bold text-danger">${{ number_format($product->buying_price, 2) }}</td>
+                                        <td class="fw-bold text-danger">LKR {{ number_format($product->buying_price, 2) }}</td>
                                     </tr>
                                     <tr>
                                         <th class="text-muted">Selling Price</th>
-                                        <td class="fw-bold text-success">${{ number_format($product->selling_price, 2) }}</td>
+                                        <td class="fw-bold text-success">LKR {{ number_format($product->selling_price, 2) }}</td>
                                     </tr>
                                     <tr>
                                         <th class="text-muted">Notes</th>

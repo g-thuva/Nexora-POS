@@ -349,7 +349,7 @@
                                             </small>
                                         </div>
                                         <div class="col-auto">
-                                            <span class="badge bg-blue">${{ number_format($product->selling_price, 2) }}</span>
+                                            <span class="badge bg-blue">LKR {{ number_format($product->selling_price, 2) }}</span>
                                         </div>
                                     </div>
                                 </div>

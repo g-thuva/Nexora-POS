@@ -180,7 +180,7 @@
                                         <span class="badge bg-red">{{ $shop->subscription_end_date->diffInDays(now()) }} days</span>
                                     </td>
                                     <td>
-                                        ${{ number_format($shop->monthly_fee, 2) }}
+                                        LKR {{ number_format($shop->monthly_fee, 2) }}
                                     </td>
                                     <td>
                                         <a href="{{ route('admin.shops.show', $shop) }}" class="btn btn-sm btn-primary">

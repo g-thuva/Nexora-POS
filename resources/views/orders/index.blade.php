@@ -278,21 +278,14 @@
                 </div>
             </div>
     @endif
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            <p class="mt-2 text-muted">Loading order details...</p>
-                        </div>
-                    </div>
-                    <!-- Print-only wrapper -->
-                    <div id="print-receipt-wrapper" style="display:none;"></div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     @push('scripts')
     <script>
-        // AJAX search with debounce
+        // AJAX search functionality has been disabled to fix modal functionality
+        // The hot search was interfering with Bootstrap modal event handlers
+        // Standard form submission is now used instead
+        
+        /* REMOVED - Hot Search AJAX functionality that was breaking modal
         let searchTimeout;
         const searchInput = document.querySelector('input[name="search"]');
         const filterForm = document.getElementById('filterForm');
@@ -379,8 +372,31 @@
                 }
             }
         });
+        */
     </script>
     @endpush
+
+    <!-- Order Receipt Modal -->
+    <div class="modal fade" id="orderReceiptModal" tabindex="-1" aria-labelledby="orderReceiptModalLabel" aria-hidden="true" data-bs-keyboard="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+                <div class="modal-header" style="background: #f8f9fa; border-radius: 12px 12px 0 0;">
+                    <h5 class="modal-title" id="orderReceiptModalLabel" style="font-size: 16px; font-weight: 600; color: #495057;">Order Receipt</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div id="order-receipt-content" class="receipt-container">
+                        <div class="text-center p-4 text-muted">
+                            <p>Select an order to view details</p>
+                        </div>
+                    </div>
+                    <!-- Print-only wrapper -->
+                    <div id="print-receipt-wrapper" style="display:none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('page-scripts')
@@ -665,7 +681,6 @@
             <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
-            <p class="mt-2 text-muted">Loading order details...</p>
         </div>
     `;
 
@@ -1035,13 +1050,10 @@
                 // Clear any stored order data
                 window.currentOrderData = null;
 
-                // Reset modal content to loading state
+                // Reset modal content to empty state
                 document.getElementById('order-receipt-content').innerHTML = `
-            <div class="text-center p-4">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                <p class="mt-2 text-muted">Loading order details...</p>
+            <div class="text-center p-4 text-muted">
+                <p>Select an order to view details</p>
             </div>
         `;
 
@@ -1056,32 +1068,8 @@
                 window.lastFocusedElement = null;
             });
 
-            // Add ESC key support (safe: check bootstrap exists)
-            document.addEventListener('keydown', function(event) {
-                if (event.key === 'Escape') {
-                    try {
-                        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                            const modal = bootstrap.Modal.getInstance(orderReceiptModal);
-                            if (modal && (modal._isShown || (orderReceiptModal && orderReceiptModal.classList && orderReceiptModal.classList.contains('show')))) {
-                                closeOrderReceiptModal();
-                            }
-                        } else {
-                            // Fallback: if modal is visible via classes, close it
-                            if (orderReceiptModal && orderReceiptModal.classList && orderReceiptModal.classList.contains('show')) {
-                                closeOrderReceiptModal();
-                            }
-                        }
-                    } catch (e) {
-                        // swallow errors to avoid breaking other scripts
-                        console.warn('ESC handler fallback error', e);
-                        try {
-                            if (orderReceiptModal && orderReceiptModal.classList && orderReceiptModal.classList.contains('show')) {
-                                closeOrderReceiptModal();
-                            }
-                        } catch (e2) {}
-                    }
-                }
-            });
+            // Note: ESC key handling removed to allow Bootstrap modal native ESC key functionality
+            // Bootstrap handles ESC key by default if keyboard option is enabled in modal config
         });
 
         // Check if we need to auto-show order modal from URL parameter
