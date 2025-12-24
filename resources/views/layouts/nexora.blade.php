@@ -93,6 +93,8 @@
             box-shadow: 0 4px 16px rgba(0,0,0,0.15) !important;
             border: 1px solid #e6e8ea !important;
             z-index: 1030 !important;
+            background-color: #ffffff !important;
+            backdrop-filter: blur(10px) !important;
         }
 
         .navbar .dropdown-menu-columns {

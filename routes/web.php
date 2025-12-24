@@ -53,6 +53,11 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/user/change-password/{username}', [UserController::class, 'updatePassword'])->name('users.updatePassword');
     });
 
+    // User Profile Routes (for regular users)
+    Route::get('/user/profile', [ProfileController::class, 'userProfile'])->name('user.profile');
+    Route::patch('/user/profile', [ProfileController::class, 'userProfileUpdate'])->name('user.profile.update');
+
+    // Admin Profile Routes (redirect to admin dashboard if needed)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::get('/profile/settings', [ProfileController::class, 'settings'])->name('profile.settings');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -208,9 +208,6 @@
                                     <a class="dropdown-item" href="{{ route('categories.index') }}">
                                         {{ __('Categories') }}
                                     </a>
-                                    <a class="dropdown-item" href="{{ route('units.index') }}">
-                                        {{ __('Units') }}
-                                    </a>
                                     <a class="dropdown-item" href="{{ route('job-types.index') }}">
                                         {{ __('Job Types') }}
                                     </a>
@@ -220,8 +217,8 @@
                                         {{ __('Letterhead') }}
                                     </a>
                                     @endif
-                                    <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                        {{ __('Account') }}
+                                    <a class="dropdown-item" href="{{ route('user.profile') }}">
+                                        {{ __('Profile') }}
                                     </a>
                                 </div>
                             </div>
