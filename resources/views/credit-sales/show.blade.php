@@ -316,10 +316,9 @@
                         <div class="mb-3">
                             <label for="payment_method" class="form-label">Payment Method</label>
                             <select class="form-select" id="payment_method" name="payment_method" required>
-                                <option value="cash">Cash</option>
-                                <option value="card">Card</option>
-                                <option value="bank_transfer">Bank Transfer</option>
-                                <option value="cheque">Cheque</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Card">Card</option>
+                                <option value="Bank Transfer">Bank Transfer</option>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -342,8 +341,8 @@
 <script>
 function showPaymentModal(creditSaleId, customerName, maxAmount) {
     document.getElementById('customerName').value = customerName;
-    document.getElementById('maxAmount').value = 'LKR ' + (maxAmount / 100).toFixed(2);
-    document.getElementById('payment_amount').max = (maxAmount / 100).toFixed(2);
+    document.getElementById('maxAmount').value = 'LKR ' + maxAmount.toFixed(2);
+    document.getElementById('payment_amount').max = maxAmount.toFixed(2);
 
     // Set form action
     document.getElementById('paymentForm').action = '/credit-sales/' + creditSaleId + '/payment';

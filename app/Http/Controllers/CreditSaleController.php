@@ -27,9 +27,9 @@ class CreditSaleController extends Controller
         )->first();
 
         $stats = [
-            'total_credit' => ($aggregates->total_credit ?? 0) / 100,
-            'total_paid' => ($aggregates->total_paid ?? 0) / 100,
-            'total_due' => ($aggregates->total_due ?? 0) / 100,
+            'total_credit' => $aggregates->total_credit ?? 0,
+            'total_paid' => $aggregates->total_paid ?? 0,
+            'total_due' => $aggregates->total_due ?? 0,
             'overdue_count' => CreditSale::overdue()->count(),
         ];
 
@@ -48,15 +48,13 @@ class CreditSaleController extends Controller
     public function makePayment(Request $request, CreditSale $creditSale)
     {
         $request->validate([
-            'payment_amount' => 'required|numeric|min:0.01|max:' . ($creditSale->due_amount / 100),
-            'payment_method' => 'required|in:cash,card,bank_transfer,cheque',
+            'payment_amount' => 'required|numeric|min:0.01|max:' . $creditSale->due_amount,
+            'payment_method' => 'required|in:Cash,Card,Bank Transfer',
             'notes' => 'nullable|string|max:255'
         ]);
 
-        $amount = (int)($request->payment_amount * 100); // Convert to cents
-
         $payment = $creditSale->makePayment(
-            $amount,
+            $request->payment_amount,
             $request->payment_method,
             $request->notes
         );
@@ -82,9 +80,9 @@ class CreditSaleController extends Controller
             ->paginate(10);
 
         $customerStats = [
-            'total_credit' => $customer->creditSales()->sum('total_amount') / 100,
-            'total_paid' => $customer->creditSales()->sum('paid_amount') / 100,
-            'total_due' => $customer->creditSales()->sum('due_amount') / 100,
+            'total_credit' => $customer->creditSales()->sum('total_amount'),
+            'total_paid' => $customer->creditSales()->sum('paid_amount'),
+            'total_due' => $customer->creditSales()->sum('due_amount'),
             'overdue_count' => $customer->creditSales()->overdue()->count(),
         ];
 

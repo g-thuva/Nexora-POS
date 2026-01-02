@@ -284,7 +284,7 @@
         // AJAX search functionality has been disabled to fix modal functionality
         // The hot search was interfering with Bootstrap modal event handlers
         // Standard form submission is now used instead
-        
+
         /* REMOVED - Hot Search AJAX functionality that was breaking modal
         let searchTimeout;
         const searchInput = document.querySelector('input[name="search"]');
@@ -615,10 +615,19 @@
             cursor: pointer;
             font-size: 12px;
             margin-right: 10px;
+            -webkit-tap-highlight-color: rgba(59, 130, 246, 0.3);
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         #orderReceiptModal .print-btn:hover {
             background: #2563eb;
+        }
+
+        #orderReceiptModal .print-btn:active {
+            background: #1d4ed8;
+            transform: scale(0.98);
         }
 
         #orderReceiptModal .pdf-btn {
@@ -630,10 +639,19 @@
             cursor: pointer;
             font-size: 12px;
             margin-right: 10px;
+            -webkit-tap-highlight-color: rgba(220, 38, 38, 0.3);
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         #orderReceiptModal .pdf-btn:hover {
             background: #b91c1c;
+        }
+
+        #orderReceiptModal .pdf-btn:active {
+            background: #991b1b;
+            transform: scale(0.98);
         }
 
         /* Print styles for modal */
@@ -778,7 +796,7 @@
                 receiptHTML += `            <div class="total-row">\n                <span>Service Charges:</span>\n                <span>+LKR ${Number(serviceCharges).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>\n            </div>\n`;
             }
 
-            receiptHTML += `            <div class="total-row final">\n                <span>TOTAL:</span>\n                <span>LKR ${Number(total).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>\n            </div>\n        </div>\n\n        <div class="print-actions">\n            <button class="print-btn" onclick="(window.currentOrderData && window.currentOrderData.id) ? printOrder(window.currentOrderData.id) : printOrderReceipt()">🖨️ Print Receipt</button>\n            <button class="pdf-btn" onclick="if(window.currentOrderData && window.currentOrderData.id) { const url = '/orders/' + window.currentOrderData.id + '/download-pdf-bill'; const w = window.open(url, '_blank'); setTimeout(() => { try { w.close(); } catch(e) {} }, 2000); } else { alert('Unable to download: missing order id'); }">📄 Download PDF</button>\n        </div>\n`;
+            receiptHTML += `            <div class="total-row final">\n                <span>TOTAL:</span>\n                <span>LKR ${Number(total).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>\n            </div>\n        </div>\n\n        <div class="print-actions">\n            <button class="print-btn" onclick="(window.currentOrderData && window.currentOrderData.id) ? printOrder(window.currentOrderData.id) : printOrderReceipt()">🖨️ Print Receipt</button>\n            <button class="pdf-btn" id="modal-pdf-download-btn" data-order-id="${orderData.id}">📄 Download PDF</button>\n        </div>\n`;
 
             // Insert receipt content
             document.getElementById('order-receipt-content').innerHTML = receiptHTML;
@@ -788,6 +806,37 @@
             if (downloadBtn) {
                 downloadBtn.disabled = false;
             }
+
+            // Setup download button click handler (iOS-friendly)
+            // Use event delegation since the button is dynamically created
+            setTimeout(() => {
+                const modalPdfBtn = document.getElementById('modal-pdf-download-btn');
+                if (modalPdfBtn) {
+                    // Remove any existing listeners
+                    modalPdfBtn.replaceWith(modalPdfBtn.cloneNode(true));
+                    const newBtn = document.getElementById('modal-pdf-download-btn');
+
+                    // Add touch and click handlers for iOS compatibility
+                    const handleDownload = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const orderId = this.getAttribute('data-order-id');
+                        if (orderId) {
+                            const downloadUrl = `/orders/${orderId}/download-pdf-bill`;
+
+                            // For iOS, we need to trigger download immediately in the same user gesture
+                            // Use window.location for better iOS compatibility
+                            window.location.href = downloadUrl;
+                        } else {
+                            alert('Unable to download: Order ID not found');
+                        }
+                    };
+
+                    newBtn.addEventListener('touchend', handleDownload, { passive: false });
+                    newBtn.addEventListener('click', handleDownload);
+                }
+            }, 100);
 
             // Dispatch event to signal the receipt has been rendered and is ready for printing
             try {

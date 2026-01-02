@@ -348,9 +348,9 @@ class OrderController extends Controller
                     'user_id' => auth()->id(),
                     'order_id' => $order->id,
                     'customer_id' => $order->customer_id,
-                    'total_amount' => (int) round($total * 100), // Convert to cents
-                    'paid_amount' => (int) round($initialPayment * 100),
-                    'due_amount' => (int) round(($total - $initialPayment) * 100),
+                    'total_amount' => round($total, 2),
+                    'paid_amount' => round($initialPayment, 2),
+                    'due_amount' => round($total - $initialPayment, 2),
                     'due_date' => $dueDate,
                     'sale_date' => now(),
                     'status' => $initialPayment > 0 ? 'partial' : 'pending',
@@ -363,9 +363,9 @@ class OrderController extends Controller
                     \App\Models\CreditPayment::create([
                         'user_id' => auth()->id(),
                         'credit_sale_id' => $creditSale->id,
-                        'payment_amount' => (int) round($initialPayment * 100),
+                        'payment_amount' => round($initialPayment, 2),
                         'payment_date' => now(),
-                        'payment_method' => 'cash', // Default for initial payments
+                        'payment_method' => 'Cash',
                         'notes' => 'Initial payment during order creation',
                     ]);
                 }

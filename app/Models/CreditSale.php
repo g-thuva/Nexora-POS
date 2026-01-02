@@ -29,10 +29,6 @@ class CreditSale extends Model
         'due_date' => 'date',
         'sale_date' => 'date',
         'status' => CreditStatus::class,
-        'total_amount' => 'integer',
-        'paid_amount' => 'integer',
-        'due_amount' => 'integer',
-        'credit_days' => 'integer'
     ];
 
     // Relationships
@@ -59,17 +55,17 @@ class CreditSale extends Model
     // Accessors & Mutators
     public function getTotalAmountFormattedAttribute()
     {
-        return number_format($this->total_amount / 100, 2);
+        return number_format($this->total_amount, 2);
     }
 
     public function getPaidAmountFormattedAttribute()
     {
-        return number_format($this->paid_amount / 100, 2);
+        return number_format($this->paid_amount, 2);
     }
 
     public function getDueAmountFormattedAttribute()
     {
-        return number_format($this->due_amount / 100, 2);
+        return number_format($this->due_amount, 2);
     }
 
     public function getDaysOverdueAttribute()
@@ -77,7 +73,7 @@ class CreditSale extends Model
         if ($this->status === CreditStatus::PAID) {
             return 0;
         }
-        
+
         return max(0, now()->diffInDays($this->due_date, false));
     }
 

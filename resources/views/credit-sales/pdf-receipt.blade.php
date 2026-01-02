@@ -317,15 +317,15 @@
                 </div>
                 <div class="totals-row total">
                     <span>Total:</span>
-                    <span>{{ number_format($creditSale->total_amount_formatted, 2) }}</span>
+                    <span>{{ $creditSale->total_amount_formatted }}</span>
                 </div>
                 <div class="totals-row">
                     <span>Paid:</span>
-                    <span>{{ number_format($creditSale->paid_amount_formatted, 2) }}</span>
+                    <span>{{ $creditSale->paid_amount_formatted }}</span>
                 </div>
                 <div class="totals-row total">
                     <span>Due:</span>
-                    <span>{{ number_format($creditSale->due_amount_formatted, 2) }}</span>
+                    <span>{{ $creditSale->due_amount_formatted }}</span>
                 </div>
             </div>
 

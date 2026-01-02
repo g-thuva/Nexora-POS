@@ -21,7 +21,6 @@ class CreditPayment extends Model
 
     protected $casts = [
         'payment_date' => 'date',
-        'payment_amount' => 'integer'
     ];
 
     // Relationships
@@ -38,16 +37,15 @@ class CreditPayment extends Model
     // Accessors
     public function getPaymentAmountFormattedAttribute()
     {
-        return number_format($this->payment_amount / 100, 2);
+        return number_format($this->payment_amount, 2);
     }
 
     public function getPaymentMethodLabelAttribute()
     {
         return match($this->payment_method) {
-            'cash' => 'Cash',
-            'card' => 'Card',
-            'bank_transfer' => 'Bank Transfer',
-            'cheque' => 'Cheque',
+            'Cash' => 'Cash',
+            'Card' => 'Card',
+            'Bank Transfer' => 'Bank Transfer',
             default => ucfirst($this->payment_method)
         };
     }
