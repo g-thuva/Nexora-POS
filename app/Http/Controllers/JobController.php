@@ -221,68 +221,34 @@ class JobController extends Controller
     }
 
     /**
-     * Download PDF job sheet
+     * Download PDF job card - clean and professional
      */
     public function downloadPdfJobSheet($jobId)
     {
         try {
             $job = Job::with(['customer', 'jobType'])->findOrFail($jobId);
-
-            // Get shop JOB letterhead configuration (separate from order letterhead)
             $shop = auth()->user()->shop ?? \App\Models\Shop::first();
-            $letterheadConfig = is_array($shop->job_letterhead_config) ? $shop->job_letterhead_config : [];
 
-            $hasLetterhead = isset($letterheadConfig['letterhead_file']) && !empty($letterheadConfig['letterhead_file']);
-            $letterheadType = $letterheadConfig['letterhead_type'] ?? 'image';
-            $letterheadFile = $letterheadConfig['letterhead_file'] ?? null;
-
-            // For PDF letterheads, don't merge - just show content without background
-            // Image letterheads will embed directly
-            if ($letterheadType === 'pdf') {
-                \Log::info('PDF letterhead detected - skipping merge, content-only generation');
-                $letterheadConfig['letterhead_file'] = null; // Disable letterhead for PDF generation
-                $hasLetterhead = false;
-            }
-
-            // Try embedding image as data URI
-            if ($hasLetterhead && $letterheadType === 'image' && $letterheadFile) {
-                try {
-                    $imagePath = public_path('letterheads/' . $letterheadFile);
-                    if (File::exists($imagePath)) {
-                        $contents = File::get($imagePath);
-                        $mime = @mime_content_type($imagePath) ?: 'image/png';
-                        $letterheadConfig['preview_image_data'] = 'data:' . $mime . ';base64,' . base64_encode($contents);
-                    }
-                } catch (\Throwable $e) {
-                    \Log::warning('Failed to embed image letterhead', ['error' => $e->getMessage()]);
-                }
-            }
-
-            // Generate PDF with content
+            // Generate clean, professional PDF
             $pdf = PDF::loadView('jobs.pdf-job-sheet', [
                 'job' => $job,
                 'shop' => $shop,
-                'letterheadConfig' => $letterheadConfig,
             ]);
 
-            $pdf->setPaper('A5', 'portrait');
+            $pdf->setPaper('A4', 'portrait');
             $pdf->setOptions([
                 'dpi' => 150,
                 'defaultFont' => 'DejaVu Sans',
                 'isHtml5ParserEnabled' => true,
                 'isPhpEnabled' => true,
-                'isRemoteEnabled' => true,
-                'isFontSubsettingEnabled' => false,
+                'isRemoteEnabled' => false,
             ]);
 
-            // Get PDF content
-            $pdfContent = $pdf->output();
-
             // Generate filename
-            $filename = "JobSheet_{$job->reference_number}_{$job->created_at->format('Y-m-d')}.pdf";
+            $filename = "JobCard_{$job->reference_number}_{$job->created_at->format('Y-m-d')}.pdf";
 
             // Return PDF download
-            return response($pdfContent, 200, [
+            return response($pdf->output(), 200, [
                 'Content-Type' => 'application/pdf',
                 'Content-Disposition' => 'attachment; filename="' . $filename . '"',
                 'Cache-Control' => 'no-cache, no-store, must-revalidate',
@@ -291,13 +257,13 @@ class JobController extends Controller
             ]);
 
         } catch (\Throwable $e) {
-            \Log::error('Job sheet PDF generation failed', [
+            \Log::error('Job card PDF generation failed', [
                 'job_id' => $jobId,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
 
-            return back()->with('error', 'Failed to generate job sheet PDF: ' . $e->getMessage());
+            return back()->with('error', 'Failed to generate job card PDF: ' . $e->getMessage());
         }
     }
 }
