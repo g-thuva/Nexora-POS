@@ -2,7 +2,6 @@
     'route'
 ])
 
-<x-button {{ $attributes->class(['btn btn-warning']) }} route="{{ $route }}">
-    <x-icon.pencil/>
-    {{ $slot }}
-</x-button>
+<a href="{{ $route }}" {{ $attributes->class(['btn btn-white btn-icon']) }} title="Edit">
+    <x-icon.pencil class="icon text-dark"/>
+</a>

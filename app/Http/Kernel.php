@@ -66,5 +66,7 @@ class Kernel extends HttpKernel
         'admin' => \App\Http\Middleware\AdminOnly::class,
         'role' => \App\Http\Middleware\RoleMiddleware::class,
         'shop.tenant' => \App\Http\Middleware\ShopTenant::class,
+        'api.rate.limit' => \App\Http\Middleware\ApiRateLimiter::class,
+        'check.suspended' => \App\Http\Middleware\CheckSuspended::class,
     ];
 }

@@ -8,11 +8,13 @@
         <title>Receipt - {{ $order->invoice_no }}</title>
         <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { background: white; color: black; font-family: monospace; padding: 20px; }
+            body { background: white; color: black; font-family: monospace; padding: 20px; font-weight: bold; }
             .pos-receipt { width: 80mm; max-width: 100%; margin: 0 auto; background: white; padding: 8px; color: black; }
             @media print {
-                body { margin: 0; padding: 0; }
-                .pos-receipt { width: 80mm; }
+                @page { margin: 0; size: 80mm auto; }
+                body { margin: 0; padding: 0; background: white; color: #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: bold; }
+                .pos-receipt { width: 80mm; margin: 0; padding: 4mm; color: #000; font-weight: bold; }
+                * { color: #000 !important; font-weight: bold !important; }
             }
         </style>
     </head>

@@ -102,20 +102,20 @@ final class UnitsTable extends PowerGridComponent
     {
         return [
             Button::make('show', file_get_contents('assets/svg/eye.svg'))
-                ->class('btn btn-outline-info btn-icon w-100')
+                ->class('btn btn-white btn-icon w-100')
                 ->route('units.show', ['unit' => $row])
                 ->method('get')
                 ->tooltip('Show Unit Details'),
 
             Button::make('edit', file_get_contents('assets/svg/edit.svg'))
-                ->class('btn btn-outline-warning btn-icon w-100')
+                ->class('btn btn-white btn-icon w-100')
                 ->route('units.edit', ['unit' => $row])
                 ->method('get')
                 ->tooltip('Edit Unit'),
 
             Button::add('delete')
                 ->slot(file_get_contents('assets/svg/trash.svg'))
-                ->class('btn btn-outline-danger btn-icon w-100')
+                ->class('btn btn-white btn-icon w-100')
                 ->route('units.destroy', ['unit' => $row])
                 ->method('delete')
                 ->tooltip('Delete Unit')

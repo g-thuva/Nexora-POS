@@ -3,27 +3,11 @@
 @section('content')
 <div class="page-header d-print-none">
     <div class="container-fluid">
-        <div class="row g-2 align-items-center">
+        <div class="row g-2 align-items-center mb-3">
             <div class="col">
-                <div class="page-pretitle">
-                    Admin Panel
-                </div>
                 <h2 class="page-title">
-                    Create New User
+                    {{ __('Create New User') }}
                 </h2>
-            </div>
-            <div class="col-12 col-md-auto ms-auto d-print-none">
-                <div class="btn-list">
-                    <a href="{{ route('admin.users.index') }}" class="btn btn-ghost-dark">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="m0 0h24v24H0z" fill="none"/>
-                            <path d="M5 12l-2 0l9 -9l9 9l-2 0"/>
-                            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/>
-                            <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"/>
-                        </svg>
-                        Back to Users
-                    </a>
-                </div>
             </div>
         </div>
     </div>
@@ -31,151 +15,278 @@
 
 <div class="page-body">
     <div class="container-fluid">
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible" role="alert">
-                <div class="d-flex">
-                    <div>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="m0 0h24v24H0z" fill="none"/>
-                            <path d="m5 12l5 5l10 -10"/>
-                        </svg>
+        <x-alert/>
+
+        <div class="row row-cards">
+            <form method="POST" action="{{ route('admin.users.store') }}">
+                @csrf
+
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title text-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-bulb me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M3 12h1m8 -9v1m8 8h1m-15.4 -6.4l.7 .7m12.1 -.7l-.7 .7" />
+                                        <path d="M9 16a5 5 0 1 1 6 0a3.5 3.5 0 0 0 -1 3a2 2 0 0 1 -4 0a3.5 3.5 0 0 0 -1 -3" />
+                                        <path d="M9.7 17l4.6 0" />
+                                    </svg>
+                                    Quick Tips
+                                </h3>
+
+                                <div class="list-group list-group-flush mb-3">
+                                    <div class="list-group-item px-0">
+                                        <div class="row align-items-center">
+                                            <div class="col-auto">
+                                                <span class="avatar bg-success text-white">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg>
+                                                </span>
+                                            </div>
+                                            <div class="col">
+                                                <div class="text-truncate">
+                                                    <strong>Choose Role Wisely</strong>
+                                                </div>
+                                                <div class="text-muted small">Determines access level</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="list-group-item px-0">
+                                        <div class="row align-items-center">
+                                            <div class="col-auto">
+                                                <span class="avatar bg-info text-white">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2" /></svg>
+                                                </span>
+                                            </div>
+                                            <div class="col">
+                                                <div class="text-truncate">
+                                                    <strong>Unique Username</strong>
+                                                </div>
+                                                <div class="text-muted small">Each user needs unique ID</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="list-group-item px-0">
+                                        <div class="row align-items-center">
+                                            <div class="col-auto">
+                                                <span class="avatar bg-warning text-white">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z" /><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" /><path d="M8 11v-4a4 4 0 1 1 8 0v4" /></svg>
+                                                </span>
+                                            </div>
+                                            <div class="col">
+                                                <div class="text-truncate">
+                                                    <strong>Strong Password</strong>
+                                                </div>
+                                                <div class="text-muted small">Min 8 characters required</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="list-group-item px-0">
+                                        <div class="row align-items-center">
+                                            <div class="col-auto">
+                                                <span class="avatar bg-purple text-white">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 21l18 0" /><path d="M3 7v1a3 3 0 0 0 6 0v-1m0 1a3 3 0 0 0 6 0v-1m0 1a3 3 0 0 0 6 0v-1h-18l2 -4h14l2 4" /><path d="M5 21l0 -10.15" /><path d="M19 21l0 -10.15" /><path d="M9 21v-4a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v4" /></svg>
+                                                </span>
+                                            </div>
+                                            <div class="col">
+                                                <div class="text-truncate">
+                                                    <strong>Assign to Shop</strong>
+                                                </div>
+                                                <div class="text-muted small">Link user to location</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="alert alert-info mb-0">
+                                    <div class="d-flex">
+                                        <div>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" /><path d="M12 9h.01" /><path d="M11 12h1v4h1" /></svg>
+                                        </div>
+                                        <div>
+                                            <h4 class="alert-title">Pro Tip!</h4>
+                                            <div class="text-muted">Shop Owners have full control over their shop. Making a user a shop owner will automatically demote the current owner to manager.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div>{{ session('success') }}</div>
+
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h3 class="card-title">
+                                        {{ __('User Information') }}
+                                    </h3>
+                                </div>
+
+                                <div class="card-actions">
+                                    <a href="{{ route('admin.users.index') }}" class="btn-action">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M18 6l-12 12"></path><path d="M6 6l12 12"></path></svg>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row row-cards">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label required">
+                                                {{ __('Full Name') }}
+                                            </label>
+                                            <input type="text"
+                                                   class="form-control @error('name') is-invalid @enderror"
+                                                   name="name"
+                                                   value="{{ old('name') }}"
+                                                   placeholder="John Doe"
+                                                   required>
+                                            @error('name')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label required">
+                                                {{ __('Username') }}
+                                            </label>
+                                            <input type="text"
+                                                   class="form-control @error('username') is-invalid @enderror"
+                                                   name="username"
+                                                   value="{{ old('username') }}"
+                                                   placeholder="johndoe"
+                                                   required>
+                                            @error('username')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                            <small class="form-hint">Username must be unique and lowercase</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label required">
+                                                {{ __('Email Address') }}
+                                            </label>
+                                            <input type="email"
+                                                   class="form-control @error('email') is-invalid @enderror"
+                                                   name="email"
+                                                   value="{{ old('email') }}"
+                                                   placeholder="john@example.com"
+                                                   required>
+                                            @error('email')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label required">
+                                                {{ __('User Role') }}
+                                            </label>
+                                            <select class="form-select @error('role') is-invalid @enderror"
+                                                    name="role"
+                                                    required
+                                                    onchange="updateOwnershipWarning()">
+                                                <option value="">Select Role</option>
+                                                <option value="employee" {{ old('role') == 'employee' ? 'selected' : '' }}>Employee</option>
+                                                <option value="manager" {{ old('role') == 'manager' ? 'selected' : '' }}>Manager</option>
+                                                <option value="shop_owner" {{ old('role') == 'shop_owner' ? 'selected' : '' }}>Shop Owner</option>
+                                            </select>
+                                            @error('role')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label required">
+                                                {{ __('Password') }}
+                                            </label>
+                                            <input type="password"
+                                                   class="form-control @error('password') is-invalid @enderror"
+                                                   name="password"
+                                                   placeholder="Enter password"
+                                                   required>
+                                            @error('password')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                            <small class="form-hint">Password must be at least 8 characters</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label required">
+                                                {{ __('Confirm Password') }}
+                                            </label>
+                                            <input type="password"
+                                                   class="form-control"
+                                                   name="password_confirmation"
+                                                   placeholder="Confirm password"
+                                                   required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">
+                                                {{ __('Shop Assignment') }}
+                                                <span class="text-muted">(Optional)</span>
+                                            </label>
+                                            <select class="form-select @error('shop_id') is-invalid @enderror" name="shop_id">
+                                                <option value="">No Shop (Unassigned)</option>
+                                                @foreach($shops as $shop)
+                                                    <option value="{{ $shop->id }}" {{ old('shop_id') == $shop->id ? 'selected' : '' }}>
+                                                        {{ $shop->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('shop_id')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                            <small class="form-hint">Select the shop to assign this user to</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="alert alert-warning" id="ownershipWarning" style="display: none;">
+                                            <div class="d-flex">
+                                                <div>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 9v4" /><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z" /><path d="M12 16h.01" /></svg>
+                                                </div>
+                                                <div>
+                                                    <h4 class="alert-title">Important Notice!</h4>
+                                                    <div class="text-muted">Making this user a <strong>Shop Owner</strong> will automatically demote the current owner to manager role.</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-footer text-end">
+                                <div class="d-flex">
+                                    <a href="{{ route('admin.users.index') }}" class="btn btn-link me-auto">
+                                        Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-white">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+                                        Create User
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div class="alert alert-danger alert-dismissible" role="alert">
-                <div class="d-flex">
-                    <div>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="m0 0h24v24H0z" fill="none"/>
-                            <path d="m12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/>
-                            <path d="m9 12l2 2l4 -4"/>
-                        </svg>
-                    </div>
-                    <div>{{ session('error') }}</div>
-                </div>
-                <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
-            </div>
-        @endif
-
-        <div class="row row-deck row-cards">
-            <div class="col-12">
-                <form method="POST" action="{{ route('admin.users.store') }}">
-                    @csrf
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">User Information</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label required">Full Name</label>
-                                        <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                                               name="name" value="{{ old('name') }}" placeholder="Enter full name" required>
-                                        @error('name')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label required">Username</label>
-                                        <input type="text" class="form-control @error('username') is-invalid @enderror" 
-                                               name="username" value="{{ old('username') }}" placeholder="Enter username" required>
-                                        @error('username')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                        <div class="form-text">Username must be unique</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label required">Email Address</label>
-                                        <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                               name="email" value="{{ old('email') }}" placeholder="Enter email address" required>
-                                        @error('email')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label required">User Role</label>
-                                        <select class="form-select @error('role') is-invalid @enderror" name="role" required onchange="updateOwnershipWarning()">
-                                            <option value="">Select Role</option>
-                                            <option value="employee" {{ old('role') == 'employee' ? 'selected' : '' }}>Employee</option>
-                                            <option value="manager" {{ old('role') == 'manager' ? 'selected' : '' }}>Manager</option>
-                                            <option value="shop_owner" {{ old('role') == 'shop_owner' ? 'selected' : '' }}>Shop Owner</option>
-                                        </select>
-                                        @error('role')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label required">Password</label>
-                                        <input type="password" class="form-control @error('password') is-invalid @enderror" 
-                                               name="password" placeholder="Enter password" required>
-                                        @error('password')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                        <div class="form-text">Password must be at least 8 characters</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label required">Confirm Password</label>
-                                        <input type="password" class="form-control" 
-                                               name="password_confirmation" placeholder="Confirm password" required>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Shop Assignment</label>
-                                        <select class="form-select @error('shop_id') is-invalid @enderror" name="shop_id">
-                                            <option value="">No Shop (Unassigned)</option>
-                                            @foreach($shops as $shop)
-                                                <option value="{{ $shop->id }}" {{ old('shop_id') == $shop->id ? 'selected' : '' }}>
-                                                    {{ $shop->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('shop_id')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                        <div class="form-text">Select the shop to assign this user to</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="alert alert-info" id="ownershipWarning" style="display: none;">
-                                <strong>Note:</strong> Making this user a shop owner will demote the current owner to manager.
-                            </div>
-                        </div>
-                        <div class="card-footer text-end">
-                            <div class="d-flex">
-                                <a href="{{ route('admin.users.index') }}" class="btn btn-ghost-dark me-auto">Cancel</a>
-                                <button type="submit" class="btn btn-primary">Create User</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
+            </form>
         </div>
     </div>
 </div>
@@ -186,7 +297,7 @@
 function updateOwnershipWarning() {
     const roleSelect = document.querySelector('select[name="role"]');
     const warningDiv = document.getElementById('ownershipWarning');
-    
+
     if (roleSelect.value === 'shop_owner') {
         warningDiv.style.display = 'block';
     } else {

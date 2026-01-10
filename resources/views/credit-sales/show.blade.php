@@ -39,7 +39,7 @@
                                 </svg>
                                 Back to List
                             </a>
-                            <a href="{{ route('credit-sales.download-pdf', $creditSale) }}" class="btn btn-danger" title="Download PDF Receipt">
+                            <a href="{{ route('credit-sales.download-pdf', $creditSale) }}" class="btn" title="Download PDF Receipt">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16"
                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                     stroke-linecap="round" stroke-linejoin="round">
@@ -53,7 +53,7 @@
                             </a>
                             @if($creditSale->status !== \App\Enums\CreditStatus::PAID)
                                 <button type="button"
-                                        class="btn btn-success"
+                                        class="btn btn-primary"
                                         onclick="showPaymentModal({{ $creditSale->id }}, '{{ $creditSale->customer->name }}', {{ $creditSale->due_amount }})">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16"
                                         viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -329,7 +329,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-success">Record Payment</button>
+                        <button type="submit" class="btn">Record Payment</button>
                     </div>
                 </form>
             </div>

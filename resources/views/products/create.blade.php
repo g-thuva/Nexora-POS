@@ -27,34 +27,93 @@
                     <div class="col-lg-4">
                         <div class="card">
                             <div class="card-body">
-                                <h3 class="card-title">
-                                    {{ __('Product Image') }}
+                                <h3 class="card-title text-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-bulb me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M3 12h1m8 -9v1m8 8h1m-15.4 -6.4l.7 .7m12.1 -.7l-.7 .7" />
+                                        <path d="M9 16a5 5 0 1 1 6 0a3.5 3.5 0 0 0 -1 3a2 2 0 0 1 -4 0a3.5 3.5 0 0 0 -1 -3" />
+                                        <path d="M9.7 17l4.6 0" />
+                                    </svg>
+                                    Quick Tips
                                 </h3>
 
-                                <img
-                                    class="img-account-profile mb-2"
-                                    src="{{ asset('assets/img/products/default.webp') }}"
-                                    id="image-preview"
-                                />
+                                <div class="list-group list-group-flush mb-3">
+                                    <div class="list-group-item px-0">
+                                        <div class="row align-items-center">
+                                            <div class="col-auto">
+                                                <span class="avatar bg-success text-white">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                                                </span>
+                                            </div>
+                                            <div class="col">
+                                                <div class="text-truncate">
+                                                    <strong>Set Alert Levels</strong>
+                                                </div>
+                                                <div class="text-muted small">Low stock notifications</div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                <div class="small font-italic text-muted mb-2">
-                                    JPG or PNG no larger than 2 MB
+                                    <div class="list-group-item px-0">
+                                        <div class="row align-items-center">
+                                            <div class="col-auto">
+                                                <span class="avatar bg-info text-white">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 21l18 0" /><path d="M3 7v1a3 3 0 0 0 6 0v-1m0 1a3 3 0 0 0 6 0v-1m0 1a3 3 0 0 0 6 0v-1h-18l2 -4h14l2 4" /><path d="M5 21l0 -10.15" /><path d="M19 21l0 -10.15" /><path d="M9 21v-4a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v4" /></svg>
+                                                </span>
+                                            </div>
+                                            <div class="col">
+                                                <div class="text-truncate">
+                                                    <strong>Choose Category</strong>
+                                                </div>
+                                                <div class="text-muted small">Organize your inventory</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="list-group-item px-0">
+                                        <div class="row align-items-center">
+                                            <div class="col-auto">
+                                                <span class="avatar bg-warning text-white">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" /><path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" /><path d="M9 12l.01 0" /><path d="M13 12l2 0" /><path d="M9 16l.01 0" /><path d="M13 16l2 0" /></svg>
+                                                </span>
+                                            </div>
+                                            <div class="col">
+                                                <div class="text-truncate">
+                                                    <strong>Add Details</strong>
+                                                </div>
+                                                <div class="text-muted small">Notes & warranty info</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="list-group-item px-0">
+                                        <div class="row align-items-center">
+                                            <div class="col-auto">
+                                                <span class="avatar bg-purple text-white">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 10h14" /><path d="M12 14h9" /><path d="M3 6l3 2v10" /></svg>
+                                                </span>
+                                            </div>
+                                            <div class="col">
+                                                <div class="text-truncate">
+                                                    <strong>Price Smart</strong>
+                                                </div>
+                                                <div class="text-muted small">Consider cost & profit</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    id="image"
-                                    name="product_image"
-                                    class="form-control @error('product_image') is-invalid @enderror"
-                                    onchange="previewImage();"
-                                >
-
-                                @error('product_image')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
+                                <div class="alert alert-info mb-0">
+                                    <div class="d-flex">
+                                        <div>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" /><path d="M12 9h.01" /><path d="M11 12h1v4h1" /></svg>
+                                        </div>
+                                        <div>
+                                            <h4 class="alert-title">Pro Tip!</h4>
+                                            <div class="text-muted">Use descriptive product names and keep track of buying prices for better profit analysis.</div>
+                                        </div>
+                                    </div>
                                 </div>
-                                @enderror
                             </div>
                         </div>
                     </div>
@@ -83,6 +142,18 @@
                                                  placeholder="Product name"
                                                  value="{{ old('name') }}"
                                         />
+
+                                        <div class="alert alert-info mt-2 mb-3">
+                                            <div class="d-flex">
+                                                <div>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" /><path d="M12 9h.01" /><path d="M11 12h1v4h1" /></svg>
+                                                </div>
+                                                <div>
+                                                    <h4 class="alert-title">Auto-Generated SKU</h4>
+                                                    <div class="text-muted">A unique SKU code will be automatically generated (e.g., PRD00001, PRD00002). You can use this SKU to search for products on POS and inventory.</div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="col-sm-6 col-md-6">
@@ -197,8 +268,8 @@
                                                  label="Quantity"
                                                  name="quantity"
                                                  id="quantity"
-                                                 placeholder="0"
-                                                 value="{{ old('quantity', 0) }}"
+                                                 placeholder="1"
+                                                 value="{{ old('quantity', 1) }}"
                                         />
                                     </div>
 

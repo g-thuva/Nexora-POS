@@ -12,9 +12,16 @@
 
         <div class="navbar-nav flex-row order-md-last align-items-center" style="position: relative; z-index: 1150; overflow: visible !important; gap: 1rem;">
             <div class="nav-item d-flex align-items-center">
-                <span class="avatar avatar-sm shadow-none me-2"
-                      style="background-image: url({{ Avatar::create(Auth::user()->name)->toBase64() }})">
-                </span>
+                @if(Auth::user()->photo)
+                    <img src="{{ asset('storage/profile/' . Auth::user()->photo) }}?t={{ time() }}"
+                         alt="{{ Auth::user()->name }}"
+                         class="avatar avatar-sm rounded-circle shadow-sm me-2"
+                         style="width: 32px; height: 32px; object-fit: cover;">
+                @else
+                    <span class="avatar avatar-sm shadow-none me-2"
+                          style="background-image: url({{ Avatar::create(Auth::user()->name)->toBase64() }})">
+                    </span>
+                @endif
                 <div class="d-none d-xl-block">
                     <div class="small text-muted">{{ Auth::user()->name }}</div>
                 </div>
@@ -22,7 +29,7 @@
             <div class="nav-item">
                 <form action="{{ route('logout') }}" method="post" class="m-0">
                     @csrf
-                    <button type="submit" class="btn btn-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);">
+                    <button type="submit" class="btn btn-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                             <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />

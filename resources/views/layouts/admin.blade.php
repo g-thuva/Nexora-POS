@@ -15,11 +15,124 @@
     <link href="{{ asset('css/mobile-responsive.css') }}" rel="stylesheet"/>
     <style>
         @import url('https://rsms.me/inter/inter.css');
+
+        /* Global stability fixes */
+        * {
+            box-sizing: border-box;
+        }
+
         :root {
             --nexora-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
         }
+
         body {
             font-feature-settings: "cv03", "cv04", "cv11";
+            font-display: swap;
+        }
+
+        /* Prevent layout shifts globally */
+        .icon, svg.icon {
+            width: 18px !important;
+            height: 18px !important;
+            min-width: 18px;
+            min-height: 18px;
+            display: inline-block;
+            flex-shrink: 0;
+            vertical-align: middle;
+        }
+
+        .btn {
+            min-height: 38px !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            contain: layout style;
+        }
+
+        .btn .icon {
+            margin-right: 0.375rem;
+        }
+
+        .btn-sm {
+            min-height: 32px !important;
+        }
+
+        /* Form controls stability */
+        .form-control, .form-select {
+            min-height: 38px !important;
+        }
+
+        /* Card stability */
+        .card {
+            contain: layout;
+        }
+
+        .card-header {
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Avatar stability */
+        .avatar {
+            width: 2.5rem !important;
+            height: 2.5rem !important;
+            min-width: 2.5rem;
+            min-height: 2.5rem;
+            flex-shrink: 0;
+            contain: layout;
+        }
+
+        .avatar-sm {
+            width: 1.75rem !important;
+            height: 1.75rem !important;
+            min-width: 1.75rem;
+            min-height: 1.75rem;
+        }
+
+        /* Badge stability */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            min-height: 20px;
+            padding: 0.25rem 0.5rem;
+        }
+
+        /* Modal stability */
+        .modal-dialog {
+            min-height: 200px;
+            contain: layout;
+        }
+
+        .modal-content {
+            min-height: 150px;
+        }
+
+        .modal-body {
+            min-height: 100px;
+        }
+
+        /* Spinner stability */
+        .spinner-border {
+            width: 2rem !important;
+            height: 2rem !important;
+            min-width: 2rem;
+            min-height: 2rem;
+            flex-shrink: 0;
+        }
+
+        .spinner-border-sm {
+            width: 1rem !important;
+            height: 1rem !important;
+            min-width: 1rem;
+            min-height: 1rem;
+        }
+
+        /* Image stability */
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
         }
 
         /* Brand styling */
@@ -125,12 +238,12 @@
         .navbar .dropdown-menu-columns {
             display: flex !important;
             flex-wrap: nowrap !important;
-            min-width: 500px !important;
+            min-width: 280px !important;
         }
 
         .navbar .dropdown-menu-column {
             flex: 1 1 auto !important;
-            min-width: 200px !important;
+            min-width: 140px !important;
             padding: 0.5rem !important;
         }
     </style>
@@ -140,7 +253,6 @@
     @livewireStyles
 </head>
 <body>
-
     <div class="page">
 
         @include('layouts.body.header')

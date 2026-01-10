@@ -116,7 +116,7 @@
                         @endif
 
                         <div class="d-flex justify-content-between">
-                            <a href="{{ request()->routeIs('admin.*') ? route('admin.shops.index') : route('shops.index') }}" class="btn btn-secondary">
+                            <a href="{{ request()->routeIs('admin.*') ? route('admin.shops.index') : route('shops.index') }}" class="btn">
                                 <i class="fas fa-arrow-left"></i> Back to Shops
                             </a>
                             <button type="submit" class="btn btn-primary">

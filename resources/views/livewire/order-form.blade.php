@@ -225,8 +225,39 @@
 
 @push('page-styles')
     <style>
+        /* Global stability fixes */
+        .icon, svg.icon {
+            width: 18px !important;
+            height: 18px !important;
+            min-width: 18px;
+            min-height: 18px;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            min-height: 38px !important;
+            contain: layout style;
+        }
+
+        .form-control, .form-select {
+            min-height: 38px !important;
+        }
+
+        .avatar {
+            width: 2.5rem !important;
+            height: 2.5rem !important;
+            flex-shrink: 0;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            min-height: 20px;
+        }
+
         .product-search-input {
             min-width: 300px;
+            min-height: 38px !important;
             position: relative;
         }
 

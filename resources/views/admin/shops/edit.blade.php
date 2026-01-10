@@ -110,7 +110,7 @@
 
                         <div class="text-end">
                             <a href="{{ route('admin.shops.show', $shop) }}" class="btn btn-secondary me-2">Cancel</a>
-                            <button type="submit" class="btn btn-primary">Update Shop</button>
+                            <button type="submit" class="btn btn-white">Update Shop</button>
                         </div>
                     </form>
                 </div>

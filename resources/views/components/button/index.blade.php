@@ -4,11 +4,11 @@
 ])
 
 @isset($route)
-    <a href="{{ $route }}" {{ $attributes->class(['btn btn-primary']) }}>
+    <a href="{{ $route }}" {{ $attributes->class(['btn btn-white']) }}>
         {{ $slot }}
     </a>
 @else
-    <button type="{{ $type }}" {{ $attributes->class(['btn btn-primary']) }}>
+    <button type="{{ $type }}" {{ $attributes->class(['btn btn-white']) }}>
         {{ $slot }}
     </button>
 @endisset

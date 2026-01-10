@@ -3,6 +3,42 @@
 @section('title', 'Yearly Sales Report')
 
 @section('content')
+<div class="page-header d-print-none">
+    <div class="container-fluid">
+        <div class="row g-2 align-items-center">
+            <div class="col">
+                <div class="page-pretitle">
+                    Sales Reports
+                </div>
+                <h2 class="page-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <rect x="4" y="5" width="16" height="16" rx="2"/>
+                        <line x1="16" y1="3" x2="16" y2="7"/>
+                        <line x1="8" y1="3" x2="8" y2="7"/>
+                        <line x1="4" y1="11" x2="20" y2="11"/>
+                        <path d="M8 15h2v4H8z"/>
+                        <path d="M14 15h2v4h-2z"/>
+                    </svg>
+                    Yearly Sales Report
+                </h2>
+                <p class="text-muted">{{ $selectedYear }} - Complete annual financial overview and performance metrics</p>
+            </div>
+            <div class="col-auto ms-auto d-print-none">
+                <div class="btn-list">
+                    <a href="{{ route('reports.sales.index') }}" class="btn btn-outline-secondary d-none d-sm-inline-block">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1"/>
+                        </svg>
+                        Back to Reports
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="page-body">
     <div class="container-fluid">
         <div class="row row-deck row-cards">
@@ -51,7 +87,7 @@
                                         </svg>
                                         {{ $selectedYear - 1 }}
                                     </a>
-                                    <a href="{{ route('reports.sales.yearly', ['year' => now()->year]) }}" class="btn btn-info">This Year</a>
+                                    <a href="{{ route('reports.sales.yearly', ['year' => now()->year]) }}" class="btn">This Year</a>
                                     @if($selectedYear < now()->year)
                                     <a href="{{ route('reports.sales.yearly', ['year' => $selectedYear + 1]) }}" class="btn btn-outline-info">
                                         {{ $selectedYear + 1 }}
@@ -210,8 +246,8 @@
                                     <div class="subheader">Sales Growth</div>
                                     <div class="ms-auto lh-1">
                                         @php
-                                            $growth = $previousYearData['total_sales'] > 0 
-                                                ? (($salesData['total_sales'] - $previousYearData['total_sales']) / $previousYearData['total_sales']) * 100 
+                                            $growth = $previousYearData['total_sales'] > 0
+                                                ? (($salesData['total_sales'] - $previousYearData['total_sales']) / $previousYearData['total_sales']) * 100
                                                 : 0;
                                         @endphp
                                         <div class="strong {{ $growth >= 0 ? 'text-success' : 'text-danger' }}">
@@ -225,8 +261,8 @@
                                     <div class="subheader">Order Growth</div>
                                     <div class="ms-auto lh-1">
                                         @php
-                                            $orderGrowth = $previousYearData['total_orders'] > 0 
-                                                ? (($salesData['total_orders'] - $previousYearData['total_orders']) / $previousYearData['total_orders']) * 100 
+                                            $orderGrowth = $previousYearData['total_orders'] > 0
+                                                ? (($salesData['total_orders'] - $previousYearData['total_orders']) / $previousYearData['total_orders']) * 100
                                                 : 0;
                                         @endphp
                                         <div class="strong {{ $orderGrowth >= 0 ? 'text-success' : 'text-danger' }}">
@@ -340,15 +376,15 @@
 document.addEventListener('DOMContentLoaded', function() {
     const monthlyData = @json($monthlyData);
     const quarterlyData = @json($quarterlyData);
-    
+
     let monthlyChart;
     let quarterlyChart;
-    
+
     // Prepare monthly data
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const monthlySales = [];
     const monthlyOrders = [];
-    
+
     for (let i = 1; i <= 12; i++) {
         const monthData = monthlyData[i];
         monthlySales.push(monthData ? parseFloat(monthData.total_sales) : 0);
@@ -360,7 +396,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (monthlyChart) {
             monthlyChart.destroy();
         }
-        
+
         const monthlyOptions = {
             series: [{
                 name: 'Sales (LKR)',
@@ -449,7 +485,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Quarterly chart
     const quarterNames = ['Q1', 'Q2', 'Q3', 'Q4'];
     const quarterlySales = [];
-    
+
     quarterNames.forEach((quarter, index) => {
         const quarterNum = index + 1;
         const quarterData = quarterlyData[quarterNum];

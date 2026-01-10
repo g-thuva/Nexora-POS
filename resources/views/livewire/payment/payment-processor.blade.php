@@ -113,7 +113,7 @@
 
                     <div class="text-end">
                         <button type="submit"
-                                class="btn btn-success btn-lg px-4"
+                                class="btn btn-primary btn-lg px-4"
                                 style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; font-weight: 700; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35); transition: all 0.3s ease; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); font-size: 18px;"
                                 wire:loading.attr="disabled"
                                 wire:target="processPayment"

@@ -27,40 +27,24 @@ use Barryvdh\DomPDF\Facade\Pdf as PDF;
 |
 */
 
-Route::get('/', function () {
-    if (auth()->check()) {
-        return redirect()->route('dashboard');
-    }
-    return redirect()->route('login');
-});
+Route::middleware(['auth', 'check.suspended'])->group(function () {
 
-Route::middleware(['auth'])->group(function () {
-
-    // Dashboard Route with Role-based Redirection
-    Route::get('/dashboard', function () {
-        if (auth()->user()->isAdmin()) {
-            return redirect()->route('admin.dashboard');
-        }
-        return redirect()->route('user.dashboard');
-    })->name('dashboard');
-
-    // User Dashboard
-    Route::get('/user/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
+    // User Dashboard at root
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // User Management (Shop Owner Only)
     Route::middleware(['role:user_management'])->group(function () {
-        Route::resource('/users', UserController::class); //->except(['show']);
+        Route::resource('/users', UserController::class)->except(['show']);
         Route::put('/user/change-password/{username}', [UserController::class, 'updatePassword'])->name('users.updatePassword');
     });
 
     // User Profile Routes (for regular users)
-    Route::get('/user/profile', [ProfileController::class, 'userProfile'])->name('user.profile');
-    Route::patch('/user/profile', [ProfileController::class, 'userProfileUpdate'])->name('user.profile.update');
+    Route::get('/profile', [ProfileController::class, 'userProfile'])->name('user.profile');
+    Route::patch('/profile', [ProfileController::class, 'userProfileUpdate'])->name('user.profile.update');
 
-    // Admin Profile Routes (redirect to admin dashboard if needed)
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::get('/profile/settings', [ProfileController::class, 'settings'])->name('profile.settings');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    // Admin Profile Routes
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/settings', [ProfileController::class, 'settings'])->name('profile.settings');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Inventory Management (Manager and Shop Owner)
@@ -74,7 +58,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/products/import', [ProductImportController::class, 'create'])->name('products.import.view');
         Route::post('/products/import', [ProductImportController::class, 'store'])->name('products.import.store');
         Route::get('/products/export', [ProductExportController::class, 'create'])->name('products.export.store');
-        Route::patch('/products/{product}/add-stock', [ProductController::class, 'addStock'])->name('products.add-stock');
+        Route::post('/products/{product}/add-stock', [ProductController::class, 'addStock'])->name('products.add-stock');
         Route::resource('/products', ProductController::class);
     // Jobs - device repair jobs (shop tenant)
     Route::get('/jobs-list', [\App\Http\Controllers\JobController::class, 'list'])->name('jobs.list');
@@ -94,8 +78,14 @@ Route::middleware(['auth'])->group(function () {
 
     // Route Orders - Simplified
     Route::middleware(['shop.tenant'])->group(function () {
-        Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
-        Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
+        Route::get('/sales', [OrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders', function () {
+            return redirect()->route('orders.index');
+        });
+        Route::get('/pos', [OrderController::class, 'create'])->name('orders.create');
+        Route::get('/orders/create', function () {
+            return redirect()->route('orders.create');
+        });
         Route::post('/orders/store', [OrderController::class, 'store'])->name('orders.store');
         Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
         Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
@@ -230,13 +220,18 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/letterhead/save-offset', [\App\Http\Controllers\Order\OrderController::class, 'saveLetterheadMergeOffset'])->name('letterhead.save_offset');
 
     // Admin Routes (Administrator only)
-    Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::middleware(['admin'])->name('admin.')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('dashboard');
 
         // Admin Shop Management
         Route::get('/shops/create', [App\Http\Controllers\AdminController::class, 'createShop'])->name('shops.create');
         Route::post('/shops', [App\Http\Controllers\AdminController::class, 'storeShop'])->name('shops.store');
         Route::get('/shops', [App\Http\Controllers\AdminController::class, 'shops'])->name('shops.index');
+        Route::get('/shops/subscriptions', [App\Http\Controllers\AdminController::class, 'subscriptions'])->name('shops.subscriptions');
+        Route::post('/shops/{shop}/extend-subscription', [App\Http\Controllers\AdminController::class, 'extendSubscription'])->name('shops.extend-subscription');
+        Route::post('/shops/{shop}/change-status', [App\Http\Controllers\AdminController::class, 'changeSubscriptionStatus'])->name('shops.change-status');
+        Route::get('/shops/suspended', [App\Http\Controllers\AdminController::class, 'suspendedShops'])->name('shops.suspended');
+        Route::post('/shops/{shop}/unsuspend', [App\Http\Controllers\AdminController::class, 'unsuspendShop'])->name('shops.unsuspend');
         Route::get('/shops/{shop}', [App\Http\Controllers\AdminController::class, 'showShop'])->name('shops.show');
         Route::get('/shops/{shop}/edit', [App\Http\Controllers\AdminController::class, 'editShop'])->name('shops.edit');
         Route::put('/shops/{shop}', [App\Http\Controllers\AdminController::class, 'updateShop'])->name('shops.update');
@@ -250,15 +245,25 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/users/create', [App\Http\Controllers\AdminController::class, 'createUser'])->name('users.create');
         Route::post('/users', [App\Http\Controllers\AdminController::class, 'storeUser'])->name('users.store');
         Route::get('/users', [App\Http\Controllers\AdminController::class, 'users'])->name('users.index');
+        Route::get('/users/suspended', [App\Http\Controllers\AdminController::class, 'suspendedUsers'])->name('users.suspended');
         Route::get('/users/{user}', [App\Http\Controllers\AdminController::class, 'showUser'])->name('users.show');
         Route::get('/users/{user}/edit', [App\Http\Controllers\AdminController::class, 'editUser'])->name('users.edit');
         Route::put('/users/{user}', [App\Http\Controllers\AdminController::class, 'updateUser'])->name('users.update');
+        Route::get('/users/{user}/assign-shop', [App\Http\Controllers\AdminController::class, 'assignShopPage'])->name('users.assign-shop');
+        Route::post('/users/{user}/assign-shop', [App\Http\Controllers\AdminController::class, 'updateUserShopAssignment'])->name('users.update-shop-assignment');
         Route::post('/users/{user}/toggle-access', [App\Http\Controllers\AdminController::class, 'toggleUserAccess'])->name('users.toggle-access');
         Route::post('/users/{user}/verify-email', [App\Http\Controllers\AdminController::class, 'verifyUserEmail'])->name('users.verify-email');
         Route::post('/users/{user}/unverify-email', [App\Http\Controllers\AdminController::class, 'unverifyUserEmail'])->name('users.unverify-email');
         Route::post('/users/{user}/send-password-reset', [App\Http\Controllers\AdminController::class, 'sendPasswordResetToUser'])->name('users.send-password-reset');
-        Route::post('/users/{user}/update-shop-assignment', [App\Http\Controllers\AdminController::class, 'updateUserShopAssignment'])->name('users.update-shop-assignment');
+        Route::get('/users/{user}/suspend', [App\Http\Controllers\AdminController::class, 'suspendUserPage'])->name('users.suspend');
+        Route::post('/users/{user}/suspend', [App\Http\Controllers\AdminController::class, 'suspendUser'])->name('users.suspend.store');
+        Route::post('/users/{user}/unsuspend', [App\Http\Controllers\AdminController::class, 'unsuspendUser'])->name('users.unsuspend');
+        Route::get('/users/{user}/delete', [App\Http\Controllers\AdminController::class, 'deleteUserPage'])->name('users.delete.page');
         Route::delete('/users/{user}', [App\Http\Controllers\AdminController::class, 'deleteUser'])->name('users.delete');
+
+        // Admin Reports
+        Route::get('/reports/users', [App\Http\Controllers\AdminController::class, 'userReports'])->name('reports.users');
+        Route::get('/reports/shops', [App\Http\Controllers\AdminController::class, 'shopReports'])->name('reports.shops');
     });
 
 });

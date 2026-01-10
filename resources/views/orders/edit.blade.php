@@ -30,7 +30,7 @@
                                             <select id="customer_id" name="customer_id" class="form-select @error('customer_id') is-invalid @enderror" required>
                                                 <option value="">Select a customer</option>
                                                 @foreach($customers as $customer)
-                                                    <option value="{{ $customer->id }}" 
+                                                    <option value="{{ $customer->id }}"
                                                             data-name="{{ $customer->name }}"
                                                             data-email="{{ $customer->email }}"
                                                             data-phone="{{ $customer->phone }}"
@@ -141,7 +141,7 @@
                                                     <select name="products[{{ $index }}][product_id]" class="form-select product-select" required>
                                                         <option value="">Select Product</option>
                                                         @foreach($products as $product)
-                                                            <option value="{{ $product->id }}" 
+                                                            <option value="{{ $product->id }}"
                                                                     data-price="{{ $product->selling_price }}"
                                                                     @selected($detail->product_id == $product->id)>
                                                                 {{ $product->name }} ({{ $product->code }})
@@ -162,7 +162,7 @@
                                                     <select name="products[{{ $index }}][warranty_id]" class="form-select warranty-select">
                                                         <option value="">No Warranty</option>
                                                         @foreach($warranties as $warranty)
-                                                            <option value="{{ $warranty->id }}" 
+                                                            <option value="{{ $warranty->id }}"
                                                                     data-name="{{ $warranty->name }}"
                                                                     data-duration="{{ $warranty->duration }}"
                                                                     @selected($detail->warranty_id == $warranty->id)>
@@ -348,21 +348,21 @@
             e.preventDefault();
             e.stopPropagation();
             console.log('Edit customer button clicked');
-            
+
             const selectedCustomerId = customerSelect.value;
-            
+
             if (!selectedCustomerId) {
                 alert('Please select a customer first');
                 return;
             }
 
             console.log('Selected customer ID:', selectedCustomerId);
-            
+
             // Find customer in data
             const customer = customersData.find(c => c.id == selectedCustomerId);
-            
+
             console.log('Found customer:', customer);
-            
+
             if (customer) {
                 document.getElementById('edit_customer_id').value = customer.id;
                 document.getElementById('edit_customer_name').value = customer.name || '';
@@ -372,22 +372,22 @@
                 document.getElementById('edit_customer_account_holder').value = customer.account_holder || '';
                 document.getElementById('edit_customer_account_number').value = customer.account_number || '';
                 document.getElementById('edit_customer_bank_name').value = customer.bank_name || '';
-                
+
                 // Hide messages
                 document.getElementById('customer_error_message').classList.add('d-none');
                 document.getElementById('customer_success_message').classList.add('d-none');
-                
+
                 // Show modal - try multiple methods
                 const modalElement = document.getElementById('editCustomerModal');
                 if (modalElement) {
                     console.log('Modal element found, attempting to show...');
-                    
+
                     // Method 1: Use Bootstrap 5 Modal API
                     if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
                         const bsModal = new bootstrap.Modal(modalElement);
                         bsModal.show();
                         console.log('Opened with Bootstrap 5 Modal API');
-                    } 
+                    }
                     // Method 2: Use jQuery if Bootstrap JS is loaded via jQuery
                     else if (typeof $ !== 'undefined' && $.fn.modal) {
                         $(modalElement).modal('show');
@@ -401,14 +401,14 @@
                         modalElement.setAttribute('aria-modal', 'true');
                         modalElement.setAttribute('role', 'dialog');
                         modalElement.removeAttribute('aria-hidden');
-                        
+
                         // Add backdrop
                         const backdrop = document.createElement('div');
                         backdrop.className = 'modal-backdrop fade show';
                         backdrop.id = 'customModalBackdrop';
                         document.body.appendChild(backdrop);
                         document.body.classList.add('modal-open');
-                        
+
                         console.log('Modal opened with direct DOM manipulation');
                     }
                 } else {
@@ -483,7 +483,7 @@
         // Function to close modal
         function closeCustomerModal() {
             const modalElement = document.getElementById('editCustomerModal');
-            
+
             // Try Bootstrap API first
             if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
                 const modalInstance = bootstrap.Modal.getInstance(modalElement);
@@ -499,7 +499,7 @@
                 modalElement.setAttribute('aria-hidden', 'true');
                 modalElement.removeAttribute('aria-modal');
                 modalElement.removeAttribute('role');
-                
+
                 // Remove backdrop
                 const backdrop = document.getElementById('customModalBackdrop');
                 if (backdrop) {
@@ -518,6 +518,13 @@
 
         // Add new product row
         addProductBtn.addEventListener('click', function() {
+            // Check current number of product rows
+            const currentRows = productRows.querySelectorAll('.product-row').length;
+            if (currentRows >= 11) {
+                alert('Maximum 11 different items allowed per order. Please create a new order for additional items to prevent PDF generation issues.');
+                return;
+            }
+
             const newRow = createProductRow(productIndex);
             productRows.insertAdjacentHTML('beforeend', newRow);
             productIndex++;

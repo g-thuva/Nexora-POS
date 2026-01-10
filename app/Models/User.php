@@ -25,6 +25,13 @@ class User extends Authenticatable
         'password',
         'role',
         'shop_id',
+        'is_suspended',
+        'suspension_reason',
+        'suspension_type',
+        'suspension_duration',
+        'suspended_at',
+        'suspension_ends_at',
+        'suspended_by',
     ];
 
     protected $hidden = [
@@ -35,7 +42,10 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'updated_at' => 'datetime',
+        'is_suspended' => 'boolean',
+        'suspended_at' => 'datetime',
+        'suspension_ends_at' => 'datetime',
     ];
 
     public function scopeSearch($query, $value): void
@@ -192,6 +202,12 @@ class User extends Authenticatable
     public function ownedShop()
     {
         return $this->hasOne(Shop::class, 'owner_id');
+    }
+
+    // Suspension relationship
+    public function suspendedBy()
+    {
+        return $this->belongsTo(User::class, 'suspended_by');
     }
 
     // Helper methods for shop management

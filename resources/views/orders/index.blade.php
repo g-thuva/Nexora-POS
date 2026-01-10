@@ -24,7 +24,7 @@
             </div>
             <div class="col-auto ms-auto d-print-none">
                 <div class="btn-list">
-                    <a href="{{ route('orders.create') }}" class="btn btn-success d-none d-sm-inline-block">
+                    <a href="{{ route('orders.create') }}" class="btn d-none d-sm-inline-block">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16"
                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                 stroke-linecap="round" stroke-linejoin="round">
@@ -36,7 +36,7 @@
                             </svg>
                             Point Of Sale
                         </a>
-                        <a href="{{ route('credit-sales.index') }}" class="btn btn-primary d-none d-sm-inline-block">
+                        <a href="{{ route('credit-sales.index') }}" class="btn d-none d-sm-inline-block">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16"
                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                 stroke-linecap="round" stroke-linejoin="round">
@@ -45,9 +45,9 @@
                                 <path d="M14 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
                                 <path d="M17 9v-2a2 2 0 0 0 -2 -2h-10a2 2 0 0 0 -2 2v6a2 2 0 0 0 2 2h2" />
                             </svg>
-                            CREDIT SALES
+                            Credit Sales
                         </a>
-                        <a href="{{ route('customers.index') }}" class="btn btn-info d-none d-sm-inline-block">
+                        <a href="{{ route('customers.index') }}" class="btn d-none d-sm-inline-block">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16"
                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                 stroke-linecap="round" stroke-linejoin="round">
@@ -205,7 +205,7 @@
                                         <td><strong>LKR {{ number_format($order->total, 2) }}</strong></td>
                                         <td>
                                             @if($order->creator)
-                                                <span class="badge bg-info text-dark">{{ $order->creator->name }} <span class="text-muted small">({{ $order->creator->getRoleDisplayName() }})</span></span>
+                                                <span class="badge bg-info text-dark">{{ $order->creator->name }}</span>
                                             @else
                                                 <span class="text-muted">N/A</span>
                                             @endif
@@ -215,10 +215,10 @@
                                                 <button type="button" class="btn btn-white btn-sm" title="View & Print" onclick="viewOrderInModal({{ $order->id }})" data-bs-toggle="modal" data-bs-target="#orderReceiptModal">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><circle cx="12" cy="12" r="2" /><path d="M22 12c-2.667 4.667-6 7-10 7s-7.333-2.333-10-7c2.667-4.667 6-7 10-7s7.333 2.333 10 7" /></svg>
                                                 </button>
-                                                <a href="{{ route('orders.edit', $order) }}" class="btn btn-warning btn-sm" title="Edit">
+                                                <a href="{{ route('orders.edit', $order) }}" class="btn btn-sm" title="Edit">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M7 7h-1a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97l-8.415 8.385v3h3l8.385-8.415z" /><path d="M16 5l3 3" /></svg>
                                                 </a>
-                                                <button type="button" class="btn btn-info btn-sm" title="Quick Print" onclick="printOrder({{ $order->id }})">
+                                                <button type="button" class="btn btn-sm" title="Quick Print" onclick="printOrder({{ $order->id }})">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M17 17h2a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-14a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h2" /><path d="M17 9v-4a2 2 0 0 0-2-2h-6a2 2 0 0 0-2 2v4" /><rect x="7" y="13" width="10" height="8" rx="2" /></svg>
                                                 </button>
                                             </div>
@@ -426,6 +426,44 @@
 
 @push('page-styles')
     <style>
+        /* Global stability fixes */
+        .icon, svg.icon {
+            width: 18px !important;
+            height: 18px !important;
+            min-width: 18px;
+            min-height: 18px;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            min-height: 38px !important;
+            contain: layout style;
+        }
+
+        .btn-sm {
+            min-height: 32px !important;
+        }
+
+        .avatar {
+            width: 2.5rem !important;
+            height: 2.5rem !important;
+            min-width: 2.5rem;
+            min-height: 2.5rem;
+            flex-shrink: 0;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            min-height: 20px;
+        }
+
+        .spinner-border {
+            width: 2rem !important;
+            height: 2rem !important;
+            flex-shrink: 0;
+        }
+
         /* Order Receipt Modal Styles */
         #orderReceiptModal .receipt-container {
             position: relative;
@@ -895,7 +933,7 @@
                 </svg>
             </div>
             <p class="text-muted">${message}</p>
-            <button class="btn btn-sm btn-secondary" onclick="closeOrderReceiptModal()">Close</button>
+            <button class="btn btn-sm" onclick="closeOrderReceiptModal()">Close</button>
         </div>
     `;
         }

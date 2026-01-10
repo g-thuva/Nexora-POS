@@ -64,12 +64,16 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request)
     {
-        $existingProduct = Product::where('code', $request->get('code'))->first();
+        // Remove code validation - let the model auto-generate SKU
+        // If code is provided and exists, let the model handle uniqueness
+        $existingProduct = null;
+        if ($request->filled('code')) {
+            $existingProduct = Product::where('code', $request->get('code'))->first();
 
-        if ($existingProduct) {
-            $newCode = $this->generateUniqueCode();
-
-            $request->merge(['code' => $newCode]);
+            if ($existingProduct) {
+                // Clear the code to let model auto-generate
+                $request->merge(['code' => null]);
+            }
         }
 
         try {
@@ -89,16 +93,42 @@ class ProductController extends Controller
                         'product_image' => $filename
                     ]);
                 } else {
+                    if ($request->expectsJson() || $request->ajax()) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Invalid image file'
+                        ], 422);
+                    }
                     return back()->withErrors(['product_image' => 'Invalid image file']);
                 }
             }
 
+            $message = 'Product has been created with code: ' . $product->code;
+
+            // Return JSON for AJAX requests
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'product' => $product
+                ]);
+            }
+
             return redirect()
                 ->back()
-                ->with('success', 'Product has been created with code: ' . $product->code);
+                ->with('success', $message);
 
         } catch (\Exception $e) {
-            // Handle any unexpected errors
+            \Log::error('Product creation error: ' . $e->getMessage());
+
+            // Return JSON for AJAX requests
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Something went wrong while creating the product'
+                ], 500);
+            }
+
             return back()->withErrors(['error' => 'Something went wrong while creating the product']);
         }
     }
@@ -106,11 +136,8 @@ class ProductController extends Controller
     // Helper method to generate a unique product code
     private function generateUniqueCode()
     {
-        do {
-            $code = 'PC' . strtoupper(uniqid());
-        } while (Product::where('code', $code)->exists());
-
-        return $code;
+        // Delegate to the model's PRD-based generator
+        return Product::generateSku();
     }
 
     public function show(Product $product)
@@ -165,40 +192,42 @@ class ProductController extends Controller
             ->with('success', 'Product has been updated!');
     }
 
-    public function addStock(Request $request, Product $product)
+    public function addStock(Request $request, $product)
     {
-        \Log::info('AddStock called', [
-            'product_id' => $product->id,
-            'request_data' => $request->all(),
-            'is_ajax' => $request->ajax(),
-            'wants_json' => $request->wantsJson(),
-            'accept_header' => $request->header('Accept'),
-            'x_requested_with' => $request->header('X-Requested-With')
-        ]);
+        try {
+            // Manually find the product by ID to avoid route model binding issues
+            $product = Product::findOrFail($product);
 
-        $request->validate([
-            'add_quantity' => 'required|integer|min:1',
-            'notes' => 'nullable|string|max:500',
-        ]);
+            $validated = $request->validate([
+                'add_quantity' => 'required|integer|min:1|max:10000',
+                'notes' => 'nullable|string|max:500',
+            ]);
 
-        $oldQuantity = $product->quantity;
-        $addQuantity = $request->add_quantity;
-        $newQuantity = $oldQuantity + $addQuantity;
+            $oldQuantity = $product->quantity;
+            $addQuantity = $validated['add_quantity'];
+            $newQuantity = $oldQuantity + $addQuantity;
 
-        $product->update([
-            'quantity' => $newQuantity,
-        ]);
+            // Use increment for atomic update (prevents race conditions)
+            $product->increment('quantity', $addQuantity);
 
-        $message = "Stock updated successfully! Added {$addQuantity} units. New stock: {$newQuantity}";
+            $message = "Stock updated successfully! Added {$addQuantity} units. New stock: {$newQuantity}";
 
-        \Log::info('Stock updated', ['message' => $message]);
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'new_quantity' => $newQuantity
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Stock update failed', [
+                'product_id' => $product ?? null,
+                'error' => $e->getMessage()
+            ]);
 
-        // Always return JSON for this endpoint
-        return response()->json([
-            'success' => true,
-            'message' => $message,
-            'new_quantity' => $newQuantity
-        ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update stock'
+            ], 500);
+        }
     }
 
     public function destroy(Product $product)

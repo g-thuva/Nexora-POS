@@ -65,6 +65,12 @@ class OrderForm extends Component
             }
         }
 
+        // Check if we already have 11 different items
+        if (count($this->invoiceProducts) >= 11) {
+            session()->flash('error', 'Maximum 11 different items allowed per order. Please create a new order for additional items to prevent PDF generation issues.');
+            return;
+        }
+
         $newIndex = count($this->invoiceProducts);
 
         $this->invoiceProducts[] = [

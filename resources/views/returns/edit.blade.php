@@ -61,7 +61,7 @@
 
                                 <div class="d-flex">
                                     <button class="btn btn-primary">Save</button>
-                                    <a href="{{ route('returns.create') }}" class="btn btn-secondary ms-2">New Return</a>
+                                    <a href="{{ route('returns.create') }}" class="btn ms-2">New Return</a>
                                 </div>
                             </form>
                         </div>

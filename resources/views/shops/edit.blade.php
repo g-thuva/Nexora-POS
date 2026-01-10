@@ -91,7 +91,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <a href="{{ route('admin.shops.show', $shop) }}" class="btn btn-secondary">
+                            <a href="{{ route('admin.shops.show', $shop) }}" class="btn">
                                 <i class="fas fa-arrow-left"></i> Back to Shop
                             </a>
                             <div>

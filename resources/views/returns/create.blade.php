@@ -90,7 +90,7 @@
                                 </div>
 
                                 <div class="d-flex justify-content-end">
-                                    <button class="btn btn-secondary me-2" type="reset">Reset</button>
+                                    <button class="btn me-2" type="reset">Reset</button>
                                     <button class="btn btn-primary" type="submit">Save Return</button>
                                 </div>
                             </form>

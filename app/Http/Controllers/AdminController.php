@@ -136,6 +136,29 @@ class AdminController extends Controller
     }
 
     /**
+     * Show suspended users list (Super Admin only)
+     */
+    public function suspendedUsers()
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Get only suspended users with their shop information
+        $users = User::with([
+            'shop:id,name,email',
+            'suspendedBy:id,name,email'
+        ])
+            ->where('is_suspended', true)
+            ->orderBy('suspended_at', 'desc')
+            ->paginate(20);
+
+        $shops = Shop::orderBy('name')->get();
+
+        return view('admin.users.suspended', compact('users', 'shops'));
+    }
+
+    /**
      * Show user profile for admin (uses admin layout)
      */
     public function showUser(User $boundUser)
@@ -272,20 +295,6 @@ class AdminController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Shop reactivated successfully.'
-        ]);
-    }
-
-    public function extendSubscription(Request $request, Shop $shop)
-    {
-        $request->validate([
-            'months' => 'required|integer|min:1|max:12'
-        ]);
-
-        $shop->extendSubscription($request->months);
-
-        return response()->json([
-            'success' => true,
-            'message' => "Subscription extended by {$request->months} month(s)."
         ]);
     }
 
@@ -570,29 +579,176 @@ class AdminController extends Controller
     public function updateUserShopAssignment(Request $request, User $user)
     {
         if (!auth()->user()->isAdmin()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized action.'
-            ], 403);
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized action.'
+                ], 403);
+            }
+            abort(403, 'Unauthorized action.');
         }
 
         $request->validate([
             'shop_id' => 'nullable|exists:shops,id',
-            'role' => 'required|in:admin,shop_owner,manager,employee'
+            'role' => 'required|in:admin,shop_owner,manager,employee',
+            'confirm_transfer' => 'nullable|boolean'
         ]);
 
         // Don't allow changing super admin role/shop assignment
         if ($user->isAdmin() || $request->role === 'admin') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Cannot modify super admin assignments.'
-            ], 403);
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot modify super admin assignments.'
+                ], 403);
+            }
+            return redirect()->back()->with('error', 'Cannot modify super admin assignments.');
         }
 
         $oldRole = $user->role;
         $oldShopId = $user->shop_id;
         $newShopId = $request->shop_id;
         $newRole = $request->role;
+
+        // If making user a shop owner
+        if ($newRole === 'shop_owner' && $newShopId) {
+            $targetShop = Shop::findOrFail($newShopId);
+
+            // Check if shop already has owner and it's not the current user
+            if ($targetShop->owner_id && $targetShop->owner_id !== $user->id) {
+                // Require explicit confirmation for ownership transfer
+                if (!$request->has('confirm_transfer') || !$request->confirm_transfer) {
+                    return redirect()->back()
+                        ->withInput()
+                        ->with('error', 'This shop already has an owner. You must confirm the ownership transfer. Please check the confirmation dialog.');
+                }
+
+                // Demote current owner to manager
+                $currentOwner = $targetShop->owner;
+                if ($currentOwner) {
+                    $currentOwner->update([
+                        'role' => 'manager',
+                        'shop_id' => $targetShop->id
+                    ]);
+                }
+            }
+
+            // Update shop ownership
+            $targetShop->update(['owner_id' => $user->id]);
+        }
+
+        // If user was a shop owner and role is changing
+        if ($oldRole === 'shop_owner' && $newRole !== 'shop_owner') {
+            if ($user->ownedShop) {
+                $user->ownedShop->update(['owner_id' => null]);
+            }
+        }
+
+        // Update user
+        $user->update([
+            'shop_id' => $newShopId,
+            'role' => $newRole
+        ]);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'User shop assignment updated successfully.',
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'role' => $user->role,
+                    'shop_name' => $user->shop ? $user->shop->name : null
+                ]
+            ]);
+        }
+
+        return redirect()->route('admin.users.index')->with('success', 'User shop assignment updated successfully!');
+    }
+
+    /**
+     * Send password reset email (Super Admin only)
+     */
+    public function sendPasswordResetToUser(User $user)
+    {
+        if (!auth()->user()->isAdmin()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized action.'
+            ], 403);
+        }
+
+        try {
+            // Generate password reset token
+            $token = app('auth.password.broker')->createToken($user);
+
+            // Send password reset email
+            $user->sendPasswordResetNotification($token);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password reset email sent successfully to ' . $user->email
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to send password reset email: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Show edit form for user (Super Admin only)
+     */
+    public function editUser(User $user)
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $shops = Shop::orderBy('name')->get();
+        return view('admin.users.edit', compact('user', 'shops'));
+    }
+
+    /**
+     * Show assign shop page (Super Admin only)
+     */
+    public function assignShopPage(User $user)
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $shops = Shop::orderBy('name')->get();
+        return view('admin.users.assign-shop', compact('user', 'shops'));
+    }
+
+    /**
+     * Update user (Super Admin only)
+     */
+    public function updateUser(Request $request, User $user)
+    {
+        if (!auth()->user()->isAdmin()) {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        // Prevent modification of super admin accounts
+        if ($user->isAdmin()) {
+            return redirect()->back()->with('error', 'Cannot modify super admin accounts.');
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'role' => 'required|in:shop_owner,manager,employee',
+            'shop_id' => 'nullable|exists:shops,id',
+        ]);
+
+        $oldRole = $user->role;
+        $oldShopId = $user->shop_id;
+        $newShopId = $validated['shop_id'] ?? null;
+        $newRole = $validated['role'];
 
         // If making user a shop owner
         if ($newRole === 'shop_owner' && $newShopId) {
@@ -623,57 +779,64 @@ class AdminController extends Controller
 
         // Update user
         $user->update([
-            'shop_id' => $newShopId,
-            'role' => $newRole
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'username' => $validated['username'],
+            'role' => $newRole,
+            'shop_id' => $newShopId
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'User shop assignment updated successfully.',
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'role' => $user->role,
-                'shop_name' => $user->shop ? $user->shop->name : null
-            ]
-        ]);
+        return redirect()->route('admin.users.index')
+                        ->with('success', 'User updated successfully.');
     }
 
     /**
-     * Send password reset email (Super Admin only)
+     * Update shop (Super Admin only)
      */
-    public function sendPasswordReset(User $user)
+    public function updateShop(Request $request, Shop $shop)
     {
         if (!auth()->user()->isAdmin()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized action.'
-            ], 403);
+            return redirect()->back()->with('error', 'Unauthorized action.');
         }
 
-        try {
-            // Generate password reset token
-            $token = app('auth.password.broker')->createToken($user);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'address' => 'required|string',
+            'phone' => 'required|string|max:20',
+            'email' => 'required|email',
+            'owner_id' => 'required|exists:users,id',
+            'monthly_fee' => 'nullable|numeric|min:0',
+            'subscription_status' => 'nullable|in:active,suspended,expired',
+            'subscription_end_date' => 'nullable|date',
+        ]);
 
-            // Send password reset email
-            $user->sendPasswordResetNotification($token);
+        // If owner is changing
+        if ($validated['owner_id'] != $shop->owner_id) {
+            // Update old owner role if exists
+            if ($shop->owner) {
+                $shop->owner->update([
+                    'role' => 'manager'
+                ]);
+            }
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Password reset email sent successfully to ' . $user->email
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to send password reset email: ' . $e->getMessage()
+            // Update new owner role
+            $newOwner = User::findOrFail($validated['owner_id']);
+            $newOwner->update([
+                'role' => 'shop_owner',
+                'shop_id' => $shop->id
             ]);
         }
+
+        $shop->update($validated);
+
+        return redirect()->route('admin.shops.index')
+                        ->with('success', 'Shop updated successfully.');
     }
 
     /**
-     * Delete user (Super Admin only)
+     * Show delete user page
      */
-    public function deleteUser(User $user)
+    public function deleteUserPage(User $user)
     {
         if (!auth()->user()->isAdmin()) {
             return redirect()->back()->with('error', 'Unauthorized action.');
@@ -689,20 +852,381 @@ class AdminController extends Controller
             return redirect()->back()->with('error', 'You cannot delete your own account.');
         }
 
+        $shops = Shop::orderBy('name')->get();
+
+        // Get related users if this is a shop owner
+        $relatedUsers = collect();
+        $shopToDelete = null;
+        if ($user->role === 'shop_owner' && $user->ownedShop) {
+            $shopToDelete = $user->ownedShop;
+            // Get all users (managers, employees) assigned to this shop
+            $relatedUsers = User::where('shop_id', $shopToDelete->id)
+                                ->where('id', '!=', $user->id)
+                                ->get();
+        }
+
+        return view('admin.users.delete', compact('user', 'shops', 'relatedUsers', 'shopToDelete'));
+    }
+
+    /**
+     * Delete user (Super Admin only)
+     */
+    public function deleteUser(Request $request, User $user)
+    {
+        if (!auth()->user()->isAdmin()) {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        // Prevent deletion of super admin accounts
+        if ($user->isAdmin()) {
+            return redirect()->back()->with('error', 'Cannot delete super admin accounts.');
+        }
+
+        // Prevent deletion of currently authenticated user
+        if ($user->id === auth()->id()) {
+            return redirect()->back()->with('error', 'You cannot delete your own account.');
+        }
+
+        // Validate confirmation
+        $request->validate([
+            'confirm_delete' => 'required|in:DELETE',
+            'confirm_understand' => 'required|accepted',
+        ], [
+            'confirm_delete.in' => 'You must type DELETE (all caps) to confirm deletion.',
+            'confirm_understand.accepted' => 'You must confirm that you understand this action is permanent.',
+        ]);
+
         try {
-            // If user is a shop owner, remove ownership
+            $userName = $user->name;
+            $deletedCount = 0;
+            $deletedShop = null;
+
+            // If user is a shop owner, delete all related users and the shop
             if ($user->role === 'shop_owner' && $user->ownedShop) {
-                $user->ownedShop->update(['owner_id' => null]);
+                $shop = $user->ownedShop;
+                $deletedShop = $shop->name;
+
+                // Get all users assigned to this shop (managers, employees)
+                $relatedUsers = User::where('shop_id', $shop->id)
+                                    ->where('id', '!=', $user->id)
+                                    ->get();
+
+                // Delete sessions for all related users
+                foreach ($relatedUsers as $relatedUser) {
+                    \DB::table('sessions')->where('user_id', $relatedUser->id)->delete();
+                    $relatedUser->delete();
+                    $deletedCount++;
+                }
+
+                // Delete the shop
+                $shop->delete();
             }
 
+            // Delete user's sessions
+            \DB::table('sessions')->where('user_id', $user->id)->delete();
+
             // Delete the user
-            $userName = $user->name;
             $user->delete();
 
+            // Build success message
+            $message = "User '{$userName}' has been deleted successfully.";
+            if ($deletedCount > 0) {
+                $message .= " Additionally, {$deletedCount} related user(s) were deleted.";
+            }
+            if ($deletedShop) {
+                $message .= " Shop '{$deletedShop}' has been removed from the system.";
+            }
+
             return redirect()->route('admin.users.index')
-                           ->with('success', "User '{$userName}' has been deleted successfully.");
+                           ->with('success', $message);
         } catch (\Exception $e) {
+            \Log::error('Failed to delete user: ' . $e->getMessage(), [
+                'user_id' => $user->id,
+                'exception' => $e
+            ]);
             return redirect()->back()->with('error', 'Failed to delete user: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Show suspend user page
+     */
+    public function suspendUserPage(User $user)
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $shops = Shop::orderBy('name')->get();
+        return view('admin.users.suspend', compact('user', 'shops'));
+    }
+
+    /**
+     * Suspend user
+     */
+    public function suspendUser(Request $request, User $user)
+    {
+        if (!auth()->user()->isAdmin()) {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        // Prevent suspending super admin
+        if ($user->isAdmin()) {
+            return redirect()->back()->with('error', 'Cannot suspend super admin accounts.');
+        }
+
+        $request->validate([
+            'suspension_reason' => 'required|string',
+            'suspension_type' => 'required|in:days,months,lifetime,until_payment,manual',
+            'suspension_duration' => 'required_if:suspension_type,days,months|nullable|integer|min:1'
+        ]);
+
+        $suspensionEndsAt = null;
+
+        // Calculate suspension end date based on type
+        if ($request->suspension_type === 'days') {
+            $suspensionEndsAt = now()->addDays($request->suspension_duration);
+        } elseif ($request->suspension_type === 'months') {
+            $suspensionEndsAt = now()->addMonths($request->suspension_duration);
+        }
+
+        // Update user suspension status
+        $user->update([
+            'is_suspended' => true,
+            'suspension_reason' => $request->suspension_reason,
+            'suspension_type' => $request->suspension_type,
+            'suspension_duration' => $request->suspension_duration,
+            'suspended_at' => now(),
+            'suspension_ends_at' => $suspensionEndsAt,
+            'suspended_by' => auth()->id()
+        ]);
+
+        // Log out the user from all devices
+        \DB::table('sessions')->where('user_id', $user->id)->delete();
+
+        return redirect()->route('admin.users.index')
+                       ->with('success', "User '{$user->name}' has been suspended successfully.");
+    }
+
+    /**
+     * Unsuspend user
+     */
+    public function unsuspendUser(User $user)
+    {
+        try {
+            if (!auth()->user()->isAdmin()) {
+                return back()->with('error', 'Unauthorized action.');
+            }
+
+            $user->is_suspended = false;
+            $user->suspension_reason = null;
+            $user->suspension_type = null;
+            $user->suspension_duration = null;
+            $user->suspended_at = null;
+            $user->suspension_ends_at = null;
+            $user->suspended_by = null;
+            $user->save();
+
+            return redirect()->route('admin.users.index')
+                           ->with('success', "User '{$user->name}' suspension has been lifted.");
+        } catch (\Exception $e) {
+            return back()->with('error', 'An error occurred while unsuspending user: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Show user reports
+     */
+    public function userReports()
+    {
+        // Get user statistics
+        $stats = [
+            'total_users' => User::count(),
+            'admin_users' => User::where('role', 'admin')->count(),
+            'shop_owner_users' => User::where('role', 'shop_owner')->count(),
+            'manager_users' => User::where('role', 'manager')->count(),
+            'employee_users' => User::where('role', 'employee')->count(),
+        ];
+
+        // User distribution by role
+        $totalUsers = User::count();
+        $usersByRole = User::selectRaw('role, COUNT(*) as total')
+            ->groupBy('role')
+            ->get()
+            ->map(function ($item) use ($totalUsers) {
+                $item->percentage = $totalUsers > 0 ? ($item->total / $totalUsers) * 100 : 0;
+                $item->active_count = $item->total; // All users are considered active since there's no is_active column
+                $item->role_color = match($item->role) {
+                    'admin' => 'red',
+                    'shop_owner' => 'blue',
+                    'manager' => 'green',
+                    'employee' => 'yellow',
+                    default => 'secondary'
+                };
+                return $item;
+            });
+
+        // Recent users
+        $recentUsers = User::with('shop:id,name')
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        return view('admin.reports.users', compact('stats', 'usersByRole', 'recentUsers'));
+    }
+
+    /**
+     * Show shop reports
+     */
+    public function shopReports()
+    {
+        // Get shop statistics
+        $stats = [
+            'total_shops' => Shop::count(),
+            'active_shops' => Shop::where('subscription_status', 'active')->where('is_active', true)->count(),
+            'suspended_shops' => Shop::where('subscription_status', 'suspended')->count(),
+            'overdue_shops' => Shop::where('subscription_end_date', '<', now())
+                ->where('subscription_status', '!=', 'suspended')
+                ->count(),
+            'active_subscription_value' => Shop::where('subscription_status', 'active')
+                ->where('is_active', true)
+                ->sum('monthly_fee'),
+            'avg_subscription' => Shop::where('subscription_status', 'active')
+                ->where('is_active', true)
+                ->avg('monthly_fee') ?? 0,
+        ];
+
+        // Shop distribution by status
+        $totalShops = Shop::count();
+        $shopsByStatus = Shop::selectRaw('subscription_status as status, COUNT(*) as total')
+            ->groupBy('subscription_status')
+            ->get()
+            ->map(function ($item) use ($totalShops) {
+                $item->percentage = $totalShops > 0 ? ($item->total / $totalShops) * 100 : 0;
+                return $item;
+            });
+
+        // Top performing shops
+        $topShops = Shop::with(['owner:id,name'])
+            ->withCount(['users', 'products'])
+            ->where('is_active', true)
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        // Recent shops
+        $recentShops = Shop::with('owner:id,name')
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        return view('admin.reports.shops', compact('stats', 'shopsByStatus', 'topShops', 'recentShops'));
+    }
+
+    /**
+     * Display all shops with their subscription details
+     */
+    public function subscriptions()
+    {
+        $shops = Shop::with('owner:id,name')
+            ->withCount('users')
+            ->orderBy('subscription_end_date', 'asc')
+            ->paginate(20);
+
+        return view('admin.shops.subscriptions', compact('shops'));
+    }
+
+    /**
+     * Display only suspended shops
+     */
+    public function suspendedShops()
+    {
+        $shops = Shop::where('is_suspended', true)
+            ->with(['owner:id,name', 'suspendedBy:id,name'])
+            ->withCount('users')
+            ->orderBy('suspended_at', 'desc')
+            ->paginate(20);
+
+        return view('admin.shops.suspended', compact('shops'));
+    }
+
+    /**
+     * Extend shop subscription
+     */
+    public function extendSubscription(Request $request, Shop $shop)
+    {
+        $request->validate([
+            'extend_days' => 'required|integer|min:1',
+            'notes' => 'nullable|string|max:500'
+        ]);
+
+        $currentEndDate = $shop->subscription_end_date ?? now();
+        $newEndDate = \Carbon\Carbon::parse($currentEndDate)->addDays($request->extend_days);
+
+        $shop->update([
+            'subscription_end_date' => $newEndDate,
+            'subscription_status' => 'active'
+        ]);
+
+        return redirect()
+            ->route('admin.shops.subscriptions')
+            ->with('success', "Subscription for {$shop->name} extended by {$request->extend_days} days until {$newEndDate->format('M d, Y')}");
+    }
+
+    /**
+     * Change shop subscription status
+     */
+    public function changeSubscriptionStatus(Request $request, Shop $shop)
+    {
+        $request->validate([
+            'status' => 'required|in:trial,active,expired,cancelled',
+            'reason' => 'nullable|string|max:500'
+        ]);
+
+        $shop->update([
+            'subscription_status' => $request->status
+        ]);
+
+        return redirect()
+            ->route('admin.shops.subscriptions')
+            ->with('success', "Subscription status for {$shop->name} changed to {$request->status}");
+    }
+
+    /**
+     * Unsuspend a shop
+     */
+    public function unsuspendShop(Request $request, Shop $shop)
+    {
+        $request->validate([
+            'unsuspend_users' => 'nullable|boolean',
+            'notes' => 'nullable|string|max:500'
+        ]);
+
+        $shop->update([
+            'is_suspended' => false,
+            'suspended_at' => null,
+            'suspended_by' => null,
+            'suspension_reason' => null
+        ]);
+
+        // Unsuspend all shop users if requested
+        if ($request->unsuspend_users) {
+            User::where('shop_id', $shop->id)
+                ->where('is_suspended', true)
+                ->update([
+                    'is_suspended' => false,
+                    'suspended_at' => null,
+                    'suspended_by' => null,
+                    'suspension_reason' => null
+                ]);
+        }
+
+        $message = $request->unsuspend_users
+            ? "Shop {$shop->name} and all its users have been unsuspended"
+            : "Shop {$shop->name} has been unsuspended";
+
+        return redirect()
+            ->route('admin.shops.suspended')
+            ->with('success', $message);
     }
 }

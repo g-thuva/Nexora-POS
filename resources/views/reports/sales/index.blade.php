@@ -25,7 +25,7 @@
             </div>
             <div class="col-auto ms-auto d-print-none">
                 <div class="btn-list">
-                    <a href="{{ route('orders.create') }}" class="btn btn-success d-none d-sm-inline-block">
+                    <a href="{{ route('orders.create') }}" class="btn d-none d-sm-inline-block">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16"
                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                             stroke-linecap="round" stroke-linejoin="round">
@@ -36,7 +36,7 @@
                         </svg>
                         POS
                     </a>
-                    <a href="{{ route('credit-sales.index') }}" class="btn btn-primary d-none d-sm-inline-block">
+                    <a href="{{ route('credit-sales.index') }}" class="btn d-none d-sm-inline-block">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16"
                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                             stroke-linecap="round" stroke-linejoin="round">
@@ -235,15 +235,15 @@
                                 </td>
                                 <td>
                                     <div class="btn-list flex-nowrap">
-                                        <a href="#" class="btn btn-white btn-sm">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <a href="#" class="btn btn-white btn-icon btn-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                                                 <circle cx="12" cy="12" r="2"/>
                                                 <path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7"/>
                                             </svg>
                                         </a>
-                                        <a href="#" class="btn btn-primary btn-sm">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <a href="#" class="btn btn-white btn-icon btn-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                                                 <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"/>
                                                 <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"/>

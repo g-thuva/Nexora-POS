@@ -6,8 +6,7 @@
 <form action="{{ $route }}" method="POST" class="d-inline-block" onsubmit="return confirm('{{ $confirmMessage }}')">
     @csrf
     @method('delete')
-    <x-button type="submit" {{ $attributes->class(['btn btn-danger']) }}>
-        <x-icon.trash/>
-        {{ $slot }}
-    </x-button>
+    <button type="submit" {{ $attributes->class(['btn btn-white btn-icon']) }} title="Delete">
+        <x-icon.trash class="icon text-dark"/>
+    </button>
 </form>

@@ -15,7 +15,7 @@
             </div>
             <div class="col-12 col-md-auto ms-auto d-print-none">
                 <div class="btn-list">
-                    <a href="{{ route('admin.dashboard') }}" class="btn btn-ghost-dark">
+                    <a href="{{ route('dashboard') }}" class="btn btn-ghost-dark">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path stroke="none" d="m0 0h24v24H0z" fill="none"/>
                             <polyline points="5 12 3 12 12 3 21 12 19 12"/>
@@ -24,7 +24,7 @@
                         </svg>
                         Back to Dashboard
                     </a>
-                    <a href="{{ route('admin.shops.create') }}" class="btn btn-primary d-none d-sm-inline-block">
+                    <a href="{{ route('admin.shops.create') }}" class="btn btn-white d-none d-sm-inline-block">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
                             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -106,24 +106,17 @@
                             <table class="table card-table table-vcenter text-nowrap datatable">
                                 <thead>
                                     <tr>
-                                        <th class="w-1">
-                                            <input class="form-check-input m-0 align-middle" type="checkbox" aria-label="Select all shops">
-                                        </th>
                                         <th>Shop Details</th>
                                         <th>Owner</th>
                                         <th>Subscription</th>
                                         <th>Status</th>
                                         <th>Stats</th>
                                         <th>Created</th>
-                                        <th class="w-1">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($shops as $shop)
                                         <tr>
-                                            <td>
-                                                <input class="form-check-input m-0 align-middle" type="checkbox" aria-label="Select shop">
-                                            </td>
                                             <td>
                                                 <div class="d-flex py-1 align-items-center">
                                                     <span class="avatar me-2" style="background-image: url({{ asset('static/avatars/shop-default.png') }})"></span>
@@ -189,77 +182,6 @@
                                                     <div class="small">{{ $shop->created_at->diffForHumans() }}</div>
                                                 </div>
                                             </td>
-                                            <td>
-                                                <div class="btn-list flex-nowrap">
-                                                    <div class="dropdown">
-                                                        <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">
-                                                            Actions
-                                                        </button>
-                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                            <a class="dropdown-item" href="{{ route('admin.shops.show', $shop) }}">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                                    <path stroke="none" d="m0 0h24v24H0z" fill="none"/>
-                                                                    <circle cx="12" cy="12" r="2"/>
-                                                                    <path d="m12 1c.835 0 1.52 .205 2.05 .623a3.441 3.441 0 0 1 1.343 3.146c.096 .443 -.071 .884 -.334 1.317l-2.059 3.914l-2.059 -3.914c-.263 -.433 -.43 -.874 -.334 -1.317a3.441 3.441 0 0 1 1.343 -3.146c.53 -.418 1.215 -.623 2.05 -.623z"/>
-                                                                </svg>
-                                                                View Details
-                                                            </a>
-                                                            <a class="dropdown-item" href="{{ route('admin.shops.edit', $shop) }}">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                                    <path stroke="none" d="m0 0h24v24H0z" fill="none"/>
-                                                                    <path d="m7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"/>
-                                                                    <path d="m20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"/>
-                                                                    <path d="m16 5l3 3"/>
-                                                                </svg>
-                                                                Edit Shop
-                                                            </a>
-                                                            <a class="dropdown-item" href="#" onclick="manageShopUsers({{ $shop->id }}, '{{ $shop->name }}')">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                                    <path stroke="none" d="m0 0h24v24H0z" fill="none"/>
-                                                                    <circle cx="9" cy="7" r="4"/>
-                                                                    <path d="m3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/>
-                                                                    <path d="m16 3.13a4 4 0 0 1 0 7.75"/>
-                                                                    <path d="m21 21v-2a4 4 0 0 0 -3 -3.85"/>
-                                                                </svg>
-                                                                Manage Users
-                                                            </a>
-                                                            <div class="dropdown-divider"></div>
-                                                            @if(isset($shop->is_active) && $shop->is_active)
-                                                                <a class="dropdown-item text-yellow" href="#" onclick="toggleShopStatus({{ $shop->id }}, false)">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                                        <path stroke="none" d="m0 0h24v24H0z" fill="none"/>
-                                                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                                                                        <line x1="9" y1="9" x2="15" y2="15"/>
-                                                                        <line x1="15" y1="9" x2="9" y2="15"/>
-                                                                    </svg>
-                                                                    Deactivate
-                                                                </a>
-                                                            @else
-                                                                <a class="dropdown-item text-green" href="#" onclick="toggleShopStatus({{ $shop->id }}, true)">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                                        <path stroke="none" d="m0 0h24v24H0z" fill="none"/>
-                                                                        <circle cx="12" cy="12" r="9"/>
-                                                                        <path d="m9 12l2 2l4 -4"/>
-                                                                    </svg>
-                                                                    Activate
-                                                                </a>
-                                                            @endif
-                                                            <div class="dropdown-divider"></div>
-                                                            <a class="dropdown-item text-red" href="#" onclick="deleteShop({{ $shop->id }}, '{{ $shop->name }}')">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                                    <path stroke="none" d="m0 0h24v24H0z" fill="none"/>
-                                                                    <line x1="4" y1="7" x2="20" y2="7"/>
-                                                                    <line x1="10" y1="11" x2="10" y2="17"/>
-                                                                    <line x1="14" y1="11" x2="14" y2="17"/>
-                                                                    <path d="m5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/>
-                                                                    <path d="m9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/>
-                                                                </svg>
-                                                                Delete Shop
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -279,7 +201,7 @@
                                 No shops have been created yet. Create the first shop to get started.
                             </p>
                             <div class="empty-action">
-                                <a href="{{ route('admin.shops.create') }}" class="btn btn-primary">
+                                <a href="{{ route('admin.shops.create') }}" class="btn btn-white">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                         <line x1="12" y1="5" x2="12" y2="19"></line>
                                         <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -320,7 +242,7 @@
                             <form id="deleteShopForm" method="POST" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger w-100">Delete Shop</button>
+                                <button type="submit" class="btn btn-white w-100">Delete Shop</button>
                             </form>
                         </div>
                     </div>
@@ -390,7 +312,7 @@
                             </div>
 
                             <div class="text-end">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-white">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                         <path stroke="none" d="m0 0h24v24H0z" fill="none"/>
                                         <line x1="12" y1="5" x2="12" y2="19"/>

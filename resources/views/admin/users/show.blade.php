@@ -10,7 +10,7 @@
             </div>
             <div class="col-12 col-md-auto ms-auto d-print-none">
                 <div class="btn-list">
-                    <a href="{{ route('users.edit', $user) }}" class="btn btn-primary">
+                    <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                             <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"/>
@@ -19,7 +19,7 @@
                         </svg>
                         Edit User
                     </a>
-                    <a href="{{ route('users.index') }}" class="btn btn-outline-secondary">Back to Users</a>
+                    <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary">Back to Users</a>
                 </div>
             </div>
         </div>
@@ -38,7 +38,7 @@
                         <div class="text-muted mb-1">{{ $user->email }}</div>
                         <div class="mb-2">
                             @if($user->username)
-                                <span class="badge bg-light text-dark">@{{ $user->username }}</span>
+                                <span class="badge bg-light text-dark">{{ $user->username }}</span>
                             @else
                                 <span class="badge bg-light text-dark">No Username</span>
                             @endif
@@ -85,14 +85,14 @@
                         </div>
                         <div class="d-flex flex-wrap gap-2">
                             @if(!$user->email_verified_at)
-                                <button class="btn btn-success btn-sm" onclick="verifyUserEmail({{ $user->id }})">Verify Email</button>
+                                <button class="btn btn-sm" onclick="verifyUserEmail({{ $user->id }})">Verify Email</button>
                             @else
-                                <button class="btn btn-warning btn-sm" onclick="unverifyUserEmail({{ $user->id }})">Unverify</button>
+                                <button class="btn btn-sm" onclick="unverifyUserEmail({{ $user->id }})">Unverify</button>
                             @endif
-                            <button class="btn btn-info btn-sm" onclick="sendPasswordReset({{ $user->id }})">Reset Password</button>
+                            <button class="btn btn-sm" onclick="sendPasswordReset({{ $user->id }})">Reset Password</button>
                             @if($user->role !== 'admin' && $user->id !== auth()->id())
-                                <button class="btn btn-warning btn-sm" onclick="toggleUserAccess({{ $user->id }})">Suspend</button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteUser({{ $user->id }}, '{{ $user->name }}')">Delete</button>
+                                <button class="btn btn-sm" onclick="toggleUserAccess({{ $user->id }})">Suspend</button>
+                                <button class="btn btn-sm" onclick="deleteUser({{ $user->id }}, '{{ $user->name }})">Delete</button>
                             @endif
                         </div>
                     </div>
@@ -149,7 +149,7 @@
                                         </svg>
                                     </td>
                                     <td class="font-weight-medium">Username</td>
-                                    <td class="text-muted">@{{ $user->username }}</td>
+                                    <td class="text-muted">{{ $user->username }}</td>
                                 </tr>
                                 @endif
                                 <tr>
@@ -237,6 +237,33 @@
                                     <td class="text-muted">
                                         {{ $user->last_login_at->format('M d, Y h:i A') }}
                                         <div class="small text-muted">{{ $user->last_login_at->diffForHumans() }}</div>
+                                    </td>
+                                </tr>
+                                @endif
+                                @if($user->is_suspended)
+                                <tr>
+                                    <td class="w-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon text-red" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="m0 0h24v24H0z" fill="none"/>
+                                            <circle cx="12" cy="12" r="9"/>
+                                            <line x1="9" y1="9" x2="15" y2="15"/>
+                                            <line x1="15" y1="9" x2="9" y2="15"/>
+                                        </svg>
+                                    </td>
+                                    <td class="font-weight-medium text-red">Suspended</td>
+                                    <td>
+                                        <div class="badge bg-red">{{ ucfirst($user->suspension_type) }}</div>
+                                        <div class="text-muted mt-1">
+                                            <strong>Reason:</strong> {{ $user->suspension_reason }}
+                                        </div>
+                                        @if($user->suspension_ends_at)
+                                        <div class="text-muted small mt-1">
+                                            <strong>Expires:</strong> {{ $user->suspension_ends_at->format('M d, Y h:i A') }} ({{ $user->suspension_ends_at->diffForHumans() }})
+                                        </div>
+                                        @endif
+                                        <div class="text-muted small mt-1">
+                                            <strong>Suspended:</strong> {{ $user->suspended_at->format('M d, Y h:i A') }} by {{ $user->suspendedBy->name ?? 'System' }}
+                                        </div>
                                     </td>
                                 </tr>
                                 @endif
@@ -347,7 +374,7 @@
                             <form id="deleteUserForm" method="POST" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger w-100">Delete User</button>
+                                <button type="submit" class="btn btn-white w-100">Delete User</button>
                             </form>
                         </div>
                     </div>

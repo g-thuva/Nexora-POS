@@ -28,7 +28,7 @@ class OrderController extends Controller
     $query = Order::withoutGlobalScope(\App\Scopes\UserScope::class)
         ->with([
             'customer:id,name,phone',
-            'creator:id,name',
+            'creator:id,name,role',
         ]);
         $user = auth()->user();
         $shop = null;
@@ -141,6 +141,8 @@ class OrderController extends Controller
             'products' => Product::with(['category', 'unit', 'warranty'])->get(),
             'products_count' => Product::count(),
             'warranties' => \App\Models\Warranty::all(['id', 'name', 'duration']),
+            'categories' => \App\Models\Category::all(['id', 'name']),
+            'units' => \App\Models\Unit::all(['id', 'name', 'slug']),
             'shop' => $shop,
         ]);
     }
@@ -1698,7 +1700,7 @@ class OrderController extends Controller
      */
     public function getProducts()
     {
-        $products = Product::with(['category', 'unit'])
+        $products = Product::with(['category', 'unit', 'warranty'])
             ->get()
             ->map(function($product) {
                 return [
@@ -1706,6 +1708,9 @@ class OrderController extends Controller
                     'name' => $product->name,
                     'price' => $product->selling_price,
                     'stock' => $product->quantity,
+                    'warranty_id' => $product->warranty_id,
+                    'warranty_name' => $product->warranty ? $product->warranty->name : null,
+                    'warranty_duration' => $product->warranty ? $product->warranty->duration : null,
                 ];
             });
 

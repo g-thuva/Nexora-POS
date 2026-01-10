@@ -30,7 +30,7 @@ class StoreCustomerRequest extends FormRequest
             'photo' => 'image|file|max:1024',
             'name' => 'required|string|max:50',
             'email' => 'nullable|email|max:50|unique:customers,email,NULL,id,shop_id,' . $shopId,
-            'phone' => 'nullable|string|max:25',
+            'phone' => 'nullable|string|max:25|unique:customers,phone,NULL,id,shop_id,' . $shopId,
             'address' => 'nullable|string|max:100',
         ];
     }

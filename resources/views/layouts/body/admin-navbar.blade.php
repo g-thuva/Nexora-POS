@@ -4,8 +4,8 @@
             <div class="container-xxl" style="position: static;">
                 <ul class="navbar-nav">
                     <!-- Admin Dashboard -->
-                    <li class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : null }}">
-                        <a class="nav-link" href="{{ route('admin.dashboard') }}">
+                    <li class="nav-item {{ request()->routeIs('dashboard') ? 'active' : null }}">
+                        <a class="nav-link" href="{{ route('dashboard') }}">
                             <span class="nav-link-icon d-md-none d-lg-inline-block">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -68,59 +68,17 @@
                                         </svg>
                                         {{ __('Create User') }}
                                     </a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item"
-                                        href="{{ route('admin.users.index', ['role' => 'admin']) }}">
+                                    <a class="dropdown-item" href="{{ route('admin.users.suspended') }}">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon"
                                             width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
                                             stroke="currentColor" fill="none" stroke-linecap="round"
                                             stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M12 6l0 6l6 0l0 -6z" />
-                                            <path d="M21 14l0 7l-7 0l0 -7" />
-                                            <path d="M14 3l0 7l-7 0l0 -7" />
-                                            <path d="M10 17l0 4l-4 0l0 -4" />
+                                            <circle cx="12" cy="12" r="9" />
+                                            <line x1="9" y1="9" x2="15" y2="15" />
+                                            <line x1="15" y1="9" x2="9" y2="15" />
                                         </svg>
-                                        {{ __('Administrators') }}
-                                    </a>
-                                    <a class="dropdown-item"
-                                        href="{{ route('admin.users.index', ['role' => 'shop_owner']) }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon"
-                                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
-                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M3 21l18 0" />
-                                            <path d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16" />
-                                            <path d="M9 9l0 4" />
-                                            <path d="M12 7l0 6" />
-                                            <path d="M15 11l0 2" />
-                                        </svg>
-                                        {{ __('Shop Owners') }}
-                                    </a>
-                                    <a class="dropdown-item"
-                                        href="{{ route('admin.users.index', ['role' => 'manager']) }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon"
-                                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
-                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <circle cx="12" cy="7" r="4" />
-                                            <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-                                        </svg>
-                                        {{ __('Managers') }}
-                                    </a>
-                                    <a class="dropdown-item"
-                                        href="{{ route('admin.users.index', ['role' => 'employee']) }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon"
-                                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
-                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <circle cx="12" cy="7" r="4" />
-                                            <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-                                        </svg>
-                                        {{ __('Employees') }}
+                                        {{ __('Suspended Users') }}
                                     </a>
                                 </div>
                             </div>
@@ -177,45 +135,32 @@
                                         </svg>
                                         {{ __('Create Shop') }}
                                     </a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item"
-                                        href="{{ route('admin.shops.index', ['status' => 'active']) }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon dropdown-item-icon text-green" width="24" height="24"
-                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                            fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <a class="dropdown-item" href="{{ route('admin.shops.subscriptions') }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon"
+                                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                            stroke="currentColor" fill="none" stroke-linecap="round"
+                                            stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <circle cx="12" cy="12" r="9" />
-                                            <path d="M9 12l2 2l4 -4" />
+                                            <rect x="3" y="5" width="18" height="14" rx="2" />
+                                            <line x1="3" y1="10" x2="21" y2="10" />
+                                            <line x1="7" y1="15" x2="7.01" y2="15" />
+                                            <line x1="11" y1="15" x2="13" y2="15" />
                                         </svg>
-                                        {{ __('Active Shops') }}
+                                        {{ __('Subscriptions') }}
                                     </a>
-                                    <a class="dropdown-item"
-                                        href="{{ route('admin.shops.index', ['status' => 'suspended']) }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon dropdown-item-icon text-red" width="24" height="24"
-                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                            fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <a class="dropdown-item" href="{{ route('admin.shops.suspended') }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon"
+                                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                            stroke="currentColor" fill="none" stroke-linecap="round"
+                                            stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                             <circle cx="12" cy="12" r="9" />
-                                            <path d="M15 9l-6 6" />
-                                            <path d="M9 9l6 6" />
+                                            <line x1="9" y1="9" x2="15" y2="15" />
+                                            <line x1="15" y1="9" x2="9" y2="15" />
                                         </svg>
                                         {{ __('Suspended Shops') }}
                                     </a>
-                                    <a class="dropdown-item"
-                                        href="{{ route('admin.shops.index', ['status' => 'overdue']) }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon dropdown-item-icon text-orange" width="24" height="24"
-                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                            fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <circle cx="12" cy="12" r="9" />
-                                            <path d="M12 8v4" />
-                                            <path d="M12 16h.01" />
-                                        </svg>
-                                        {{ __('Overdue Shops') }}
-                                    </a>
+                                    <div class="dropdown-divider"></div>
                                 </div>
                             </div>
                         </div>
@@ -265,7 +210,7 @@
                     </li>
 
                     <!-- Reports -->
-                    <li class="nav-item dropdown {{ request()->routeIs('reports.*') ? 'active' : null }}">
+                    <li class="nav-item dropdown {{ request()->routeIs('admin.reports.*') ? 'active' : null }}">
                         <a id="navbar-reports-toggle" class="nav-link dropdown-toggle" href="#"
                             data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button"
                             aria-expanded="false" aria-haspopup="true">
@@ -285,7 +230,7 @@
                         <div class="dropdown-menu" aria-labelledby="navbar-reports-toggle">
                             <div class="dropdown-menu-columns">
                                 <div class="dropdown-menu-column">
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" href="{{ route('admin.reports.users') }}">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon"
                                             width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
                                             stroke="currentColor" fill="none" stroke-linecap="round"
@@ -296,7 +241,7 @@
                                         </svg>
                                         {{ __('User Reports') }}
                                     </a>
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" href="{{ route('admin.reports.shops') }}">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon"
                                             width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
                                             stroke="currentColor" fill="none" stroke-linecap="round"

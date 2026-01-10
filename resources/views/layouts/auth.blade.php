@@ -96,10 +96,62 @@
             border-color: #3b82f6;
             box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
         }
+
+        /* Preloader Styles */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: opacity 0.3s ease-out;
+        }
+
+        #preloader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .preloader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .preloader-text {
+            margin-top: 20px;
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Prevent content from showing during load */
+        body.loading .page {
+            opacity: 0;
+        }
     </style>
 </head>
 
-<body class=" d-flex flex-column">
+<body class="d-flex flex-column loading">
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="preloader-spinner"></div>
+        <div class="preloader-text">Loading...</div>
+    </div>
     <div class="page page-center">
         <div class="container container-tight py-4">
             <div class="text-center mb-4">
@@ -113,6 +165,36 @@
             <!-- END: Content -->
         </div>
     </div>
+
+    <!-- Preloader Script -->
+    <script>
+        // Hide preloader when page is fully loaded
+        window.addEventListener('load', function() {
+            const preloader = document.getElementById('preloader');
+            const body = document.body;
+
+            // Add fade-out class
+            preloader.classList.add('fade-out');
+            body.classList.remove('loading');
+
+            // Remove preloader from DOM after transition
+            setTimeout(function() {
+                preloader.style.display = 'none';
+            }, 300);
+        });
+
+        // Fallback: Hide preloader after 2 seconds (faster for auth pages)
+        setTimeout(function() {
+            const preloader = document.getElementById('preloader');
+            if (preloader && !preloader.classList.contains('fade-out')) {
+                preloader.classList.add('fade-out');
+                document.body.classList.remove('loading');
+                setTimeout(function() {
+                    preloader.style.display = 'none';
+                }, 300);
+            }
+        }, 2000);
+    </script>
 
     <!-- Libs JS -->
     <script src="{{ asset('dist/js/nexora.min.js') }}" defer></script>

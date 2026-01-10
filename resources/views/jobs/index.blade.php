@@ -1,154 +1,422 @@
 @extends('layouts.nexora')
 
 @section('content')
-<div class="page-wrapper">
-    <div class="container-fluid py-4">
-
-        <div class="page-header d-print-none mb-3">
-            <div class="container-fluid">
-                <div class="row g-2 align-items-center">
+<div class="page-header d-print-none">
+    <div class="container-fluid">
+        <div class="row g-2 align-items-center mb-3">
             <div class="col">
-                <div class="page-pretitle">{{ __('Services') }}</div>
-                <h2 class="page-title">{{ __('Jobs') }}</h2>
-            </div>
-            <div class="col-auto ms-auto d-print-none">
-                <div class="btn-list">
-                    <a href="{{ route('job-letterhead.index') }}" class="btn btn-white">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"/></svg>
-                        {{ __('Job Letterhead') }}
-                    </a>
-                    <a href="{{ route('jobs.index') }}" class="btn btn-primary">
-                        {{ __('New Job') }}
-                    </a>
-                </div>
+                <h2 class="page-title">
+                    {{ __('Create Job') }}
+                </h2>
             </div>
         </div>
 
         @include('partials._breadcrumbs')
-            </div>
-        </div>
+    </div>
+</div>
 
+<div class="page-body">
+    <div class="container-fluid">
         <x-alert/>
 
-        {{-- Summary cards --}}
-        <div class="row g-3 mb-4">
-            <div class="col-md-3">
-                <div class="card p-3">
-                    <div class="text-muted small">TOTAL JOBS</div>
-                    <div class="h5">{{ \App\Models\Job::count() }}</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card p-3">
-                    <div class="text-muted small">PENDING JOBS</div>
-                    <div class="h5">{{ \App\Models\Job::where('status', 'pending')->count() }}</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card p-3">
-                    <div class="text-muted small">THIS MONTH</div>
-                    <div class="h5">{{ \App\Models\Job::whereMonth('created_at', now()->month)->count() }}</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card p-3">
-                    <div class="text-muted small">OPEN</div>
-                    <div class="h5">{{ \App\Models\Job::whereIn('status', ['pending','in_progress'])->count() }}</div>
-                </div>
-            </div>
-        </div>
+        <div class="row row-cards">
+            <form action="{{ route('jobs.store') }}" method="POST">
+                @csrf
 
-        <div class="row">
-            {{-- 60% width for Create Job Form --}}
-            <div class="col-lg-7">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Create New Job</h3>
-                    </div>
-                    <div class="card-body">
-                        <form method="POST" action="{{ route('jobs.store') }}">
-                            @csrf
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title text-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                                        <path d="M12 10m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+                                        <path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855" />
+                                    </svg>
+                                    Quick Stats
+                                </h3>
 
-                            {{-- include the job form partial --}}
-                            @include('jobs._form')
-
-                            <div class="d-flex justify-content-end mt-3">
-                                <button class="btn btn-secondary me-2" type="reset">Reset</button>
-                                <button class="btn btn-primary" type="submit">Create Job</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            {{-- 40% width for Recent Jobs List --}}
-            <div class="col-lg-5">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Recent Jobs</h3>
-                        <div class="card-actions">
-                            <a href="{{ route('jobs.list') }}" class="btn btn-sm btn-primary">View All</a>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        @php $recent = \App\Models\Job::with(['customer', 'jobType'])->latest()->limit(10)->get(); @endphp
-
-                        @if($recent->isNotEmpty())
-                            <div class="list-group list-group-flush">
-                                @foreach($recent as $r)
-                                    <div class="list-group-item">
-                                        <div class="row align-items-center">
-                                            <div class="col">
-                                                <div class="text-truncate">
-                                                    <strong>{{ $r->reference_number }}</strong>
-                                                </div>
-                                                <div class="text-muted text-truncate">{{ $r->customer->name ?? 'N/A' }}</div>
-                                                <div class="text-muted small">{{ $r->jobType->name ?? $r->type ?? 'N/A' }}</div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <span class="badge badge-sm
-                                                    @if($r->status === 'completed') bg-success
-                                                    @elseif($r->status === 'in_progress') bg-blue
-                                                    @elseif($r->status === 'on_hold') bg-warning
-                                                    @elseif($r->status === 'cancelled') bg-danger
-                                                    @else bg-secondary
-                                                    @endif">
-                                                    {{ ucfirst(str_replace('_', ' ', $r->status)) }}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="mt-2">
-                                            <div class="btn-list">
-                                                <a href="{{ route('jobs.pdf-job-sheet', $r) }}" class="btn btn-sm btn-primary" title="Download PDF">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><path d="M7 11l5 5l5 -5"/><path d="M12 4l0 12"/></svg>
-                                                    PDF
-                                                </a>
-                                                <a href="{{ route('jobs.edit', $r) }}" class="btn btn-sm btn-white" title="Edit">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"/><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"/><path d="M16 5l3 3"/></svg>
-                                                    Edit
-                                                </a>
-                                                <a href="{{ route('jobs.show', $r) }}" class="btn btn-sm btn-white" title="View">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="2"/><path d="M22 12c-2.667 4.667-6 7-10 7s-7.333-2.333-10-7c2.667-4.667 6-7 10-7s7.333 2.333 10 7"/></svg>
-                                                    View
-                                                </a>
+                                <!-- Stats Section -->
+                                <div class="row g-2 mb-3">
+                                    <div class="col-6">
+                                        <div class="card card-sm bg-primary-lt">
+                                            <div class="card-body text-center">
+                                                <div class="text-muted small">Total</div>
+                                                <div class="h3 m-0 text-primary">{{ \App\Models\Job::count() }}</div>
                                             </div>
                                         </div>
                                     </div>
-                                @endforeach
+                                    <div class="col-6">
+                                        <div class="card card-sm bg-warning-lt">
+                                            <div class="card-body text-center">
+                                                <div class="text-muted small">Pending</div>
+                                                <div class="h3 m-0 text-warning">{{ \App\Models\Job::where('status', 'pending')->count() }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="card card-sm bg-info-lt">
+                                            <div class="card-body text-center">
+                                                <div class="text-muted small">This Month</div>
+                                                <div class="h3 m-0 text-info">{{ \App\Models\Job::whereMonth('created_at', now()->month)->count() }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="card card-sm bg-success-lt">
+                                            <div class="card-body text-center">
+                                                <div class="text-muted small">Open</div>
+                                                <div class="h3 m-0 text-success">{{ \App\Models\Job::whereIn('status', ['pending','in_progress'])->count() }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tips Section -->
+                                <h3 class="card-title text-success mt-4 mb-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M3 12h1m8 -9v1m8 8h1m-15.4 -6.4l.7 .7m12.1 -.7l-.7 .7" />
+                                        <path d="M9 16a5 5 0 1 1 6 0a3.5 3.5 0 0 0 -1 3a2 2 0 0 1 -4 0a3.5 3.5 0 0 0 -1 -3" />
+                                        <path d="M9.7 17l4.6 0" />
+                                    </svg>
+                                    Best Practices
+                                </h3>
+
+                                <div class="list-group list-group-flush mb-3">
+                                    <div class="list-group-item px-0">
+                                        <div class="row align-items-center">
+                                            <div class="col-auto">
+                                                <span class="avatar bg-blue text-white">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                        <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+                                                        <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                            <div class="col">
+                                                <div class="text-truncate">
+                                                    <strong>Customer Details</strong>
+                                                </div>
+                                                <div class="text-muted small">Complete contact info</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="list-group-item px-0">
+                                        <div class="row align-items-center">
+                                            <div class="col-auto">
+                                                <span class="avatar bg-orange text-white">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                        <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+                                                        <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                            <div class="col">
+                                                <div class="text-truncate">
+                                                    <strong>Select Job Type</strong>
+                                                </div>
+                                                <div class="text-muted small">Choose service category</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="list-group-item px-0">
+                                        <div class="row align-items-center">
+                                            <div class="col-auto">
+                                                <span class="avatar bg-cyan text-white">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                                                        <path d="M12 7l0 5l3 3" />
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                            <div class="col">
+                                                <div class="text-truncate">
+                                                    <strong>Set Duration</strong>
+                                                </div>
+                                                <div class="text-muted small">Estimated completion time</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="list-group-item px-0">
+                                        <div class="row align-items-center">
+                                            <div class="col-auto">
+                                                <span class="avatar bg-teal text-white">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                        <path d="M8 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h5.5" />
+                                                        <path d="M16 3l0 4" />
+                                                        <path d="M8 3l0 4" />
+                                                        <path d="M4 11l16 0" />
+                                                        <path d="M11 15l0 .01" />
+                                                        <path d="M12 15l0 .01" />
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                            <div class="col">
+                                                <div class="text-truncate">
+                                                    <strong>Detailed Notes</strong>
+                                                </div>
+                                                <div class="text-muted small">Add job requirements</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="alert alert-success mb-0">
+                                    <div class="d-flex">
+                                        <div>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                <path d="M5 12l5 5l10 -10" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h4 class="alert-title">Pro Tip!</h4>
+                                            <div class="text-muted">Clear job descriptions and accurate duration estimates help improve customer satisfaction and workflow planning.</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        @else
-                            <div class="empty p-4">
-                                <p class="empty-title">No jobs found</p>
-                                <p class="empty-subtitle text-muted">Create your first job using the form.</p>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h3 class="card-title">
+                                        {{ __('Create New Job') }}
+                                    </h3>
+                                </div>
+
+                                <div class="card-actions">
+                                    <a href="{{ route('jobs.list') }}" class="btn-action" title="View All Jobs">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M9 6l6 6l-6 6" />
+                                        </svg>
+                                    </a>
+                                </div>
                             </div>
-                        @endif
+                            <div class="card-body">
+                                <div class="row row-cards">
+                                    <!-- Customer Information Section -->
+                                    <div class="col-12">
+                                        <div class="mb-3">
+                                            <h4 class="text-primary mb-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler me-1" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                    <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+                                                    <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                                                </svg>
+                                                Customer Information
+                                            </h4>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label for="new_customer_name" class="form-label required">
+                                                {{ __('Customer Name') }}
+                                            </label>
+                                            <input type="text"
+                                                   name="new_customer_name"
+                                                   id="new_customer_name"
+                                                   class="form-control @error('new_customer_name') is-invalid @enderror"
+                                                   value="{{ old('new_customer_name') }}"
+                                                   placeholder="Enter customer full name"
+                                                   required>
+                                            @error('new_customer_name')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="mb-3">
+                                            <label for="new_customer_phone" class="form-label">
+                                                {{ __('Phone Number') }}
+                                            </label>
+                                            <input type="text"
+                                                   name="new_customer_phone"
+                                                   id="new_customer_phone"
+                                                   class="form-control @error('new_customer_phone') is-invalid @enderror"
+                                                   value="{{ old('new_customer_phone') }}"
+                                                   placeholder="Enter phone number">
+                                            @error('new_customer_phone')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="mb-3">
+                                            <label for="new_customer_address" class="form-label">
+                                                {{ __('Address') }}
+                                            </label>
+                                            <input type="text"
+                                                   name="new_customer_address"
+                                                   id="new_customer_address"
+                                                   class="form-control @error('new_customer_address') is-invalid @enderror"
+                                                   value="{{ old('new_customer_address') }}"
+                                                   placeholder="Enter customer address">
+                                            @error('new_customer_address')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <!-- Job Details Section -->
+                                    <div class="col-12">
+                                        <hr class="my-3">
+                                        <div class="mb-3">
+                                            <h4 class="text-success mb-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler me-1" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                    <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+                                                    <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+                                                </svg>
+                                                Service Details
+                                            </h4>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="mb-3">
+                                            <label for="job_type_id" class="form-label">
+                                                {{ __('Job Type') }}
+                                            </label>
+                                            <select name="job_type_id"
+                                                    id="job_type_id"
+                                                    class="form-select @error('job_type_id') is-invalid @enderror">
+                                                <option value="">-- {{ __('Select job type') }} --</option>
+                                                @foreach(\App\Models\JobType::all() as $type)
+                                                    <option value="{{ $type->id }}"
+                                                            data-default="{{ $type->default_days ?? '' }}"
+                                                            @if(old('job_type_id') == $type->id) selected @endif>
+                                                        {{ $type->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <small class="form-hint">Manage job types in Settings → Job Types</small>
+                                            @error('job_type_id')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="mb-3">
+                                            <label for="estimated_duration" class="form-label">
+                                                {{ __('Estimated Duration (Days)') }}
+                                            </label>
+                                            <input type="number"
+                                                   name="estimated_duration"
+                                                   id="estimated_duration"
+                                                   class="form-control @error('estimated_duration') is-invalid @enderror"
+                                                   min="0"
+                                                   value="{{ old('estimated_duration') }}"
+                                                   placeholder="Enter number of days">
+                                            @error('estimated_duration')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="mb-3">
+                                            <label for="status" class="form-label">
+                                                {{ __('Status') }}
+                                            </label>
+                                            <select name="status"
+                                                    id="status"
+                                                    class="form-select @error('status') is-invalid @enderror">
+                                                @foreach(\App\Models\Job::statuses() as $status)
+                                                    <option value="{{ $status }}" @if(old('status') == $status) selected @endif>
+                                                        {{ ucfirst(str_replace('_', ' ', $status)) }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('status')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label for="description" class="form-label">
+                                                {{ __('Job Description') }}
+                                            </label>
+                                            <textarea name="description"
+                                                      id="description"
+                                                      rows="6"
+                                                      class="form-control @error('description') is-invalid @enderror"
+                                                      placeholder="Enter detailed job description, requirements, and any special instructions...">{{ old('description') }}</textarea>
+                                            @error('description')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-footer text-end">
+                                <button type="reset" class="btn btn-outline-secondary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
+                                        <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
+                                    </svg>
+                                    {{ __('Reset') }}
+                                </button>
+
+                                <button type="submit" class="btn btn-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+                                        <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                        <path d="M14 4l0 4l-6 0l0 -4" />
+                                    </svg>
+                                    {{ __('Create Job') }}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
 
     </div>
 </div>
-@include('partials._job_receipt_modal')
+
+@push('page-scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const typeSelect = document.getElementById('job_type_id');
+            const estInput = document.getElementById('estimated_duration');
+
+            if (!typeSelect || !estInput) return;
+
+            typeSelect.addEventListener('change', function() {
+                const opt = typeSelect.options[typeSelect.selectedIndex];
+                const def = opt ? opt.dataset.default : null;
+
+                // Only autofill if estimated duration is empty
+                if ((estInput.value === null || estInput.value === '' ) && def !== undefined && def !== '') {
+                    estInput.value = def;
+                }
+            });
+        });
+    </script>
+@endpush
 
 @endsection

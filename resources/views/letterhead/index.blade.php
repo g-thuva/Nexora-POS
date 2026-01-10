@@ -433,7 +433,7 @@
                                                     <div id="elementProperties">
                                                         <p class="text-muted">Select an element to edit its properties</p>
                                                     </div>
-                                                    <button type="button" class="btn btn-success w-100 mt-3" id="savePositions">
+                                                    <button type="button" class="btn btn-primary w-100 mt-3" id="savePositions">
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                             <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                                                             <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-16a2 2 0 0 1 2 -2"/>
@@ -514,7 +514,7 @@
                                                                 </button>
                                                             </div>
                                                             <div class="col-6 mb-2">
-                                                                <button type="button" class="btn btn-success btn-sm alignment-preset w-100 active" data-preset="balanced">
+                                                                <button type="button" class="btn btn-sm alignment-preset w-100 active" data-preset="balanced">
                                                                     <i class="fas fa-balance-scale"></i> Balanced ⭐<br><small>25px equal margins</small>
                                                                 </button>
                                                             </div>
@@ -559,7 +559,7 @@
                                             <!-- Test PDF Button -->
                                             <div class="mt-3">
                                                 @if($testOrderId)
-                                                <a href="{{ route('orders.download-pdf-bill', $testOrderId) }}" class="btn btn-info w-100" target="_blank">
+                                                <a href="{{ route('orders.download-pdf-bill', $testOrderId) }}" class="btn w-100" target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                                                         <path d="M14 3v4a1 1 0 0 0 1 1h4"/>
@@ -708,7 +708,7 @@
                                             </div>
 
                                             <div class="mt-3">
-                                                <button id="savePositions" class="btn btn-success w-100">
+                                                <button id="savePositions" class="btn btn-primary w-100">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                                                         <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2"/>
@@ -719,7 +719,7 @@
                                                 </button>
 
                                                 @if($testOrderId)
-                                                <a href="{{ route('orders.download-pdf-bill', $testOrderId) }}" class="btn btn-info w-100 mt-2" target="_blank">
+                                                <a href="{{ route('orders.download-pdf-bill', $testOrderId) }}" class="btn w-100 mt-2" target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                                                         <path d="M14 3v4a1 1 0 0 0 1 1h4"/>

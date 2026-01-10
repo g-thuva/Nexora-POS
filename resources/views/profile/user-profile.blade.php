@@ -17,52 +17,52 @@
 <div class="page-body">
     <div class="container-xl">
         <x-alert/>
-        
+
         <div class="row row-cards">
             <!-- Profile Picture Card -->
             <div class="col-lg-4">
                 <div class="card">
                     <div class="card-body text-center">
                         <img
-                            class="rounded-circle mb-3 shadow-sm"
-                            src="{{ $user->photo ? asset('storage/profile/'.$user->photo) : asset('assets/img/demo/user-placeholder.svg') }}"
+                            class="rounded-circle mb-3 shadow-sm mx-auto d-block"
+                            src="{{ $user->photo ? asset('storage/profile/'.$user->photo).'?t='.time() : asset('assets/img/demo/user-placeholder.svg') }}"
                             id="image-preview"
-                            style="width: 150px; height: 150px; object-fit: cover; border: 4px solid #e5e7eb;"
+                            style="width: 150px; height: 150px; object-fit: cover; object-position: center; border: 4px solid #e5e7eb;"
                         />
                         <h3 class="mb-1">{{ $user->name }}</h3>
                         <div class="text-muted mb-2">{{ $user->getRoleDisplayName() }}</div>
                         <div class="mb-3">
                             <span class="badge bg-blue-lt">{{ $user->email }}</span>
                         </div>
-                        
-                        <form action="{{ route('user.profile.update') }}" method="POST" enctype="multipart/form-data">
+
+                        <form action="{{ route('user.profile.update') }}" method="POST" enctype="multipart/form-data" id="photoForm">
                             @csrf
                             @method('patch')
+                            <input type="hidden" name="photo_only" value="1">
                             <div class="mb-3">
-                                <label for="image" class="form-label">Update Profile Photo</label>
-                                <input 
-                                    class="form-control @error('photo') is-invalid @enderror" 
-                                    type="file"  
-                                    id="image" 
-                                    name="photo" 
-                                    accept="image/*" 
-                                    onchange="previewImage();"
+                                <label for="image" class="btn btn-primary w-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M15 8h.01"/>
+                                        <path d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z"/>
+                                        <path d="M3.5 15.5l4.5 -4.5c.928 -.893 2.072 -.893 3 0l5 5"/>
+                                        <path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l2.5 2.5"/>
+                                    </svg>
+                                    Choose Photo
+                                </label>
+                                <input
+                                    class="form-control d-none @error('photo') is-invalid @enderror"
+                                    type="file"
+                                    id="image"
+                                    name="photo"
+                                    accept="image/*"
+                                    onchange="previewImage(); this.form.submit();"
                                 >
                                 @error('photo')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
+                                <small class="form-hint text-center d-block mt-2">Max file size: 5MB</small>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                    <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
-                                    <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
-                                    <path d="M16 5l3 3" />
-                                </svg>
-                                Update Photo
-                            </button>
                         </form>
 
                         @if($user->shop)
@@ -85,16 +85,17 @@
                         <form action="{{ route('user.profile.update') }}" method="POST">
                             @csrf
                             @method('patch')
-                            
+
                             <div class="row mb-3">
                                 <div class="col-md-12">
                                     <label for="name" class="form-label required">Full Name</label>
-                                    <input 
-                                        type="text" 
-                                        class="form-control @error('name') is-invalid @enderror" 
-                                        id="name" 
-                                        name="name" 
+                                    <input
+                                        type="text"
+                                        class="form-control @error('name') is-invalid @enderror"
+                                        id="name"
+                                        name="name"
                                         value="{{ old('name', $user->name) }}"
+                                        placeholder="Enter your full name"
                                         required
                                     >
                                     @error('name')
@@ -107,46 +108,38 @@
 
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label for="username" class="form-label required">Username</label>
-                                    <input 
-                                        type="text" 
-                                        class="form-control @error('username') is-invalid @enderror" 
-                                        id="username" 
-                                        name="username" 
-                                        value="{{ old('username', $user->username) }}"
-                                        required
+                                    <label class="form-label">Username</label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        value="{{ $user->username }}"
+                                        readonly
+                                        disabled
+                                        style="background-color: #e9ecef; cursor: not-allowed;"
                                     >
-                                    @error('username')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                    <small class="form-hint">Must be 4-25 characters, alphanumeric and dashes only</small>
+                                    <small class="form-hint">Username cannot be changed</small>
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label for="email" class="form-label required">Email Address</label>
-                                    <input 
-                                        type="email" 
-                                        class="form-control @error('email') is-invalid @enderror" 
-                                        id="email" 
-                                        name="email" 
-                                        value="{{ old('email', $user->email) }}"
-                                        required
+                                    <label class="form-label">Email Address</label>
+                                    <input
+                                        type="email"
+                                        class="form-control"
+                                        value="{{ $user->email }}"
+                                        readonly
+                                        disabled
+                                        style="background-color: #e9ecef; cursor: not-allowed;"
                                     >
-                                    @error('email')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
                                     @if($user->email_verified_at)
                                     <small class="form-hint text-success">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                                             <path d="M5 12l5 5l10 -10" />
                                         </svg>
-                                        Verified
+                                        Email verified - cannot be changed
                                     </small>
+                                    @else
+                                    <small class="form-hint">Email cannot be changed</small>
                                     @endif
                                 </div>
                             </div>

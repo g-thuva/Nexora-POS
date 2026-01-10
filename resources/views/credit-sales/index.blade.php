@@ -25,7 +25,7 @@
             </div>
             <div class="col-auto ms-auto d-print-none">
                 <div class="btn-list">
-                    <a href="{{ route('credit-sales.overdue') }}" class="btn btn-warning d-none d-sm-inline-block">
+                    <a href="{{ route('credit-sales.overdue') }}" class="btn d-none d-sm-inline-block">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16"
                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                             stroke-linecap="round" stroke-linejoin="round">
@@ -36,7 +36,7 @@
                         </svg>
                         Overdue Report
                     </a>
-                    <a href="{{ route('orders.create') }}" class="btn btn-primary d-none d-sm-inline-block">
+                    <a href="{{ route('orders.create') }}" class="btn d-none d-sm-inline-block">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16"
                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                             stroke-linecap="round" stroke-linejoin="round">
@@ -295,7 +295,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-success">Record Payment</button>
+                        <button type="submit" class="btn">Record Payment</button>
                     </div>
                 </form>
             </div>

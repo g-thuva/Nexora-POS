@@ -11,7 +11,7 @@
             </div>
             <div class="col-auto ms-auto d-print-none">
                 <div class="btn-list">
-                    <a href="{{ url('/jobs?filter=overdue') }}" class="btn btn-warning">Overdue Report</a>
+                    <a href="{{ url('/jobs?filter=overdue') }}" class="btn">Overdue Report</a>
                     <a href="{{ route('jobs.index') }}" class="btn btn-primary">+ New Job</a>
                 </div>
             </div>

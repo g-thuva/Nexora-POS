@@ -13,28 +13,21 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
-        $categories = collect([
+        // Seed default "Other" category - works for both new installations
+        // and existing systems with multiple shops
+        Category::updateOrCreate(
             [
-                'id'    => 1,
-                'name'  => 'Other',
-                'slug'  => 'other',
-                'created_at' => now()
+                'slug' => 'other',
+                'shop_id' => null  // Global category available to all shops
+            ],
+            [
+                'name' => 'Other',
+                'slug' => 'other',
+                'shop_id' => null,
+                'created_by' => null,
+                'created_at' => now(),
+                'updated_at' => now()
             ]
-        ]);
-
-        $categories->each(function ($category){
-            // Use slug as the unique key so running seeds multiple times is safe
-            $attributes = [
-                'name' => $category['name'],
-                'slug' => $category['slug'],
-            ];
-
-            $values = $category;
-            unset($values['id']);
-
-            Category::updateOrCreate([
-                'slug' => $category['slug']
-            ], $values);
-        });
+        );
     }
 }

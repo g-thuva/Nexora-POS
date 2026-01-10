@@ -102,7 +102,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3">
-                                <a href="{{ route('admin.shops.index') }}" class="btn btn-primary w-100 mb-2">
+                                <a href="{{ route('admin.shops.index') }}" class="btn btn-white w-100 mb-2">
                                     <svg class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                         <path d="M3 21l18 0"></path>
@@ -115,7 +115,7 @@
                                 </a>
                             </div>
                             <div class="col-md-3">
-                                <a href="{{ route('admin.users.index') }}" class="btn btn-info w-100 mb-2">
+                                <a href="{{ route('admin.users.index') }}" class="btn w-100 mb-2">
                                     <svg class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                         <circle cx="9" cy="7" r="4"></circle>
@@ -183,7 +183,7 @@
                                         LKR {{ number_format($shop->monthly_fee, 2) }}
                                     </td>
                                     <td>
-                                        <a href="{{ route('admin.shops.show', $shop) }}" class="btn btn-sm btn-primary">
+                                        <a href="{{ route('admin.shops.show', $shop) }}" class="btn btn-sm btn-white">
                                             Manage
                                         </a>
                                     </td>

@@ -20,12 +20,23 @@
                         </svg>
                     </div>
                     <div>
-                        <h4 class="alert-title">Login Failed!</h4>
-                        <div class="text-muted">
-                            @foreach ($errors->all() as $error)
-                                <div>{{ $error }}</div>
-                            @endforeach
-                        </div>
+                        @foreach ($errors->all() as $error)
+                            @if(str_contains($error, '|'))
+                                @php
+                                    $parts = explode('|', $error);
+                                @endphp
+                                <h4 class="alert-title text-danger mb-2">{{ $parts[0] }}</h4>
+                                @if(isset($parts[1]))
+                                    <div class="mb-2"><strong>Reason:</strong> {{ $parts[1] }}</div>
+                                @endif
+                                @if(isset($parts[2]))
+                                    <div class="text-muted">{{ $parts[2] }}</div>
+                                @endif
+                            @else
+                                <h4 class="alert-title">Login Failed!</h4>
+                                <div class="text-muted">{{ $error }}</div>
+                            @endif
+                        @endforeach
                     </div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -81,7 +92,7 @@
 
             <div class="mb-2">
                 <label for="remember" class="form-check">
-                    <input type="checkbox" id="remember" name="remember" class="form-check-input"/>
+                    <input type="checkbox" id="remember" name="remember" value="1" class="form-check-input" {{ old('remember') ? 'checked' : '' }}/>
                     <span class="form-check-label">Remember me on this device</span>
                 </label>
             </div>
@@ -133,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (submitBtn) {
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Signing in...';
-                
+
                 // Re-enable after 10 seconds in case of network issues
                 setTimeout(function() {
                     if (submitBtn) {

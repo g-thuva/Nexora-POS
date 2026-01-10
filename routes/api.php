@@ -19,7 +19,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('products/', [ProductController::class, 'index'])->name('api.product.index');
+// Apply rate limiting to public API endpoints
+Route::middleware(['api.rate.limit'])->group(function () {
+    Route::get('products/', [ProductController::class, 'index'])->name('api.product.index');
+});
 
 // Payment routes
 Route::post('payments/process', [\App\Http\Controllers\API\V1\PaymentController::class, 'processPayment'])->name('api.payment.process');
@@ -30,7 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('units', function () {
         return \App\Models\Unit::select(['id', 'name', 'short_code'])->get();
     })->name('api.units.index');
-    
+
     Route::get('warranties', function () {
         return \App\Models\Warranty::select(['id', 'name', 'duration'])->get();
     })->name('api.warranties.index');

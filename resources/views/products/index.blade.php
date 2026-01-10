@@ -26,7 +26,7 @@
                 </div>
                 <div class="col-auto ms-auto d-print-none">
                     <div class="btn-list">
-                        <a href="{{ route('products.create') }}" class="btn btn-primary d-none d-sm-inline-block">
+                        <a href="{{ route('products.create') }}" class="btn d-none d-sm-inline-block">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16"
                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                 stroke-linecap="round" stroke-linejoin="round">
@@ -37,7 +37,7 @@
                             New Product
                         </a>
                         @if($categories->isNotEmpty())
-                        <a href="{{ route('categories.index') }}" class="btn btn-success d-none d-sm-inline-block">
+                        <a href="{{ route('categories.index') }}" class="btn d-none d-sm-inline-block">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16"
                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                 stroke-linecap="round" stroke-linejoin="round">

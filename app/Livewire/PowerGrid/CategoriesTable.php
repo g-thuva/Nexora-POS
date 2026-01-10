@@ -94,20 +94,20 @@ final class CategoriesTable extends PowerGridComponent
         return [
             Button::make('show', file_get_contents('assets/svg/eye.svg'))
 //                ->slot('Show')
-                ->class('btn btn-outline-info btn-icon w-100')
+                ->class('btn btn-white btn-icon w-100')
                 ->tooltip('Show Category Details')
                 ->route('categories.show', ['category' => $row])
                 ->method('get'),
 
             Button::make('edit', file_get_contents('assets/svg/edit.svg'))
-                ->class('btn btn-outline-warning btn-icon w-100')
+                ->class('btn btn-white btn-icon w-100')
                 ->route('categories.edit', ['category' => $row])
                 ->method('get')
                 ->tooltip('Edit Category'),
 
             Button::add('delete')
                 ->slot(file_get_contents('assets/svg/trash.svg'))
-                ->class('btn btn-outline-danger btn-icon w-100')
+                ->class('btn btn-white btn-icon w-100')
                 ->tooltip('Delete Category')
                 ->route('categories.destroy', ['category' => $row])
                 ->method('delete'),

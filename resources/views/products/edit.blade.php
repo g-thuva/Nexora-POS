@@ -27,34 +27,107 @@
                     <div class="col-lg-4">
                         <div class="card">
                             <div class="card-body">
-                                <h3 class="card-title">
-                                    {{ __('Product Image') }}
+                                <h3 class="card-title text-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chart-pie me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M10 3.2a9 9 0 1 0 10.8 10.8a1 1 0 0 0 -1 -1h-6.8a2 2 0 0 1 -2 -2v-7a.9 .9 0 0 0 -1 -.8" />
+                                        <path d="M15 3.5a9 9 0 0 1 5.5 5.5h-4.5a1 1 0 0 1 -1 -1v-4.5" />
+                                    </svg>
+                                    Product Overview
                                 </h3>
 
-                                <img
-                                    class="img-account-profile mb-2"
-                                    src="{{ $product->product_image ? asset('storage/products/'.$product->product_image) : asset('assets/img/products/default.webp') }}"
-                                    id="image-preview"
-                                >
-
-                                <div class="small font-italic text-muted mb-2">
-                                    JPG or PNG no larger than 2 MB
+                                <div class="mb-3">
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <div class="card card-sm">
+                                                <div class="card-body">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-auto">
+                                                            <span class="bg-success text-white avatar">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 21l18 0" /><path d="M3 7v1a3 3 0 0 0 6 0v-1m0 1a3 3 0 0 0 6 0v-1m0 1a3 3 0 0 0 6 0v-1h-18l2 -4h14l2 4" /><path d="M5 21l0 -10.15" /><path d="M19 21l0 -10.15" /><path d="M9 21v-4a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v4" /></svg>
+                                                            </span>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="font-weight-medium">
+                                                                {{ number_format($product->quantity) }}
+                                                            </div>
+                                                            <div class="text-muted small">In Stock</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="card card-sm">
+                                                <div class="card-body">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-auto">
+                                                            <span class="bg-warning text-white avatar">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 9v4" /><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z" /><path d="M12 16h.01" /></svg>
+                                                            </span>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="font-weight-medium">
+                                                                {{ $product->quantity_alert }}
+                                                            </div>
+                                                            <div class="text-muted small">Alert Level</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="card card-sm">
+                                                <div class="card-body">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-auto">
+                                                            <span class="bg-info text-white avatar">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 10h14" /><path d="M12 14h9" /><path d="M3 6l3 2v10" /></svg>
+                                                            </span>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="font-weight-medium">
+                                                                LKR {{ number_format($product->selling_price, 2) }}
+                                                            </div>
+                                                            <div class="text-muted small">Selling Price</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    id="image"
-                                    name="product_image"
-                                    class="form-control @error('product_image') is-invalid @enderror"
-                                    onchange="previewImage();"
-                                >
+                                @php
+                                    $stockStatus = 'success';
+                                    $stockMessage = 'Product is well stocked';
+                                    $stockIcon = '<path d="M5 12l5 5l10 -10" />';
 
-                                @error('product_image')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
+                                    if ($product->quantity <= 0) {
+                                        $stockStatus = 'danger';
+                                        $stockMessage = 'Out of stock - urgent restock needed';
+                                        $stockIcon = '<path d="M12 9v4" /><path d="M12 16h.01" />';
+                                    } elseif ($product->quantity <= $product->quantity_alert) {
+                                        $stockStatus = 'warning';
+                                        $stockMessage = 'Low stock - consider restocking soon';
+                                        $stockIcon = '<path d="M12 9v4" /><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z" /><path d="M12 16h.01" />';
+                                    }
+                                @endphp
+
+                                <div class="alert alert-{{ $stockStatus }} mb-0">
+                                    <div class="d-flex">
+                                        <div>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                {!! $stockIcon !!}
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h4 class="alert-title">Stock Status</h4>
+                                            <div class="text-muted">{{ $stockMessage }}</div>
+                                        </div>
+                                    </div>
                                 </div>
-                                @enderror
                             </div>
                         </div>
                     </div>

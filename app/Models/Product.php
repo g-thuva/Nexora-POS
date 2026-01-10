@@ -36,6 +36,42 @@ class Product extends Model
         'updated_at' => 'datetime',
     ];
 
+    /**
+     * Boot method to auto-generate SKU/code when creating products
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($product) {
+            if (empty($product->code)) {
+                $product->code = static::generateSku();
+            }
+        });
+    }
+
+    /**
+     * Generate unique code in format PRD00001, PRD00002, ...
+     */
+    public static function generateSku(): string
+    {
+        $prefix = 'PRD';
+
+        // Find the latest PRD code and increment its numeric part
+        $lastWithPrefix = static::where('code', 'like', $prefix . '%')
+            ->orderBy('code', 'desc')
+            ->first();
+
+        $nextNumber = 1;
+        if ($lastWithPrefix && isset($lastWithPrefix->code)) {
+            // Extract numeric part (last 5 digits)
+            $number = (int) substr($lastWithPrefix->code, strlen($prefix));
+            $nextNumber = $number + 1;
+        }
+
+        return $prefix . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+    }
+
     public function getRouteKeyName(): string
     {
         return 'slug';
@@ -82,9 +118,13 @@ class Product extends Model
         );
     }
 
+    /**
+     * Enhanced search scope to search by name, code (SKU), and ID
+     */
     public function scopeSearch($query, $value): void
     {
         $query->where('name', 'like', "%{$value}%")
-            ->orWhere('code', 'like', "%{$value}%");
+            ->orWhere('code', 'like', "%{$value}%")
+            ->orWhere('id', 'like', "%{$value}%");
     }
 }

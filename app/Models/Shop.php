@@ -17,13 +17,24 @@ class Shop extends Model
         'owner_id',
         'is_active',
         'letterhead_config',
-        'job_letterhead_config'
+        'job_letterhead_config',
+        'subscription_start_date',
+        'subscription_end_date',
+        'subscription_status',
+        'is_suspended',
+        'suspended_at',
+        'suspended_by',
+        'suspension_reason'
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'is_suspended' => 'boolean',
         'letterhead_config' => 'array',
         'job_letterhead_config' => 'array',
+        'subscription_start_date' => 'date',
+        'subscription_end_date' => 'date',
+        'suspended_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];
@@ -32,6 +43,11 @@ class Shop extends Model
     public function owner()
     {
         return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    public function suspendedBy()
+    {
+        return $this->belongsTo(User::class, 'suspended_by');
     }
 
     public function users()

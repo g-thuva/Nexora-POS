@@ -292,7 +292,7 @@ return new class extends Migration
         // FAILED JOBS
         Schema::create('failed_jobs', function (Blueprint $table) {
             $table->id();
-            $table->uuid();
+            $table->uuid('uuid')->unique();
             $table->text('connection');
             $table->text('queue');
             $table->longText('payload');
@@ -309,6 +309,8 @@ return new class extends Migration
             $table->text('data');
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
+
+            $table->index(['notifiable_type', 'notifiable_id']);
         });
 
         // PERSONAL ACCESS TOKENS
@@ -323,6 +325,8 @@ return new class extends Migration
                 $table->timestamp('last_used_at')->nullable();
                 $table->timestamp('expires_at')->nullable();
                 $table->timestamps();
+
+                $table->index(['tokenable_type', 'tokenable_id']);
             });
         }
 
@@ -356,6 +360,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Drop in reverse order of creation
         Schema::dropIfExists('payments');
         Schema::dropIfExists('shoppingcart');
         Schema::dropIfExists('personal_access_tokens');
@@ -377,6 +382,12 @@ return new class extends Migration
         Schema::dropIfExists('categories');
         Schema::dropIfExists('units');
         Schema::dropIfExists('warranties');
+
+        // Drop users.shop_id foreign key before dropping shops table
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropForeign(['shop_id']);
+        });
+
         Schema::dropIfExists('shops');
         Schema::dropIfExists('users');
     }

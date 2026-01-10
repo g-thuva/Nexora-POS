@@ -3,6 +3,41 @@
 @section('title', 'Weekly Sales Report')
 
 @section('content')
+<div class="page-header d-print-none">
+    <div class="container-fluid">
+        <div class="row g-2 align-items-center">
+            <div class="col">
+                <div class="page-pretitle">
+                    Sales Reports
+                </div>
+                <h2 class="page-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <rect x="4" y="5" width="16" height="16" rx="2"/>
+                        <line x1="16" y1="3" x2="16" y2="7"/>
+                        <line x1="8" y1="3" x2="8" y2="7"/>
+                        <line x1="4" y1="11" x2="20" y2="11"/>
+                        <rect x="8" y="15" width="2" height="2"/>
+                    </svg>
+                    Weekly Sales Report
+                </h2>
+                <p class="text-muted">Week of {{ $selectedWeek->format('M j, Y') }} - Analyze weekly sales performance and trends</p>
+            </div>
+            <div class="col-auto ms-auto d-print-none">
+                <div class="btn-list">
+                    <a href="{{ route('reports.sales.index') }}" class="btn btn-outline-secondary d-none d-sm-inline-block">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1"/>
+                        </svg>
+                        Back to Reports
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="page-body">
     <div class="container-fluid">
         <div class="row row-deck row-cards">
@@ -46,7 +81,7 @@
                                         </svg>
                                         Previous Week
                                     </a>
-                                    <a href="{{ route('reports.sales.weekly', ['week' => now()->startOfWeek()->format('Y-m-d')]) }}" class="btn btn-success">This Week</a>
+                                    <a href="{{ route('reports.sales.weekly', ['week' => now()->startOfWeek()->format('Y-m-d')]) }}" class="btn">This Week</a>
                                     <a href="{{ route('reports.sales.weekly', ['week' => $selectedWeek->copy()->addWeek()->format('Y-m-d')]) }}" class="btn btn-outline-success">
                                         Next Week
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -243,16 +278,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const days = [];
     const sales = [];
     const orders = [];
-    
+
     // Generate 7 days starting from selected week
     const startDate = new Date(selectedWeek);
     for (let i = 0; i < 7; i++) {
         const currentDate = new Date(startDate);
         currentDate.setDate(startDate.getDate() + i);
         const dateKey = currentDate.toISOString().split('T')[0];
-        
+
         days.push(currentDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }));
-        
+
         const dayData = dailyData[dateKey];
         sales.push(dayData ? parseFloat(dayData.total_sales) : 0);
         orders.push(dayData ? parseInt(dayData.order_count) : 0);

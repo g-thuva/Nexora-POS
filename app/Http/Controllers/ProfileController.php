@@ -24,46 +24,49 @@ class ProfileController extends Controller
     /**
      * Update user profile from user profile page
      */
-    public function userProfileUpdate(ProfileUpdateRequest $request): RedirectResponse
+    public function userProfileUpdate(Request $request): RedirectResponse
     {
-        $user = $request->user()->fill($request->validated());
+        $user = $request->user();
 
+        // Check if this is a photo-only upload
+        if ($request->has('photo_only') && $request->photo_only == '1')
+        {
+            // Only handle photo upload
+            if ($file = $request->file('photo'))
+            {
+                $rules = ['photo' => 'image|file|max:5120'];
+                $request->validate($rules);
+
+                $fileName = hexdec(uniqid()).'.'.$file->getClientOriginalExtension();
+                $path = 'public/profile/';
+
+                // Delete old photo if exists
+                if($user->photo)
+                {
+                    Storage::delete($path . $user->photo);
+                }
+
+                // Store new photo
+                $file->storeAs($path, $fileName);
+
+                User::where('id', $user->id)->update(['photo' => $fileName]);
+
+                return redirect()
+                    ->route('user.profile')
+                    ->with('success', 'Profile photo has been updated!');
+            }
+
+            return redirect()
+                ->route('user.profile')
+                ->with('error', 'No photo file selected.');
+        }
+
+        // Handle regular profile update (name only)
         $rules = [
             'name' => 'required|max:50',
-            'photo' => 'image|file|max:1024',
-            'email' => 'required|email|max:50|unique:users,email,'.$user->id,
-            'username' => 'required|min:4|max:25|alpha_dash:ascii|unique:users,username,'.$user->id
         ];
 
         $validatedData = $request->validate($rules);
-
-        if ($validatedData['email'] != $user->email)
-        {
-            $validatedData['email_verified_at'] = null;
-        }
-
-        /**
-         * Handle upload image
-         */
-        if ($file = $request->file('photo'))
-        {
-            $fileName = hexdec(uniqid()).'.'.$file->getClientOriginalExtension();
-            $path = 'public/profile/';
-
-            /**
-             * Delete an image if exists.
-             */
-            if($user->photo)
-            {
-                Storage::delete($path . $user->photo);
-            }
-
-            /**
-             * Store an image to Storage.
-             */
-            $file->storeAs($path, $fileName);
-            $validatedData['photo'] = $fileName;
-        }
 
         User::where('id', $user->id)->update($validatedData);
 
@@ -79,46 +82,50 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(Request $request): RedirectResponse
     {
-        $user = $request->user()->fill($request->validated());
+        $user = $request->user();
 
+        // Check if this is a photo-only upload
+        if ($request->has('photo_only') && $request->photo_only == '1')
+        {
+            // Only handle photo upload
+            if ($file = $request->file('photo'))
+            {
+                $rules = ['photo' => 'image|file|max:5120'];
+                $request->validate($rules);
+
+                $fileName = hexdec(uniqid()).'.'.$file->getClientOriginalExtension();
+                $path = 'public/profile/';
+
+                // Delete old photo if exists
+                if($user->photo)
+                {
+                    Storage::delete($path . $user->photo);
+                }
+
+                // Store new photo
+                $file->storeAs($path, $fileName);
+
+                User::where('id', $user->id)->update(['photo' => $fileName]);
+
+                return redirect()
+                    ->route('profile.edit')
+                    ->with('success', 'Profile photo has been updated!');
+            }
+
+            return redirect()
+                ->route('profile.edit')
+                ->with('error', 'No photo file selected.');
+        }
+
+        // Handle regular profile update (name and username only, no email)
         $rules = [
             'name' => 'required|max:50',
-            'photo' => 'image|file|max:1024',
-            'email' => 'required|email|max:50|unique:users,email,'.$user->id,
             'username' => 'required|min:4|max:25|alpha_dash:ascii|unique:users,username,'.$user->id
         ];
 
         $validatedData = $request->validate($rules);
-
-        if ($validatedData['email'] != $user->email)
-        {
-            $validatedData['email_verified_at'] = null;
-        }
-
-        /**
-         * Handle upload image
-         */
-        if ($file = $request->file('photo'))
-        {
-            $fileName = hexdec(uniqid()).'.'.$file->getClientOriginalExtension();
-            $path = 'public/profile/';
-
-            /**
-             * Delete an image if exists.
-             */
-            if($user->photo)
-            {
-                Storage::delete($path . $user->photo);
-            }
-
-            /**
-             * Store an image to Storage.
-             */
-            $file->storeAs($path, $fileName);
-            $validatedData['photo'] = $fileName;
-        }
 
         User::where('id', $user->id)->update($validatedData);
 

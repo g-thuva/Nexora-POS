@@ -143,15 +143,15 @@
                                         {{ number_format($item->total, 2) }}
                                     </td>
                                     <td class="align-middle text-center">
-                                        <button type="button" 
-                                                class="btn btn-sm btn-primary edit-item-btn" 
+                                        <button type="button"
+                                                class="btn btn-sm btn-primary edit-item-btn"
                                                 data-item-id="{{ $item->id }}"
                                                 data-serial="{{ $item->serial_number }}"
                                                 data-warranty-id="{{ $item->warranty_id }}"
                                                 data-warranty-name="{{ $item->warranty_name }}"
                                                 data-warranty-duration="{{ $item->warranty_duration }}"
                                                 data-warranty-years="{{ $item->warranty_years }}"
-                                                data-bs-toggle="modal" 
+                                                data-bs-toggle="modal"
                                                 data-bs-target="#editItemModal">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -203,7 +203,7 @@
                             @csrf
 
                             <button type="submit"
-                                    class="btn btn-success"
+                                    class="btn btn-primary"
                                     onclick="return confirm('Are you sure you want to complete this order?')"
                             >
                                 {{ __('Complete Order') }}
@@ -233,7 +233,7 @@
                             <label for="edit_serial_number" class="form-label">Serial Number</label>
                             <input type="text" class="form-control" id="edit_serial_number" name="serial_number" placeholder="Enter serial number">
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="edit_warranty_id" class="form-label">Warranty</label>
                             <select class="form-select" id="edit_warranty_id" name="warranty_id">
@@ -256,7 +256,7 @@
                         <div id="edit_success_message" class="alert alert-success d-none"></div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Save Changes</button>
                     </div>
                 </form>
@@ -319,7 +319,7 @@
                     if (data.success) {
                         // Update the display in the table
                         document.getElementById('serial-' + itemId).textContent = data.serial_number || '-';
-                        
+
                         let warrantyText = '-';
                         if (data.warranty_name) {
                             warrantyText = `${data.warranty_name} (${data.warranty_duration})`;

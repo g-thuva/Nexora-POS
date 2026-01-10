@@ -41,7 +41,7 @@
                 <div class="col-auto ms-auto d-print-none">
                     <div class="d-flex gap-2 flex-wrap">
                         @if(auth()->user()->role === 'shop_owner' && $shop->owner_id === auth()->id())
-                            <a href="{{ route('admin.shops.edit', $shop) }}" class="btn btn-warning d-none d-sm-inline-block">
+                            <a href="{{ route('admin.shops.edit', $shop) }}" class="btn d-none d-sm-inline-block">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                     stroke-linecap="round" stroke-linejoin="round">
@@ -52,7 +52,7 @@
                                 </svg>
                                 Edit Shop
                             </a>
-                            <a href="{{ route('admin.shops.edit', $shop) }}" class="btn btn-warning d-sm-none btn-icon" aria-label="Edit shop" title="Edit Shop">
+                            <a href="{{ route('admin.shops.edit', $shop) }}" class="btn d-sm-none btn-icon" aria-label="Edit shop" title="Edit Shop">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                     stroke-linecap="round" stroke-linejoin="round">

@@ -29,7 +29,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email', 'exists:users,email'],
+            'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
         ];
     }
@@ -49,6 +49,50 @@ class LoginRequest extends FormRequest
             throw ValidationException::withMessages([
                 $this->email => trans('auth.failed'),
             ]);
+        }
+
+        // Check if user is suspended
+        $user = Auth::user();
+        if ($user && $user->is_suspended) {
+            // Auto-unsuspend if suspension has expired
+            if ($user->suspension_ends_at && now()->greaterThan($user->suspension_ends_at)) {
+                $user->update([
+                    'is_suspended' => false,
+                    'suspension_reason' => null,
+                    'suspension_type' => null,
+                    'suspension_duration' => null,
+                    'suspended_at' => null,
+                    'suspension_ends_at' => null,
+                    'suspended_by' => null,
+                    'last_login_at' => now(),
+                ]);
+            } else {
+                // User is still suspended - logout and show error
+                Auth::logout();
+
+                $suspensionDetails = '';
+
+                if ($user->suspension_ends_at) {
+                    $suspensionDetails = 'This suspension will be lifted on ' . $user->suspension_ends_at->format('F d, Y \a\t H:i A') . '.';
+                } elseif ($user->suspension_type === 'lifetime') {
+                    $suspensionDetails = 'This is a permanent suspension.';
+                } elseif ($user->suspension_type === 'until_payment') {
+                    $suspensionDetails = 'Please complete your payment to reactivate your account.';
+                } elseif ($user->suspension_type === 'manual') {
+                    $suspensionDetails = 'Your account is under review by our team.';
+                }
+
+                $suspensionDetails .= ' Contact administrator at 077 022 1046 to lift the suspension.';
+
+                throw ValidationException::withMessages([
+                    'email' => 'Your account has been suspended.|' . $user->suspension_reason . '|' . $suspensionDetails,
+                ]);
+            }
+        } else {
+            // Update last login for non-suspended users
+            if ($user) {
+                $user->update(['last_login_at' => now()]);
+            }
         }
 
         RateLimiter::clear($this->throttleKey());

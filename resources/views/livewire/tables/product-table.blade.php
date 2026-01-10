@@ -51,44 +51,21 @@
                     </select>
                 </div>
 
-                <!-- View Toggle and Actions -->
+                <!-- Clear Filters Button -->
                 <div class="col-md-2">
-                    <div class="btn-group w-100" role="group">
-                        <button type="button"
-                                wire:click="toggleViewType"
-                                class="btn btn-outline-primary btn-sm"
-                                title="{{ $viewType === 'cards' ? 'Switch to Table View' : 'Switch to Card View' }}">
-                            @if($viewType === 'cards')
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
-                                    <rect width="7" height="7" x="3" y="3" rx="1"/>
-                                    <rect width="7" height="7" x="14" y="3" rx="1"/>
-                                    <rect width="7" height="7" x="14" y="14" rx="1"/>
-                                    <rect width="7" height="7" x="3" y="14" rx="1"/>
-                                </svg>
-                            @else
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
-                                    <line x1="8" x2="21" y1="6" y2="6"/>
-                                    <line x1="8" x2="21" y1="12" y2="12"/>
-                                    <line x1="8" x2="21" y1="18" y2="18"/>
-                                    <line x1="3" x2="3.01" y1="6" y2="6"/>
-                                    <line x1="3" x2="3.01" y1="12" y2="12"/>
-                                    <line x1="3" x2="3.01" y1="18" y2="18"/>
-                                </svg>
-                            @endif
-                        </button>
-                        <button type="button"
-                                wire:click="clearFilters"
-                                class="btn btn-outline-secondary btn-sm"
-                                title="Clear Filters">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
-                                <path d="M3 6h18"/>
-                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
-                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
-                                <line x1="10" x2="10" y1="11" y2="17"/>
-                                <line x1="14" x2="14" y1="11" y2="17"/>
-                            </svg>
-                        </button>
-                    </div>
+                    <button type="button"
+                            wire:click="clearFilters"
+                            class="btn btn-outline-secondary w-100"
+                            title="Clear Filters">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                            <path d="M3 6h18"/>
+                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                            <line x1="10" x2="10" y1="11" y2="17"/>
+                            <line x1="14" x2="14" y1="11" y2="17"/>
+                        </svg>
+                        Clear Filters
+                    </button>
                 </div>
             </div>
 
@@ -117,124 +94,7 @@
     <x-spinner.loading-spinner/>
 
     @if(safe_count($products) > 0)
-        @if($viewType === 'cards')
-            <!-- Card View -->
-            <div wire:loading.class="opacity-50" class="row g-3">
-                @foreach ($products as $product)
-                    <div class="col-xl-3 col-lg-4 col-md-6">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <!-- Product Header -->
-                                <div class="d-flex align-items-start justify-content-between mb-3">
-                                    <div class="flex-grow-1">
-                                        <h4 class="card-title mb-1 text-truncate">{{ $product->name }}</h4>
-                                        <div class="text-muted small">{{ $product->code }}</div>
-                                               {{ optional($product->category)->name ?? '-' }}
-                                    <!-- Stock Status Badge -->
-                                    @php
-                                        $stockClass = 'bg-success';
-                                        $stockText = 'In Stock';
-                                        if ($product->quantity <= 0) {
-                                            $stockClass = 'bg-danger';
-                                            $stockText = 'Out of Stock';
-                                        } elseif ($product->quantity <= $product->quantity_alert) {
-                                            $stockClass = 'bg-warning';
-                                            $stockText = 'Low Stock';
-                                        }
-                                    @endphp
-                                    <span class="badge {{ $stockClass }} badge-sm">{{ $stockText }}</span>
-                                </div>
-
-                                <!-- Product Details -->
-                                <div class="mb-3">
-                                    <div class="row g-2 text-sm">
-                                        <div class="col-6">
-                                            <div class="text-muted">Category:</div>
-                                            <div class="fw-medium">{{ optional($product->category)->name ?? '-' }}</div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="text-muted">Unit:</div>
-                                            <div class="fw-medium">{{ $product->unit->name }}</div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="text-muted">Quantity:</div>
-                                            <div class="fw-medium">{{ number_format($product->quantity) }}</div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="text-muted">Selling Price:</div>
-                                            <div class="fw-medium text-success">LKR {{ number_format($product->selling_price, 2) }}</div>
-                                        </div>
-                                        @if($product->warranty)
-                                        <div class="col-12">
-                                            <div class="text-muted">Warranty:</div>
-                                            <div class="fw-medium">{{ $product->warranty->name }}</div>
-                                        </div>
-                                        @endif
-                                    </div>
-                                </div>
-
-                                <!-- Progress Bar for Stock Level -->
-                                @if($product->quantity > 0)
-                                    @php
-                                        $stockPercentage = min(100, ($product->quantity / ($product->quantity_alert * 2)) * 100);
-                                        $progressClass = $stockPercentage > 50 ? 'bg-success' : ($stockPercentage > 25 ? 'bg-warning' : 'bg-danger');
-                                    @endphp
-                                    <div class="mb-3">
-                                        <div class="d-flex justify-content-between text-sm mb-1">
-                                            <span class="text-muted">Stock Level</span>
-                                            <span class="fw-medium">{{ $product->quantity }}/{{ $product->quantity_alert * 2 }}</span>
-                                        </div>
-                                        <div class="progress" style="height: 4px;">
-                                            <div class="progress-bar {{ $progressClass }}" role="progressbar" style="width: {{ $stockPercentage }}%"></div>
-                                        </div>
-                                    </div>
-                                @endif
-
-                                <!-- Action Buttons -->
-                                <div class="btn-group w-100" role="group">
-                                    <a href="{{ route('products.show', $product) }}" class="btn btn-outline-primary btn-sm">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon me-1">
-                                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                                            <circle cx="12" cy="12" r="3"/>
-                                        </svg>
-                                        View
-                                    </a>
-                                    <a href="{{ route('products.edit', $product) }}" class="btn btn-outline-success btn-sm">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon me-1">
-                                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
-                                        </svg>
-                                        Edit
-                                    </a>
-                                    <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure?')">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon me-1">
-                                                <path d="M3 6h18"/>
-                                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
-                                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
-                                                <line x1="10" x2="10" y1="11" y2="17"/>
-                                                <line x1="14" x2="14" y1="11" y2="17"/>
-                                            </svg>
-                                            Delete
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-            <!-- Load More Button for Card View -->
-            @if($products->hasMorePages())
-                <div class="d-flex justify-content-center my-4">
-                    <button wire:click="loadMore" class="btn btn-outline-primary">
-                        Load More
-                    </button>
-                </div>
-            @endif
-        @else
-            <!-- Table View -->
+        <!-- Table View -->
             <div class="card">
                 <div class="table-responsive">
                     <table wire:loading.class="opacity-50" class="table table-vcenter card-table">
@@ -274,7 +134,9 @@
                                     <td>
                                         <div style="display: block;">
                                             <div class="fw-bold" style="line-height:1.2;">{{ $product->name }}</div>
-                                            <div class="text-muted" style="font-size: 12px; line-height:1;">{{ $product->code }}</div>
+                                            <div class="text-muted" style="font-size: 11px; line-height:1.4; margin-top: 2px;">
+                                                {{ $product->code ?? 'N/A' }}
+                                            </div>
                                         </div>
                                     </td>
                                     <td>
@@ -303,19 +165,19 @@
                                     </td>
                                     <td>
                                         <div class="btn-list flex-nowrap">
-                                            <button type="button" class="btn btn-success btn-sm" title="Add Stock" data-bs-toggle="modal" data-bs-target="#addStockModal" onclick="setProductForStock('{{ $product->slug }}', '{{ $product->name }}', {{ $product->quantity }})">
+                                            <button type="button" class="btn btn-sm" title="Add Stock" data-bs-toggle="modal" data-bs-target="#addStockModal" onclick="setProductForStock('{{ $product->slug }}', '{{ $product->name }}', {{ $product->quantity }})">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
                                             </button>
                                             <a href="{{ route('products.show', $product) }}" class="btn btn-white btn-sm" title="View">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><circle cx="12" cy="12" r="2" /><path d="M22 12c-2.667 4.667-6 7-10 7s-7.333-2.333-10-7c2.667-4.667 6-7 10-7s7.333 2.333 10 7" /></svg>
                                             </a>
-                                            <a href="{{ route('products.edit', $product) }}" class="btn btn-warning btn-sm" title="Edit">
+                                            <a href="{{ route('products.edit', $product) }}" class="btn btn-sm" title="Edit">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M7 7h-1a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97l-8.415 8.385v3h3l8.385-8.415z" /><path d="M16 5l3 3" /></svg>
                                             </a>
                                             <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm" title="Delete" onclick="return confirm('Are you sure you want to delete this product?')">
+                                                <button type="submit" class="btn btn-sm" title="Delete" onclick="return confirm('Are you sure you want to delete this product?')">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
                                                 </button>
                                             </form>
@@ -335,7 +197,6 @@
                     </button>
                 </div>
             @endif
-        @endif
 
         <!-- Pagination -->
         @if($products->hasPages())
@@ -446,8 +307,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-success">
+                        <button type="button" class="btn" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                                 <polyline points="9 11 12 14 20 6"/>

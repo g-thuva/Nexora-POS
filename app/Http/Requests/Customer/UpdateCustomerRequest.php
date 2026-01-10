@@ -43,6 +43,7 @@ class UpdateCustomerRequest extends FormRequest
                 'nullable',
                 'string',
                 'max:25',
+                Rule::unique('customers', 'phone')->ignore($this->customer)->where('shop_id', auth()->user()->getActiveShop()?->id)
             ],
             'address' => [
                 'nullable',

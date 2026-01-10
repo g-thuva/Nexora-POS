@@ -3,6 +3,41 @@
 @section('title', 'Monthly Sales Report')
 
 @section('content')
+<div class="page-header d-print-none">
+    <div class="container-fluid">
+        <div class="row g-2 align-items-center">
+            <div class="col">
+                <div class="page-pretitle">
+                    Sales Reports
+                </div>
+                <h2 class="page-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <rect x="4" y="5" width="16" height="16" rx="2"/>
+                        <line x1="16" y1="3" x2="16" y2="7"/>
+                        <line x1="8" y1="3" x2="8" y2="7"/>
+                        <line x1="4" y1="11" x2="20" y2="11"/>
+                        <path d="M11 15h1v4h-1z"/>
+                    </svg>
+                    Monthly Sales Report
+                </h2>
+                <p class="text-muted">{{ $selectedMonth->format('F Y') }} - Comprehensive monthly performance analysis</p>
+            </div>
+            <div class="col-auto ms-auto d-print-none">
+                <div class="btn-list">
+                    <a href="{{ route('reports.sales.index') }}" class="btn btn-outline-secondary d-none d-sm-inline-block">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1"/>
+                        </svg>
+                        Back to Reports
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="page-body">
     <div class="container-fluid">
         <div class="row row-deck row-cards">
@@ -46,7 +81,7 @@
                                         </svg>
                                         Previous Month
                                     </a>
-                                    <a href="{{ route('reports.sales.monthly', ['month' => now()->format('Y-m')]) }}" class="btn btn-info">This Month</a>
+                                    <a href="{{ route('reports.sales.monthly', ['month' => now()->format('Y-m')]) }}" class="btn">This Month</a>
                                     <a href="{{ route('reports.sales.monthly', ['month' => $selectedMonth->copy()->addMonth()->format('Y-m')]) }}" class="btn btn-outline-info">
                                         Next Month
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">

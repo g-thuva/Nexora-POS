@@ -267,7 +267,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-warning">Record Payment</button>
+                        <button type="submit" class="btn">Record Payment</button>
                     </div>
                 </form>
             </div>

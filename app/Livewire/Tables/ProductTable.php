@@ -32,14 +32,11 @@ class ProductTable extends Component
 
     public $stockFilter = 'all'; // all, in_stock, low_stock, out_of_stock
 
-    public $viewType = 'table'; // Default to table view
-
     protected $queryString = [
         'search' => ['except' => ''],
         'categoryFilter' => ['except' => ''],
         'unitFilter' => ['except' => ''],
         'stockFilter' => ['except' => 'all'],
-        'viewType' => ['except' => 'table'], // Default to table view, allow switching
     ];
 
     public function updatingSearch()
@@ -71,11 +68,6 @@ class ProductTable extends Component
         }
 
         $this->sortField = $field;
-    }
-
-    public function toggleViewType()
-    {
-        $this->viewType = $this->viewType === 'cards' ? 'table' : 'cards';
     }
 
     public function clearFilters()
@@ -110,7 +102,7 @@ class ProductTable extends Component
         // Apply stock filter
         switch ($this->stockFilter) {
             case 'in_stock':
-                $query->where('quantity', '>', 10);
+                $query->whereRaw('quantity > quantity_alert');
                 break;
             case 'low_stock':
                 $query->whereRaw('quantity <= quantity_alert AND quantity > 0');

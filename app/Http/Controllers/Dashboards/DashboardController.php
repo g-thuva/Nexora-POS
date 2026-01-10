@@ -36,53 +36,36 @@ class DashboardController extends Controller
 
     private function adminDashboard()
     {
-        $totalShops = \App\Models\Shop::count();
-        $totalUsers = \App\Models\User::count();
-        $totalProducts = Product::count();
-        $totalCategories = Category::count();
+        // Get shop statistics
+        $totalShops = Shop::count();
+        $activeShops = Shop::where('subscription_status', 'active')->where('is_active', true)->count();
+        $suspendedShops = Shop::where('subscription_status', 'suspended')->count();
+        $overdueShops = Shop::where('subscription_end_date', '<', now())
+            ->where('subscription_status', '!=', 'suspended')
+            ->count();
 
-        // Use precomputed KPIs when possible to avoid heavy aggregate queries
+        $stats = [
+            'total_shops' => $totalShops,
+            'active_shops' => $activeShops,
+            'suspended_shops' => $suspendedShops,
+            'overdue_shops' => $overdueShops,
+        ];
+
+        // Add global order KPIs from DB-side cache/view to avoid heavy aggregates here
         $kpiService = new KpiService();
-        $kpis = $kpiService->getOrderKpis();
+        $orderKpis = $kpiService->getOrderKpis();
+        $stats['total_orders'] = $orderKpis->total_orders ?? 0;
+        $stats['orders_total_amount_cents'] = $orderKpis->total_amount ?? 0;
+        $stats['completed_orders'] = $orderKpis->completed_count ?? 0;
 
-        $totalOrders = $kpis->total_orders ?? 0;
-        $completedOrders = $kpis->completed_count ?? 0;
+        // Get overdue shops for the alert section
+        $overdueShops = Shop::where('subscription_end_date', '<', now())
+            ->where('subscription_status', '!=', 'suspended')
+            ->with('owner')
+            ->orderBy('subscription_end_date', 'asc')
+            ->get();
 
-        // Get shops with their sales totals
-        $shopsWithSales = \App\Models\Shop::select(['id', 'name', 'address'])
-            ->withSum(['orders' => function ($query) {
-                $query->where('order_status', OrderStatus::COMPLETE);
-            }], 'total')
-            ->withCount(['orders' => function ($query) {
-                $query->where('order_status', OrderStatus::COMPLETE);
-            }])
-            ->orderBy('orders_sum_total', 'desc')
-            ->get()
-            ->map(function ($shop) {
-                $shop->sales_total = $shop->orders_sum_total ?? 0;
-                $shop->completed_orders = $shop->orders_count ?? 0;
-                return $shop;
-            });
-
-        // Recent activity
-        $recentShops = \App\Models\Shop::latest()->take(5)->get();
-        $recentUsers = \App\Models\User::latest()->take(5)->get();
-        $recentOrders = Order::with(['shop', 'customer'])->latest()->take(10)->get();
-
-        return view('dashboard', [
-            'userType' => 'admin',
-            'totalShops' => $totalShops,
-            'shopsWithSales' => $shopsWithSales,
-            'totalUsers' => $totalUsers,
-            'products' => $totalProducts,
-            'orders' => $totalOrders,
-            'completedOrders' => $completedOrders,
-            'orders_total_amount_cents' => $kpis->total_amount ?? 0,
-            'categories' => $totalCategories,
-            'recentShops' => $recentShops,
-            'recentUsers' => $recentUsers,
-            'recentOrders' => $recentOrders,
-        ]);
+        return view('admin.dashboard', compact('stats', 'overdueShops'));
     }
 
     private function shopDashboard($user)
@@ -117,8 +100,17 @@ class DashboardController extends Controller
             ->where('shop_id', $activeShop->id)
             ->count();
 
-        // Use KPI total_amount (cents) for completed sales and all orders
-        $totalSales = $shopKpis->total_amount ?? 0; // cents
+        // Calculate total sales: completed orders + credit sales
+        $completedOrdersSales = $shopKpis->total_amount ?? 0; // cents from completed orders
+
+        // Get total credit sales for this shop
+        $creditSales = \Illuminate\Support\Facades\DB::table('credit_sales')
+            ->join('orders', 'credit_sales.order_id', '=', 'orders.id')
+            ->where('orders.shop_id', $activeShop->id)
+            ->sum('credit_sales.total_amount') ?? 0; // cents
+
+        // Total sales = completed orders + credit sales
+        $totalSales = $completedOrdersSales + $creditSales;
         $totalAllOrders = $shopKpis->total_amount ?? 0; // currently same; if needed we can compute separate metrics
 
         // Recent orders for this shop

@@ -30,6 +30,7 @@ class StoreProductRequest extends FormRequest
             'product_image'     => 'image|file|max:2048',
             'name'              => 'required|string',
             'slug'              => 'required|unique:products,slug,NULL,id,shop_id,' . $shopId,
+            'code'              => ['required','regex:/^PRD\d{5}$/','unique:products,code'],
             'category_id'       => 'nullable|integer',
             'unit_id'           => 'required|integer',
             'quantity'          => 'required|integer',
@@ -44,12 +45,15 @@ class StoreProductRequest extends FormRequest
     {
         $this->merge([
             'slug' => Str::slug($this->name, '-'),
+            // Generate codes like PRD00001, PRD00002, ...
             'code' => IdGenerator::generate([
-                'table' => 'products',
-                'field' => 'code',
-                'length' => 4,
-                'prefix' => 'PC'
-            ])
+                'table'  => 'products',
+                'field'  => 'code',
+                'length' => 8, // 3 (PRD) + 5 digits = 8 chars total
+                'prefix' => 'PRD',
+            ]),
+            'quantity' => $this->quantity ?? 1,
+            'quantity_alert' => $this->quantity_alert ?? 1,
         ]);
     }
 }

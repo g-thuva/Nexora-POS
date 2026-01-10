@@ -21,15 +21,15 @@ class FinanceReportController extends Controller
             ->leftJoin('return_sale_items as rsi', 'p.id', '=', 'rsi.product_id')
             ->select(
                 'p.id as product_id',
-                'p.product_name',
+                'p.name as product_name',
                 DB::raw('COALESCE(SUM(od.quantity), 0) as total_sold'),
                 DB::raw('COALESCE(SUM(rsi.quantity), 0) as total_returned'),
                 DB::raw('CASE WHEN SUM(od.quantity) > 0 THEN (SUM(rsi.quantity) / SUM(od.quantity)) * 100 ELSE 0 END as return_rate')
             )
-            ->groupBy('p.id', 'p.product_name');
+            ->groupBy('p.id', 'p.name');
 
         if ($product) {
-            $query->where('p.product_name', 'like', "%{$product}%");
+            $query->where('p.name', 'like', "%{$product}%");
         }
 
         if ($minRate !== null) {
@@ -60,14 +60,14 @@ class FinanceReportController extends Controller
             ->leftJoin('return_sale_items as rsi', 'p.id', '=', 'rsi.product_id')
             ->select(
                 'p.id as product_id',
-                'p.product_name',
+                'p.name as product_name',
                 DB::raw('COALESCE(SUM(od.quantity), 0) as total_sold'),
                 DB::raw('COALESCE(SUM(rsi.quantity), 0) as total_returned'),
                 DB::raw('CASE WHEN SUM(od.quantity) > 0 THEN (SUM(rsi.quantity) / SUM(od.quantity)) * 100 ELSE 0 END as return_rate')
             )
-            ->groupBy('p.id', 'p.product_name');
+            ->groupBy('p.id', 'p.name');
 
-        if ($product) $query->where('p.product_name', 'like', "%{$product}%");
+        if ($product) $query->where('p.name', 'like', "%{$product}%");
 
         $rows = $query->orderBy('return_rate', 'desc')->limit($limit)->get();
         return response()->json($rows);
@@ -213,7 +213,8 @@ class FinanceReportController extends Controller
                 DB::raw('SUM(credit_sales.total_amount) as total_credit_cents'),
                 DB::raw('SUM(credit_sales.paid_amount) as total_paid_cents'),
                 DB::raw('SUM(credit_sales.due_amount) as total_due_cents'),
-                DB::raw('COUNT(credit_sales.id) as credit_count')
+                DB::raw('COUNT(credit_sales.id) as credit_count'),
+                DB::raw('MAX(credit_sales.created_at) as last_sale_date')
             )
             ->groupBy('customers.id', 'customers.name');
 
@@ -260,14 +261,14 @@ class FinanceReportController extends Controller
             ->join('products', 'order_details.product_id', '=', 'products.id')
             ->select(
                 'products.id as product_id',
-                'products.product_name',
+                'products.name as product_name',
                 DB::raw('SUM(order_details.total) as total_amount'),
                 DB::raw('SUM(order_details.quantity) as total_quantity'),
                 DB::raw('COUNT(DISTINCT orders.id) as order_count')
             )
-            ->groupBy('products.id', 'products.product_name');
+            ->groupBy('products.id', 'products.name');
 
-        if ($q) $query->where('products.product_name', 'like', "%{$q}%");
+        if ($q) $query->where('products.name', 'like', "%{$q}%");
         $rows = $query->orderBy('total_amount', 'desc')->limit(200)->get();
         return view('reports.finance.products', ['rows' => $rows, 'q' => $q]);
     }
@@ -284,14 +285,14 @@ class FinanceReportController extends Controller
                 ->join('products', 'order_details.product_id', '=', 'products.id')
                 ->select(
                     'products.id as product_id',
-                    'products.product_name',
+                    'products.name as product_name',
                     DB::raw('SUM(order_details.total) as total_amount'),
                     DB::raw('SUM(order_details.quantity) as total_quantity'),
                     DB::raw('COUNT(DISTINCT orders.id) as order_count')
                 )
-                ->groupBy('products.id', 'products.product_name');
+                ->groupBy('products.id', 'products.name');
 
-            if ($q) $query->where('products.product_name', 'like', "%{$q}%");
+            if ($q) $query->where('products.name', 'like', "%{$q}%");
             return $query->orderBy('total_amount', 'desc')->limit(500)->get();
         });
         return response()->json($rows);

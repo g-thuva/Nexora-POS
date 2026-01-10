@@ -19,24 +19,28 @@
             <!-- POS Header -->
             <div class="row mb-3">
                 <div class="col-12">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h1 class="page-title">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                        <h1 class="page-title mb-0">
                             {{ __('Point of Sale') }}
                         </h1>
-                        <div class="d-flex gap-2">
-                            {{-- Quick actions on POS: Job, Return & Expense --}}
-                            <a href="{{ route('jobs.index') }}" class="btn btn-outline-primary" title="Create Job">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 7l6 0"/><path d="M12 3v4"/><path d="M6 21l12 0"/></svg>
-                                Job
-                            </a>
-                            <a href="{{ route('returns.create') }}" class="btn btn-outline-warning" title="Create Return">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12h3l3 8l4 -16l3 8h4"/></svg>
+                        <div class="d-flex flex-wrap gap-2">
+                            {{-- Quick actions on POS: Return & Expense --}}
+                            <a href="{{ route('returns.create') }}" class="btn btn-white" title="Create Return">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1"/></svg>
                                 Return
                             </a>
-                            <a href="{{ route('expenses.create') }}" class="btn btn-outline-danger" title="Record Expense">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3v18"/><path d="M5 12h14"/></svg>
+                            <a href="{{ route('expenses.create') }}" class="btn btn-white" title="Record Expense">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg>
                                 Expense
                             </a>
+                            <button type="button" class="btn btn-white" onclick="openQuickStockModalGlobal()" title="Quick Stock Update">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg>
+                                Quick Stock
+                            </button>
+                            <button type="button" class="btn btn-white" onclick="openQuickProductModal()" title="Add New Product">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="12" r="5"/><path d="M12 1l0 3"/><path d="M12 20l0 3"/><path d="M1 12l3 0"/><path d="M20 12l3 0"/></svg>
+                                Quick Product
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -49,10 +53,10 @@
                 <!-- Hidden reference field with default value -->
                 <input name="reference" type="hidden" value="ORDR">
 
-                <div class="row" style="min-height: calc(100vh - 200px);">
+                <div class="row g-3">
                     <!-- LEFT SECTION: Product Search (60%) -->
                     <div class="col-lg-7 col-xl-7">
-                        <div class="card h-100">
+                        <div class="card" style="height: fit-content;">
                             <div class="card-header">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
@@ -80,7 +84,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-body d-flex flex-column">
+                            <div class="card-body" style="display: flex; flex-direction: column;">
                                 <!-- Product Search Section -->
                                 <div class="mb-4">
                                     <div class="row g-3">
@@ -93,49 +97,56 @@
                                 </div>
 
                                 <!-- Products Grid -->
-                                <div class="flex-1" style="overflow-y: auto; overflow-x: hidden; max-height: 500px;">
+                                <div class="flex-1" style="overflow-y: auto; overflow-x: hidden;">
                                     <h4 class="mb-3">Products (<span id="products-count">{{ $products_count ?? safe_count($products) }}</span> items)</h4>
                                     <div id="products-grid" class="row g-2" style="margin: 0;">
                                         @foreach ($products as $product)
-                                            <div class="col-md-6 col-lg-4" style="padding: 0.25rem;">
+                                            <div class="col-6 col-sm-6 col-md-4 col-lg-3" style="padding: 0.25rem;">
                                                 <div class="card product-card {{ $product->quantity <= 0 ? 'out-of-stock' : 'cursor-pointer hover-shadow' }}"
                                                     data-product-id="{{ $product->id }}"
+                                                    data-id="{{ $product->id }}"
+                                                    data-code="{{ $product->code }}"
                                                     data-stock="{{ $product->quantity }}"
                                                     data-warranty-id="{{ $product->warranty_id ?? '' }}"
                                                     data-warranty-name="{{ $product->warranty ? $product->warranty->name : '' }}"
                                                     data-warranty-duration="{{ $product->warranty ? $product->warranty->duration : '' }}"
+                                                    data-product-name="{{ $product->name }}"
+                                                    data-product-code="{{ $product->code }}"
                                                     style="border: {{ $product->quantity <= 0 ? '2px solid #ef4444' : '1px solid #e9ecef' }};
                                                     border-radius: 8px;
-                                                    min-height: 50px;
+                                                    min-height: 120px;
+                                                    height: 100%;
                                                     width: 100%;
+                                                    transition: all 0.2s ease;
                                                     {{ $product->quantity <= 0 ? 'opacity: 0.6; cursor: not-allowed;' : '' }}">
-                                                    <div class="card-body p-3">
+                                                    <div class="card-body p-2" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
                                                         <div class="text-start">
                                                             <div class="fw-bold {{ $product->quantity <= 0 ? 'text-muted' : 'text-dark' }} mb-1"
-                                                                style="font-size: 14px; line-height: 1.2; word-wrap: break-word;">
-                                                                {{ Str::limit($product->name, 25) }}
+                                                                style="font-size: 13px; line-height: 1.3; word-wrap: break-word; min-height: 36px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                                                {{ $product->name }}
                                                                 @if ($product->quantity <= 0)
-                                                                    <small class="text-danger ms-1">(Out of Stock)</small>
+                                                                    <small class="text-danger ms-1 d-block">(Out of Stock)</small>
                                                                 @endif
                                                             </div>
-                                                            <div class="text-muted small mb-2" style="font-size: 11px;">
-                                                                PRD-{{ str_pad($product->id, 6, '0', STR_PAD_LEFT) }}
+                                                            <div class="text-muted small mb-2" style="font-size: 10px;">
+                                                                {{ $product->code ?? 'N/A' }}
                                                             </div>
                                                         </div>
-                                                        <div class="d-flex justify-content-between align-items-center"
-                                                            style="flex-wrap: wrap;">
+                                                        <div class="d-flex justify-content-between align-items-center gap-1"
+                                                            style="flex-wrap: wrap; margin-top: auto;">
                                                             <span
                                                                 class="fw-bold {{ $product->quantity <= 0 ? 'text-muted' : 'text-success' }}"
-                                                                style="font-size: 14px; white-space: nowrap;">LKR
+                                                                style="font-size: 13px; white-space: nowrap;">LKR
                                                                 {{ number_format($product->selling_price, 0) }}</span>
                                                             @if ($product->quantity > 0)
                                                                 <span class="badge rounded-pill"
-                                                                    style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; font-size: 11px; font-weight: 600; padding: 6px 10px; white-space: nowrap; border-radius: 4px; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);">Stock:
+                                                                    style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; font-size: 10px; font-weight: 600; padding: 4px 8px; white-space: nowrap; border-radius: 4px; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);">
                                                                     {{ $product->quantity }}</span>
                                                             @else
-                                                                <span class="badge rounded-pill"
-                                                                    style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; font-size: 11px; font-weight: 600; padding: 6px 10px; white-space: nowrap; border-radius: 4px; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);">Out
-                                                                    of Stock</span>
+                                                                <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); openQuickStockModal({{ $product->id }}, '{{ addslashes($product->name) }}', '{{ $product->code }}')"
+                                                                    style="font-size: 9px; padding: 3px 6px;">
+                                                                    + Stock
+                                                                </button>
                                                             @endif
                                                         </div>
                                                     </div>
@@ -150,7 +161,7 @@
 
                     <!-- RIGHT SECTION: Cart & Customer (40%) -->
                     <div class="col-lg-5 col-xl-5">
-                        <div class="card h-100">
+                        <div class="card" style="height: fit-content;">
                             <div class="card-header">
                                 <h3 class="card-title" id="cart-title">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24"
@@ -168,7 +179,7 @@
                                     <button type="button" class="btn btn-outline-secondary btn-sm">Clear</button>
                                 </div>
                             </div>
-                            <div class="card-body d-flex flex-column p-3">
+                            <div class="card-body p-3" style="display: flex; flex-direction: column;">
                                 <!-- Customer Selection -->
                                 <div class="mb-4">
                                     <div class="input-group">
@@ -202,7 +213,7 @@
                                 </div>
 
                                 <!-- Cart Items -->
-                                <div class="mb-4" style="height: auto; min-height: 350px;">
+                                <div class="mb-4" style="height: auto; max-height: 400px; overflow-y: auto;">
                                     <div class="text-center py-5" id="empty-cart">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-muted mb-3"
                                             width="48" height="48" viewBox="0 0 24 24" stroke-width="1.5"
@@ -394,6 +405,16 @@
                                                         if (completeBtn) completeBtn.disabled = true; // wait for valid amount
                                                         updateBalanceFeedback();
                                                     } else if (this.value === 'Credit Sales') {
+                                                        // Check if cart has more than 9 items
+                                                        if (typeof cart !== 'undefined' && cart.length > 9) {
+                                                            const removedCount = cart.length - 9;
+                                                            const removedItems = cart.splice(9).map(item => item.name).join(', ');
+                                                            alert(`Credit Sales allows maximum 9 items. Removed last ${removedCount} product(s): ${removedItems}`);
+                                                            if (typeof updateCartDisplay === 'function') {
+                                                                updateCartDisplay();
+                                                            }
+                                                        }
+
                                                         if (validateCreditSales()) {
                                                             paymentAmountSection.style.display = 'none';
                                                             creditSalesSection.style.display = 'block';
@@ -573,44 +594,296 @@
         </div>
     </div>
 
+    <!-- Global Quick Stock Modal -->
+    <div class="modal fade" id="globalQuickStockModal" tabindex="-1" aria-labelledby="globalQuickStockModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="globalQuickStockModalLabel">Quick Stock Update</h5>
+                    <button type="button" class="btn-close" onclick="window.closeQuickStockModal()" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="globalQuickStockForm">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="global_stock_product" class="form-label">Select Product <span class="text-danger">*</span></label>
+                            <select class="form-select" id="global_stock_product" name="product_id" required>
+                                <option value="">Search and select product...</option>
+                            </select>
+                            <div class="invalid-feedback" id="global_product_error"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="global_stock_quantity" class="form-label">Quantity to Add <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="global_stock_quantity" name="quantity" min="1" required>
+                            <div class="invalid-feedback" id="global_quantity_error"></div>
+                        </div>
+                        <div class="alert alert-danger d-none" id="global_stock_error"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="window.closeQuickStockModal()">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="global-update-stock-btn" onclick="window.submitGlobalQuickStock()">
+                        <span id="globalStockBtnText">Update Stock</span>
+                        <span id="globalStockSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stock Update Modal -->
+    <div class="modal fade" id="quickStockModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Stock</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold" id="stock-product-name"></label>
+                        <p class="text-muted small mb-2" id="stock-product-code"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Add Quantity</label>
+                        <input type="number" class="form-control" id="stock-quantity-input" min="1" value="1" placeholder="Enter quantity to add">
+                    </div>
+                    <div id="stock-update-error" class="alert alert-danger d-none"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="update-stock-btn">
+                        <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                        Add Stock
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Product Modal -->
+    <div class="modal fade" id="quickProductModal" tabindex="-1" aria-labelledby="quickProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="quickProductModalLabel">Quick Add Product</h5>
+                    <button type="button" class="btn-close" onclick="closeQuickProductModal()" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="quickProductForm">
+                        @csrf
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="qp_name" class="form-label">Product Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="qp_name" name="name" required>
+                                    <div class="invalid-feedback" id="qp_name_error"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="qp_category" class="form-label">Category <span class="text-muted">(Optional)</span></label>
+                                    <select class="form-select" id="qp_category" name="category_id">
+                                        <option value="">-- No Category --</option>
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="qp_unit" class="form-label">Unit <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="qp_unit" name="unit_id" required>
+                                        @php
+                                            $pieceUnit = $units->firstWhere('slug', 'piece');
+                                            $otherUnits = $units->where('slug', '!=', 'piece');
+                                        @endphp
+                                        @if($pieceUnit)
+                                            <option value="{{ $pieceUnit->id }}" selected>{{ $pieceUnit->name }}</option>
+                                        @endif
+                                        @foreach($otherUnits as $unit)
+                                            <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="invalid-feedback" id="qp_unit_error"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="qp_buying_price" class="form-label">Buying Price</label>
+                                    <input type="number" class="form-control" id="qp_buying_price" name="buying_price" step="0.01" min="0" placeholder="0">
+                                    <div class="invalid-feedback" id="qp_buying_price_error"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="qp_selling_price" class="form-label">Selling Price</label>
+                                    <input type="number" class="form-control" id="qp_selling_price" name="selling_price" step="0.01" min="0" placeholder="0">
+                                    <div class="invalid-feedback" id="qp_selling_price_error"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="qp_quantity" class="form-label">Quantity</label>
+                                    <input type="number" class="form-control" id="qp_quantity" name="quantity" min="1" value="1">
+                                    <div class="invalid-feedback" id="qp_quantity_error"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="qp_stock_alert" class="form-label">Stock Alert</label>
+                                    <input type="number" class="form-control" id="qp_stock_alert" name="quantity_alert" min="0" placeholder="0">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="qp_notes" class="form-label">Notes <span class="text-muted">(Optional)</span></label>
+                                    <textarea class="form-control" id="qp_notes" name="notes" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-danger d-none" id="qp_error_alert"></div>
+                        <div class="alert alert-success d-none" id="qp_success_alert"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeQuickProductModal()">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="quick-product-btn" onclick="submitQuickProduct()">
+                        <span id="qpBtnText">Add Product</span>
+                        <span id="qpSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('page-styles')
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
     <style>
-        .cursor-pointer {
-            cursor: pointer;
+        /* Enhanced POS Preloader - Keep content hidden until fully loaded */
+        .page-body {
+            opacity: 0 !important;
+            visibility: hidden;
+            transition: opacity 0.4s ease-in, visibility 0s 0.4s;
         }
 
-        .hover-shadow:hover {
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        body:not(.loading) .page-body {
+            opacity: 1 !important;
+            visibility: visible;
+            transition: opacity 0.4s ease-in, visibility 0s;
         }
 
-        .product-card:hover {
-            transform: translateY(-2px);
-            transition: all 0.2s ease-in-out;
+        /* Prevent flash of unstyled content */
+        .container-fluid {
+            height: auto;
         }
 
-        /* Out of stock product styles */
-        .out-of-stock {
-            cursor: not-allowed !important;
-            opacity: 0.6;
+        /* Reserve space for major sections to prevent layout shift */
+        #products-grid {
+            min-height: 600px;
         }
 
-        .out-of-stock:hover {
-            transform: none !important;
-            box-shadow: none !important;
+        #cart-items {
+            min-height: 400px;
         }
 
-        .product-card:not(.out-of-stock):hover {
-            border-color: #3b82f6 !important;
+        /* Critical CSS - Prevent layout shifts */
+        * {
+            box-sizing: border-box;
         }
 
+        /* Prevent font loading shifts */
+        body {
+            font-display: swap;
+        }
+
+        /* Prevent layout shifts - Fixed dimensions */
+        .icon {
+            width: 18px !important;
+            height: 18px !important;
+            display: inline-block;
+            flex-shrink: 0;
+            min-width: 18px;
+            min-height: 18px;
+        }
+
+        svg.icon {
+            width: 18px !important;
+            height: 18px !important;
+            flex-shrink: 0;
+            vertical-align: middle;
+        }
+
+        .btn {
+            min-height: 38px !important;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            contain: layout style;
+            padding: 0.375rem 0.75rem;
+        }
+
+        .btn .icon {
+            margin-right: 0.375rem;
+            width: 18px !important;
+            height: 18px !important;
+        }
+
+        .btn-sm {
+            min-height: 32px !important;
+            height: 32px;
+        }
+
+        /* Prevent cart layout shifts */
+        .card {
+            min-height: 200px;
+            contain: layout;
+            width: 100%;
+        }
+
+        .card-header {
+            min-height: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-body {
+            min-height: 100px;
+            padding: 1rem !important;
+        }
+
+        /* Fixed cart section dimensions */
+        .col-lg-5 .card {
+            height: auto;
+        }
+
+        /* Prevent cart scrollable area from shifting */
+        .overflow-auto {
+            min-height: 400px;
+            max-height: calc(100vh - 400px);
+        }
+
+        #cart-items {
+            min-height: 300px;
+            contain: layout;
+        }
+
+        .cart-title {
+            line-height: 1.5;
+            min-height: 24px;
+        }
+
+        /* Enhanced cart-item with fixed dimensions to prevent sizing shifts */
         .cart-item {
             border-bottom: 1px solid #e9ecef;
-            padding: 12px;
-            min-height: 95px;
-            max-height: none;
+            padding: 12px !important;
+            min-height: 95px !important;
+            height: auto;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -620,6 +893,165 @@
             border-radius: 6px;
             border: 1px solid #dee2e6;
             position: relative;
+            contain: layout style;
+            width: 100%;
+        }
+
+        /* Fixed dimensions for cart item children */
+        .cart-item .row {
+            min-height: 75px;
+        }
+
+        .cart-item .form-control,
+        .cart-item .form-select {
+            min-height: 32px !important;
+            height: 32px !important;
+            max-height: 32px;
+        }
+
+        .cart-item input[type="number"] {
+            min-width: 60px !important;
+            width: 60px !important;
+        }
+
+        .cart-item .btn-sm {
+            min-width: 32px !important;
+            min-height: 32px !important;
+            width: 32px !important;
+            height: 32px !important;
+        }
+
+        .cart-item * {
+            flex-shrink: 0;
+        }
+
+        .cart-item .d-flex {
+            flex-shrink: 1;
+        }
+
+        /* Ensure cart item text elements don't cause shifts */
+        .cart-item h6,
+        .cart-item .text-muted,
+        .cart-item label {
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Prevent product card shifts */
+        .product-card {
+            min-height: 120px !important;
+            max-height: 150px !important;
+            height: 120px;
+            transition: all 0.2s ease-in-out;
+            background: white;
+            contain: layout style;
+            overflow: hidden;
+        }
+
+        .product-card img {
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            width: 100%;
+            height: auto;
+        }
+
+        /* Quantity button fixed dimensions */
+        .quantity-btn {
+            width: 32px !important;
+            height: 32px !important;
+            min-width: 32px;
+            min-height: 32px;
+            max-width: 32px;
+            max-height: 32px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+            flex-shrink: 0;
+            contain: layout;
+        }
+
+        .quantity-btn:hover {
+            background: #f8f9fa;
+            border-color: #3b82f6;
+        }
+
+        /* Input fixed dimensions */
+        .quantity-input {
+            width: 60px !important;
+            height: 32px !important;
+            min-width: 60px;
+            min-height: 32px;
+            max-width: 60px;
+            max-height: 32px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 0;
+            font-size: 14px;
+            flex-shrink: 0;
+            contain: layout;
+        }
+
+        /* Avatar fixed dimensions */
+        .avatar {
+            width: 2.5rem !important;
+            height: 2.5rem !important;
+            min-width: 2.5rem;
+            min-height: 2.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            contain: layout;
+        }
+
+        .avatar-sm {
+            width: 1.75rem !important;
+            height: 1.75rem !important;
+            min-width: 1.75rem;
+            min-height: 1.75rem;
+        }
+
+        /* Badge fixed dimensions */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            min-height: 20px;
+            padding: 0.25rem 0.5rem;
+        }
+
+        /* Form control stability */
+        .form-control,
+        .form-select {
+            min-height: 38px !important;
+            height: 38px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            outline: none;
+        }
+
+        /* Prevent input placeholder shifts */
+        input::placeholder,
+        textarea::placeholder {
+            opacity: 0.6;
+        }
+
+        /* Empty state fixed dimensions */
+        .empty-cart {
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .cart-item:last-child {
@@ -740,6 +1172,51 @@
         .ts-control.focus {
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Modal fixed dimensions to prevent shifts */
+        .modal-dialog {
+            min-height: 200px;
+            contain: layout;
+        }
+
+        .modal-content {
+            min-height: 150px;
+            contain: layout;
+        }
+
+        .modal-body {
+            min-height: 100px;
+        }
+
+        .modal-header {
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        .modal-footer {
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Loading spinner fixed dimensions */
+        .spinner-border {
+            width: 2rem !important;
+            height: 2rem !important;
+            min-width: 2rem;
+            min-height: 2rem;
+            flex-shrink: 0;
+            contain: layout;
+        }
+
+        .spinner-border-sm {
+            width: 1rem !important;
+            height: 1rem !important;
+            min-width: 1rem;
+            min-height: 1rem;
+            flex-shrink: 0;
         }
 
         /* Receipt modal styles removed (cleanup) */
@@ -1411,30 +1888,16 @@
             // Display current date and time in console
             console.log('Order form loaded at:', dateTime.formatted);
 
-            // Start auto-refresh for products and customers
-            startAutoRefresh();
+            // Products and customers loaded via Blade - no auto-refresh
+            // Only refresh after Quick Product/Stock actions
         });
 
-        // Auto-refresh products and customers every 5 seconds
+        // Refresh functions - only called after quick stock/product actions
         let lastProductsData = null;
         let lastCustomersData = null;
 
-        function startAutoRefresh() {
-            // Initial fetch
-            console.log('Starting auto-refresh...');
-            refreshProducts();
-            refreshCustomers();
-
-            // Set up periodic refresh (every 5 seconds)
-            setInterval(function() {
-                console.log('Auto-refresh triggered at:', new Date().toLocaleTimeString());
-                refreshProducts();
-                refreshCustomers();
-            }, 5000);
-        }
-
         function refreshProducts() {
-            console.log('Fetching products from:', '{{ route("orders.products") }}');
+            console.log('Refreshing products...');
             fetch('{{ route("orders.products") }}')
                 .then(response => {
                     console.log('Products response status:', response.status);
@@ -1603,10 +2066,27 @@
                     alert(`Cannot add more items. Available stock: ${availableStock}, Currently in cart: ${totalInCart}`);
                 }
             } else {
+                // Check payment type and enforce different limits
+                const paymentType = document.querySelector('select[name="payment_type"]')?.value || 'Cash';
+                const maxItems = paymentType === 'Credit Sales' ? 9 : 11;
+
+                if (cart.length >= maxItems) {
+                    const msg = `Maximum ${maxItems} different items allowed per order for ${paymentType}. Please create a new order for additional items.`;
+                    try {
+                        if (typeof showToast === 'function') {
+                            showToast(msg, 'warning');
+                        } else {
+                            alert(msg);
+                        }
+                    } catch (e) {
+                        console.error('Error showing toast:', e);
+                        alert(msg);
+                    }
+                    return;
+                }
+
                 console.log('Adding NEW product to cart');
-                // Create new cart item
-                // Note: warranty fields are left empty so user can select from dropdown
-                // If not selected, backend will use product's default warranty
+                // Create new cart item with product's default warranty
                 const lineId = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : (Date.now()
                     .toString(36) + Math.random().toString(36).slice(2));
                 const newItem = {
@@ -1619,11 +2099,16 @@
                     total: productPrice,
                     serial_number: '',
                     warranty_years: null,
-                    warranty_id: '',  // Keep empty - user can select or backend uses product default
-                    warranty_name: '',
-                    warranty_duration: ''
+                    warranty_id: warrantyId,  // Use product's default warranty
+                    warranty_name: warrantyName,
+                    warranty_duration: warrantyDuration
                 };
-                console.log('New cart item created:', newItem);
+                console.log('New cart item created with warranty:', {
+                    warranty_id: newItem.warranty_id,
+                    warranty_name: newItem.warranty_name,
+                    warranty_duration: newItem.warranty_duration,
+                    fullItem: newItem
+                });
                 cart.push(newItem);
                 console.log('Cart after push:', cart);
                 updateCartDisplay();
@@ -1651,8 +2136,8 @@
                 card.dataset.productId = product.id;
                 card.dataset.stock = product.stock;
                 card.dataset.warrantyId = product.warranty_id || '';
-                card.dataset.warrantyName = product.warranty ? product.warranty.name : '';
-                card.dataset.warrantyDuration = product.warranty ? product.warranty.duration : '';
+                card.dataset.warrantyName = product.warranty_name || '';
+                card.dataset.warrantyDuration = product.warranty_duration || '';
                 card.style.border = isOutOfStock ? '2px solid #ef4444' : '1px solid #e9ecef';
                 card.style.borderRadius = '8px';
                 card.style.minHeight = '50px';
@@ -1869,51 +2354,52 @@
 
                     cartItems.innerHTML = cart.map(item => {
                         // Debug warranty selection
-                        console.log('Rendering cart item:', {
+                        console.log('Rendering cart item warranty:', {
                             product: item.name,
                             warranty_id: item.warranty_id,
-                            warranty_id_type: typeof item.warranty_id,
                             warranty_name: item.warranty_name,
-                            available_warranties: warranties.map(w => ({ id: w.id, id_type: typeof w.id, name: w.name }))
+                            warranty_duration: item.warranty_duration,
+                            has_warranty: !!(item.warranty_id && item.warranty_name),
+                            condition_check: item.warranty_id && item.warranty_name
                         });
 
                         return `
-                        <div class="cart-item">
+                        <div class="cart-item" style="min-height: 95px !important; padding: 12px !important; margin-bottom: 8px !important;">
                             <!-- Product Name and Remove Button -->
-                            <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="d-flex justify-content-between align-items-start mb-2" style="min-height: 24px;">
                                 <div class="flex-1">
-                                    <div class="cart-item-name fw-bold text-dark" style="font-size: 13px; line-height: 1.2;">${item.name}</div>
+                                    <div class="cart-item-name fw-bold text-dark" style="font-size: 13px; line-height: 1.2; min-height: 20px;">${item.name}</div>
                                 </div>
-                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeFromCart('${item.lineId}')" style="padding: 4px 8px; font-size: 12px;">
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeFromCart('${item.lineId}')" style="padding: 4px 8px; font-size: 12px; min-width: 28px; min-height: 28px; width: 28px; height: 28px; flex-shrink: 0;">
                                     ×
                                 </button>
                             </div>
 
                             <!-- Quantity Controls and Price -->
-                            <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="d-flex justify-content-between align-items-center mb-2" style="min-height: 32px;">
                                 <div class="d-flex align-items-center">
-                                    <button type="button" class="btn btn-outline-secondary btn-sm me-2" onclick="updateQuantity('${item.lineId}', -1)" style="width: 28px; height: 28px; padding: 0; font-size: 14px;">-</button>
-                                    <span class="me-2 px-2 fw-bold" style="min-width: 25px; text-align: center; font-size: 14px;">${item.quantity}</span>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="updateQuantity('${item.lineId}', 1)" style="width: 28px; height: 28px; padding: 0; font-size: 14px;">+</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm me-2" onclick="updateQuantity('${item.lineId}', -1)" style="width: 28px !important; height: 28px !important; min-width: 28px; min-height: 28px; padding: 0; font-size: 14px; flex-shrink: 0;">-</button>
+                                    <span class="me-2 px-2 fw-bold" style="min-width: 30px; text-align: center; font-size: 14px; line-height: 28px; flex-shrink: 0;">${item.quantity}</span>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="updateQuantity('${item.lineId}', 1)" style="width: 28px !important; height: 28px !important; min-width: 28px; min-height: 28px; padding: 0; font-size: 14px; flex-shrink: 0;">+</button>
                                 </div>
-                                <div class="cart-item-price fw-bold text-success" style="font-size: 14px;">LKR ${item.total.toLocaleString()}</div>
+                                <div class="cart-item-price fw-bold text-success" style="font-size: 14px; line-height: 28px; white-space: nowrap;">LKR ${item.total.toLocaleString()}</div>
                             </div>
 
                             <!-- Serial Number and Warranty in Same Row -->
-                            <div class="d-flex gap-2">
+                            <div class="d-flex gap-2" style="min-height: 32px;">
                                 <div style="flex: 0 0 60%;">
                                     <input type="text"
                                            class="form-control form-control-sm"
                                            placeholder="Serial number (optional)"
                                            value="${item.serial_number || ''}"
                                            oninput="this.value = this.value.toUpperCase(); updateSerial('${item.lineId}', this.value)"
-                                           style="font-size: 12px; padding: 6px 8px; text-transform: uppercase;">
+                                           style="font-size: 12px; padding: 6px 8px; text-transform: uppercase; min-height: 32px !important; height: 32px !important;">
                                 </div>
                                 <div style="flex: 0 0 40%;">
                                     <select class="form-select form-select-sm"
                                             onchange="updateWarrantyId('${item.lineId}', this.value)"
-                                            style="font-size: 12px; padding: 6px 8px;">
-                                        <option value="" selected>-- Select Warranty --</option>
+                                            style="font-size: 12px; padding: 6px 8px; min-height: 32px !important; height: 32px !important;">
+                                        <option value="" ${!item.warranty_id ? 'selected' : ''}>-- Select Warranty --</option>
                                         ${warranties.map(w => {
                                             const isSelected = item.warranty_id && String(item.warranty_id) === String(w.id);
                                             return '<option value="' + w.id + '" ' + (isSelected ? 'selected' : '') + '>' +
@@ -1958,7 +2444,7 @@
                     item.warranty_name = '';
                     item.warranty_duration = '';
                 }
-                // No need to refresh entire display for warranty change
+                updateCartDisplay(); // Refresh display to show warranty info
             }
         }
 
@@ -2077,12 +2563,21 @@
             const productCards = document.querySelectorAll('.product-card');
 
             productCards.forEach(card => {
-                // Handle both in-stock (.text-dark) and out-of-stock (.text-muted) products
+                // Get product name
                 const productNameElement = card.querySelector('.fw-bold');
-                const productName = productNameElement.textContent.toLowerCase().replace('(out of stock)', '')
-                .trim();
+                const productName = productNameElement ? productNameElement.textContent.toLowerCase().replace('(out of stock)', '').trim() : '';
 
-                if (productName.includes(searchTerm)) {
+                // Get product code/SKU from data attribute or text
+                const productCode = card.getAttribute('data-code') || '';
+                const productCodeLower = productCode.toLowerCase();
+
+                // Get product ID
+                const productId = card.getAttribute('data-id') || '';
+
+                // Search by name, code (SKU), or ID
+                if (productName.includes(searchTerm) ||
+                    productCodeLower.includes(searchTerm) ||
+                    productId.includes(searchTerm)) {
                     card.parentElement.style.display = 'block';
                 } else {
                     card.parentElement.style.display = 'none';
@@ -2456,14 +2951,14 @@
                     return;
                 }
 
-                // Check if response is PDF
-                if (!contentType.includes('pdf')) {
-                    console.error('Expected PDF, got:', contentType);
-                    alert('Server returned unexpected content type. Please try again.');
+                // If response is HTML, it's likely an error page
+                if (contentType.includes('html')) {
+                    console.error('Expected PDF, got HTML page');
+                    alert('Server returned an error page. Please try again.');
                     return;
                 }
 
-                // Get PDF blob and trigger download
+                // Get PDF blob and trigger download (accept PDF or octet-stream)
                 const blob = await resp.blob();
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -2485,5 +2980,646 @@
                 alert('Failed to download PDF. Please check your connection and try again.');
             }
         }
+
+        // Quick Stock Update Functions
+        let currentStockProductId = null;
+
+        function openQuickStockModal(productId, productName, productCode) {
+            currentStockProductId = productId;
+            document.getElementById('stock-product-name').textContent = productName;
+            document.getElementById('stock-product-code').textContent = productCode;
+            document.getElementById('stock-quantity-input').value = 1;
+            document.getElementById('stock-update-error').classList.add('d-none');
+
+            const modal = new bootstrap.Modal(document.getElementById('quickStockModal'));
+            modal.show();
+        }
+
+        document.getElementById('update-stock-btn').addEventListener('click', async function() {
+            const quantity = parseInt(document.getElementById('stock-quantity-input').value);
+
+            if (!quantity || quantity < 1) {
+                document.getElementById('stock-update-error').textContent = 'Please enter a valid quantity';
+                document.getElementById('stock-update-error').classList.remove('d-none');
+                return;
+            }
+
+            const btn = this;
+            const spinner = btn.querySelector('.spinner-border');
+            const originalText = btn.textContent;
+
+            btn.disabled = true;
+            spinner.classList.remove('d-none');
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Updating...';
+
+            try {
+                const response = await fetch(`/products/${currentStockProductId}/add-stock`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ add_quantity: quantity })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Close modal
+                    bootstrap.Modal.getInstance(document.getElementById('quickStockModal')).hide();
+
+                    // Refresh products list
+                    await refreshProducts();
+
+                    // Show success message
+                    if (typeof showToast === 'function') {
+                        showToast(`Stock updated successfully. New stock: ${data.new_quantity}`, 'success');
+                    } else {
+                        alert(`Stock updated successfully. New stock: ${data.new_quantity}`);
+                    }
+                } else {
+                    document.getElementById('stock-update-error').textContent = data.message || 'Failed to update stock';
+                    document.getElementById('stock-update-error').classList.remove('d-none');
+                }
+            } catch (error) {
+                console.error('Stock update error:', error);
+                document.getElementById('stock-update-error').textContent = 'Network error. Please try again.';
+                document.getElementById('stock-update-error').classList.remove('d-none');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        });
+
+        // Allow Enter key to submit
+        document.getElementById('stock-quantity-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('update-stock-btn').click();
+            }
+        });
+
+        // Global Quick Stock functionality - Initialize immediately
+        (function() {
+            window.globalProductTomSelect = null;
+
+            window.openQuickStockModalGlobal = function() {
+                console.log('openQuickStockModalGlobal called'); // Debug log
+
+                // Reset form
+                const form = document.getElementById('globalQuickStockForm');
+                if (!form) {
+                    console.error('Form globalQuickStockForm not found');
+                    return;
+                }
+                form.reset();
+            document.querySelectorAll('#globalQuickStockModal .invalid-feedback').forEach(el => {
+                el.textContent = '';
+                el.style.display = 'none';
+            });
+            document.querySelectorAll('#globalQuickStockModal .form-control, #globalQuickStockModal .form-select').forEach(el => {
+                el.classList.remove('is-invalid');
+            });
+            document.getElementById('global_stock_error').classList.add('d-none');
+
+            // Initialize TomSelect for product search if not already initialized
+            if (!window.globalProductTomSelect) {
+                window.globalProductTomSelect = new TomSelect('#global_stock_product', {
+                    valueField: 'id',
+                    labelField: 'name',
+                    searchField: ['name', 'code'],
+                    load: function(query, callback) {
+                        const url = query.length
+                            ? `/api/products?search=${encodeURIComponent(query)}`
+                            : '/api/products';
+
+                        console.log('Fetching products from:', url);
+
+                        fetch(url)
+                            .then(response => {
+                                console.log('Response status:', response.status);
+                                return response.json();
+                            })
+                            .then(json => {
+                                console.log('Products received:', json);
+                                callback(json);
+                            })
+                            .catch(error => {
+                                console.error('Error loading products:', error);
+                                callback();
+                            });
+                    },
+                    render: {
+                        option: function(item, escape) {
+                            return `<div>
+                                <span class="fw-bold">${escape(item.name)}</span>
+                                <span class="text-muted ms-2">(${escape(item.code || 'N/A')})</span>
+                                <br><small class="text-muted">Current Stock: ${escape(item.quantity || 0)}</small>
+                            </div>`;
+                        },
+                        item: function(item, escape) {
+                            return `<div>${escape(item.name)} <small class="text-muted">(${escape(item.code || 'N/A')})</small></div>`;
+                        }
+                    },
+                    placeholder: 'Type to search products...',
+                    preload: 'focus',
+                    loadThrottle: 300
+                });
+            } else {
+                window.globalProductTomSelect.clear();
+                window.globalProductTomSelect.clearOptions();
+            }
+
+            // Show modal
+            const modalEl = document.getElementById('globalQuickStockModal');
+            if (!modalEl) {
+                console.error('Modal globalQuickStockModal not found');
+                return;
+            }
+
+            // Try Bootstrap 5 first, then fallback to jQuery
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            } else if (typeof $ !== 'undefined' && $.fn.modal) {
+                $(modalEl).modal('show');
+            } else {
+                // Fallback: manually show modal
+                modalEl.classList.add('show');
+                modalEl.style.display = 'block';
+                modalEl.setAttribute('aria-modal', 'true');
+                modalEl.removeAttribute('aria-hidden');
+
+                // Add backdrop
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                backdrop.id = 'globalQuickStockBackdrop';
+                document.body.appendChild(backdrop);
+                document.body.classList.add('modal-open');
+            }
+        }
+
+        window.closeQuickStockModal = function() {
+            const modalEl = document.getElementById('globalQuickStockModal');
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                if (modalInstance) modalInstance.hide();
+            } else if (typeof $ !== 'undefined' && $.fn.modal) {
+                $(modalEl).modal('hide');
+            } else {
+                // Manual close
+                modalEl.classList.remove('show');
+                modalEl.style.display = 'none';
+                modalEl.removeAttribute('aria-modal');
+                modalEl.setAttribute('aria-hidden', 'true');
+                const backdrop = document.getElementById('globalQuickStockBackdrop');
+                if (backdrop) backdrop.remove();
+                document.body.classList.remove('modal-open');
+            }
+        }
+
+        window.submitGlobalQuickStock = async function() {
+            const productId = window.globalProductTomSelect.getValue();
+            const quantity = parseInt(document.getElementById('global_stock_quantity').value);
+
+            // Reset errors
+            document.querySelectorAll('#globalQuickStockModal .invalid-feedback').forEach(el => {
+                el.textContent = '';
+                el.style.display = 'none';
+            });
+            document.querySelectorAll('#globalQuickStockModal .form-control, #globalQuickStockModal .form-select').forEach(el => {
+                el.classList.remove('is-invalid');
+            });
+            document.getElementById('global_stock_error').classList.add('d-none');
+
+            // Validate
+            let hasError = false;
+            if (!productId) {
+                document.getElementById('global_product_error').textContent = 'Please select a product';
+                document.getElementById('global_product_error').style.display = 'block';
+                document.getElementById('global_stock_product').closest('.ts-wrapper').classList.add('is-invalid');
+                hasError = true;
+            }
+            if (!quantity || quantity < 1) {
+                document.getElementById('global_quantity_error').textContent = 'Please enter a valid quantity';
+                document.getElementById('global_quantity_error').style.display = 'block';
+                document.getElementById('global_stock_quantity').classList.add('is-invalid');
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            // Show loading state
+            const btn = document.getElementById('global-update-stock-btn');
+            const btnText = document.getElementById('globalStockBtnText');
+            const spinner = document.getElementById('globalStockSpinner');
+
+            btn.disabled = true;
+            btnText.classList.add('d-none');
+            spinner.classList.remove('d-none');
+
+            try {
+                const response = await fetch(`/products/${productId}/add-stock`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ add_quantity: quantity })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Close modal
+                    const modalEl = document.getElementById('globalQuickStockModal');
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                        const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                        if (modalInstance) modalInstance.hide();
+                    } else if (typeof $ !== 'undefined' && $.fn.modal) {
+                        $(modalEl).modal('hide');
+                    } else {
+                        // Manual close
+                        modalEl.classList.remove('show');
+                        modalEl.style.display = 'none';
+                        modalEl.removeAttribute('aria-modal');
+                        modalEl.setAttribute('aria-hidden', 'true');
+                        const backdrop = document.getElementById('globalQuickStockBackdrop');
+                        if (backdrop) backdrop.remove();
+                        document.body.classList.remove('modal-open');
+                    }
+
+                    // Refresh products list
+                    await refreshProducts();
+
+                    // Show success message with toast notification
+                    showToast(data.message || 'Stock updated successfully!', 'success');
+                } else {
+                    const errorDiv = document.getElementById('global_stock_error');
+                    errorDiv.textContent = data.message || 'Failed to update stock';
+                    errorDiv.classList.remove('d-none');
+                }
+            } catch (error) {
+                console.error('Stock update error:', error);
+                const errorDiv = document.getElementById('global_stock_error');
+                errorDiv.textContent = 'Network error. Please try again.';
+                errorDiv.classList.remove('d-none');
+            } finally {
+                btn.disabled = false;
+                btnText.classList.remove('d-none');
+                spinner.classList.add('d-none');
+            }
+        }
+
+        // Allow Enter key to submit for global quick stock
+        const globalQuantityInput = document.getElementById('global_stock_quantity');
+        if (globalQuantityInput) {
+            globalQuantityInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    window.submitGlobalQuickStock();
+                }
+            });
+        }
+
+        // Quick Product Functions
+        window.openQuickProductModal = function() {
+            const modalEl = document.getElementById('quickProductModal');
+
+            // Reset form
+            document.getElementById('quickProductForm').reset();
+
+            // Reset validation states
+            document.querySelectorAll('#quickProductModal .is-invalid').forEach(el => {
+                el.classList.remove('is-invalid');
+            });
+            document.querySelectorAll('#quickProductModal .invalid-feedback').forEach(el => {
+                el.textContent = '';
+                el.style.display = 'none';
+            });
+            document.getElementById('qp_error_alert').classList.add('d-none');
+            document.getElementById('qp_success_alert').classList.add('d-none');
+
+            // Set default quantity to 1
+            document.getElementById('qp_quantity').value = '1';
+
+            // Open modal
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            } else if (typeof $ !== 'undefined' && $.fn.modal) {
+                $(modalEl).modal('show');
+            } else {
+                // Manual show
+                modalEl.classList.add('show');
+                modalEl.style.display = 'block';
+                modalEl.setAttribute('aria-modal', 'true');
+                modalEl.removeAttribute('aria-hidden');
+
+                // Add backdrop
+                const backdrop = document.createElement('div');
+                backdrop.id = 'quickProductBackdrop';
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+                document.body.classList.add('modal-open');
+            }
+        }
+
+        window.closeQuickProductModal = function() {
+            const modalEl = document.getElementById('quickProductModal');
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                if (modalInstance) modalInstance.hide();
+            } else if (typeof $ !== 'undefined' && $.fn.modal) {
+                $(modalEl).modal('hide');
+            } else {
+                // Manual close
+                modalEl.classList.remove('show');
+                modalEl.style.display = 'none';
+                modalEl.removeAttribute('aria-modal');
+                modalEl.setAttribute('aria-hidden', 'true');
+                const backdrop = document.getElementById('quickProductBackdrop');
+                if (backdrop) backdrop.remove();
+                document.body.classList.remove('modal-open');
+            }
+        }
+
+        window.submitQuickProduct = async function() {
+            // Reset validation states
+            document.querySelectorAll('#quickProductModal .is-invalid').forEach(el => {
+                el.classList.remove('is-invalid');
+            });
+            document.querySelectorAll('#quickProductModal .invalid-feedback').forEach(el => {
+                el.textContent = '';
+                el.style.display = 'none';
+            });
+            document.getElementById('qp_error_alert').classList.add('d-none');
+            document.getElementById('qp_success_alert').classList.add('d-none');
+
+            // Get form data
+            const formData = new FormData(document.getElementById('quickProductForm'));
+
+            // Validate required fields
+            let hasError = false;
+            const name = formData.get('name');
+            const unitId = formData.get('unit_id');
+
+            if (!name || name.trim() === '') {
+                document.getElementById('qp_name').classList.add('is-invalid');
+                document.getElementById('qp_name_error').textContent = 'Product name is required';
+                document.getElementById('qp_name_error').style.display = 'block';
+                hasError = true;
+            }
+
+            if (!unitId) {
+                document.getElementById('qp_unit').classList.add('is-invalid');
+                document.getElementById('qp_unit_error').textContent = 'Unit is required';
+                document.getElementById('qp_unit_error').style.display = 'block';
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            // Show loading state
+            const btn = document.getElementById('quick-product-btn');
+            const btnText = document.getElementById('qpBtnText');
+            const spinner = document.getElementById('qpSpinner');
+
+            btn.disabled = true;
+            btnText.classList.add('d-none');
+            spinner.classList.remove('d-none');
+
+            try {
+                const response = await fetch('{{ route("products.store") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Show success message
+                    showToast(data.message || 'Product added successfully!', 'success');
+
+                    // Refresh products list
+                    await refreshProducts();
+
+                    // Close modal after a short delay
+                    setTimeout(() => {
+                        window.closeQuickProductModal();
+                    }, 500);
+                } else {
+                    // Handle validation errors
+                    if (data.errors) {
+                        Object.keys(data.errors).forEach(key => {
+                            const fieldMap = {
+                                'name': 'qp_name',
+                                'unit_id': 'qp_unit',
+                                'buying_price': 'qp_buying_price',
+                                'selling_price': 'qp_selling_price',
+                                'quantity': 'qp_quantity'
+                            };
+
+                            const fieldId = fieldMap[key];
+                            if (fieldId) {
+                                document.getElementById(fieldId).classList.add('is-invalid');
+                                document.getElementById(fieldId + '_error').textContent = data.errors[key][0];
+                                document.getElementById(fieldId + '_error').style.display = 'block';
+                            }
+                        });
+                    }
+
+                    const errorDiv = document.getElementById('qp_error_alert');
+                    errorDiv.textContent = data.message || 'Failed to add product';
+                    errorDiv.classList.remove('d-none');
+                }
+            } catch (error) {
+                console.error('Product creation error:', error);
+                const errorDiv = document.getElementById('qp_error_alert');
+                errorDiv.textContent = 'Network error. Please try again.';
+                errorDiv.classList.remove('d-none');
+            } finally {
+                btn.disabled = false;
+                btnText.classList.remove('d-none');
+                spinner.classList.add('d-none');
+            }
+        }
+
+        // Allow Enter key to submit for quick product
+        const qpNameInput = document.getElementById('qp_name');
+        if (qpNameInput) {
+            qpNameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    window.submitQuickProduct();
+                }
+            });
+        }
+
+        })(); // End of IIFE
+
+        // Enhanced POS Page Preloader - Maximum Stability
+        (function() {
+            let isPageReady = false;
+            let checksPassed = {
+                dom: false,
+                images: false,
+                fonts: false,
+                tomSelect: false,
+                productGrid: false,
+                cart: false,
+                styles: false
+            };
+
+            function checkIfAllReady() {
+                const allReady = Object.values(checksPassed).every(check => check === true);
+
+                if (allReady && !isPageReady) {
+                    isPageReady = true;
+
+                    // Wait longer to ensure everything is absolutely stable
+                    setTimeout(function() {
+                        const pageBody = document.querySelector('.page-body');
+                        if (pageBody) {
+                            // Force a reflow to ensure layout is calculated
+                            pageBody.offsetHeight;
+
+                            pageBody.style.opacity = '1';
+                            pageBody.style.visibility = 'visible';
+                            pageBody.style.transition = 'opacity 0.5s ease-in';
+                        }
+                        console.log('✓✓✓ POS page fully loaded and stable');
+                    }, 300); // Increased delay for stability
+                }
+            }
+
+            // Check 1: DOM Content Loaded
+            document.addEventListener('DOMContentLoaded', function() {
+                checksPassed.dom = true;
+                console.log('✓ DOM ready');
+
+                // Check for critical elements
+                const cartItems = document.getElementById('cart-items');
+                const productGrid = document.getElementById('products-grid');
+
+                if (cartItems) {
+                    checksPassed.cart = true;
+                    console.log('✓ Cart initialized');
+                }
+
+                if (productGrid) {
+                    const products = productGrid.querySelectorAll('.product-card');
+                    if (products.length > 0) {
+                        checksPassed.productGrid = true;
+                        console.log('✓ Product grid ready with', products.length, 'products');
+                    }
+                }
+
+                checkIfAllReady();
+            });
+
+            // Check 2: Wait for all resources (images, fonts, CSS)
+            window.addEventListener('load', function() {
+                checksPassed.images = true;
+                console.log('✓ All resources loaded');
+
+                // Give extra time for fonts to render
+                setTimeout(function() {
+                    checksPassed.fonts = true;
+                    console.log('✓ Fonts rendered');
+                    checkIfAllReady();
+                }, 100);
+
+                checkIfAllReady();
+            });
+
+            // Check 3: Wait for styles to be applied
+            setTimeout(function() {
+                const testElement = document.querySelector('.card');
+                if (testElement) {
+                    const styles = window.getComputedStyle(testElement);
+                    if (styles.minHeight) {
+                        checksPassed.styles = true;
+                        console.log('✓ Styles applied');
+                        checkIfAllReady();
+                    }
+                }
+            }, 200);
+
+            // Check 4: Wait for TomSelect to initialize
+            let tomSelectCheckAttempts = 0;
+            const tomSelectInterval = setInterval(function() {
+                tomSelectCheckAttempts++;
+
+                const customerSelect = document.getElementById('customer_id');
+                if (customerSelect && customerSelect.tomselect) {
+                    checksPassed.tomSelect = true;
+                    console.log('✓ TomSelect initialized');
+                    clearInterval(tomSelectInterval);
+                    checkIfAllReady();
+                }
+
+                // Stop checking after 5 seconds
+                if (tomSelectCheckAttempts > 50) {
+                    checksPassed.tomSelect = true; // Assume it's ready
+                    clearInterval(tomSelectInterval);
+                    console.log('⚠ TomSelect timeout - proceeding anyway');
+                    checkIfAllReady();
+                }
+            }, 100);
+
+            // Fallback: Force show after 5 seconds (increased from 4)
+            setTimeout(function() {
+                if (!isPageReady) {
+                    console.log('⚠ Fallback: Forcing page display after timeout');
+                    const pageBody = document.querySelector('.page-body');
+                    if (pageBody) {
+                        pageBody.style.opacity = '1';
+                        pageBody.style.visibility = 'visible';
+                        pageBody.style.transition = 'opacity 0.5s ease-in';
+                    }
+                    isPageReady = true;
+                }
+            }, 5000);
+
+            // Prevent layout shifts during Livewire updates
+            document.addEventListener('livewire:load', function() {
+                console.log('✓ Livewire loaded on POS page');
+            });
+
+            // Stabilize layout after everything loads
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    // Force recalculation of layout
+                    const cards = document.querySelectorAll('.card');
+                    cards.forEach(card => {
+                        card.offsetHeight; // Force reflow
+                    });
+                }, 500);
+            });
+
+            // Monitor for layout shifts (for debugging)
+            if ('PerformanceObserver' in window) {
+                const observer = new PerformanceObserver((list) => {
+                    for (const entry of list.getEntries()) {
+                        if (entry.hadRecentInput) continue;
+                        if (entry.value > 0.01) { // Only log significant shifts
+                            console.warn('⚠ Layout Shift:', (entry.value * 100).toFixed(2) + '%');
+                        }
+                    }
+                });
+
+                try {
+                    observer.observe({ entryTypes: ['layout-shift'] });
+                } catch (e) {
+                    // Layout shift API not supported
+                }
+            }
+        })();
     </script>
 @endpush
