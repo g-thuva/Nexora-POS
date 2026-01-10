@@ -51,7 +51,7 @@
                                 </svg>
                                 Download PDF
                             </a>
-                            @if($creditSale->status !== \App\Enums\CreditStatus::PAID)
+                            @if($creditSale->status !== \App\Enums\CreditStatus::PAID && $creditSale->due_amount > 0)
                                 <button type="button"
                                         class="btn btn-primary"
                                         onclick="showPaymentModal({{ $creditSale->id }}, '{{ $creditSale->customer->name }}', {{ $creditSale->due_amount }})">
@@ -273,7 +273,7 @@
                                         <path d="M17 9v-2a2 2 0 0 0 -2 -2h-10a2 2 0 0 0 -2 2v6a2 2 0 0 0 2 2h2" />
                                     </svg>
                                     <p class="text-muted">No payments recorded yet</p>
-                                    @if($creditSale->status !== \App\Enums\CreditStatus::PAID)
+                                    @if($creditSale->status !== \App\Enums\CreditStatus::PAID && $creditSale->due_amount > 0)
                                         <button type="button"
                                                 class="btn btn-sm btn-success"
                                                 onclick="showPaymentModal({{ $creditSale->id }}, '{{ $creditSale->customer->name }}', {{ $creditSale->due_amount }})">
@@ -340,27 +340,109 @@
 @push('page-scripts')
 <script>
 function showPaymentModal(creditSaleId, customerName, maxAmount) {
-    document.getElementById('customerName').value = customerName;
-    document.getElementById('maxAmount').value = 'LKR ' + maxAmount.toFixed(2);
-    document.getElementById('payment_amount').max = maxAmount.toFixed(2);
+    console.log('showPaymentModal called:', { creditSaleId, customerName, maxAmount });
+
+    // Ensure maxAmount is a number
+    maxAmount = parseFloat(maxAmount);
+
+    const customerNameInput = document.getElementById('customerName');
+    const maxAmountInput = document.getElementById('maxAmount');
+    const paymentAmountInput = document.getElementById('payment_amount');
+
+    if (customerNameInput) {
+        customerNameInput.value = customerName;
+        console.log('Customer name set:', customerName);
+    }
+
+    if (maxAmountInput) {
+        maxAmountInput.value = 'LKR ' + maxAmount.toFixed(2);
+        console.log('Max amount set:', 'LKR ' + maxAmount.toFixed(2));
+    }
+
+    if (paymentAmountInput) {
+        paymentAmountInput.max = maxAmount.toFixed(2);
+        paymentAmountInput.value = ''; // Clear previous value
+        console.log('Payment amount max set:', maxAmount.toFixed(2));
+    }
 
     // Set form action
-    document.getElementById('paymentForm').action = '/credit-sales/' + creditSaleId + '/payment';
+    const form = document.getElementById('paymentForm');
+    if (form) {
+        form.action = '/credit-sales/' + creditSaleId + '/payment';
+    }
 
-    // Show modal
-    new bootstrap.Modal(document.getElementById('paymentModal')).show();
+    // Show modal using native Bootstrap or jQuery
+    const modalElement = document.getElementById('paymentModal');
+    if (typeof bootstrap !== 'undefined') {
+        // Bootstrap 5
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+    } else if (typeof $ !== 'undefined' && $.fn.modal) {
+        // Bootstrap 4 with jQuery
+        $(modalElement).modal('show');
+    } else {
+        // Fallback: manually show modal
+        modalElement.classList.add('show');
+        modalElement.style.display = 'block';
+        modalElement.setAttribute('aria-modal', 'true');
+        modalElement.removeAttribute('aria-hidden');
+
+        // Add backdrop
+        const backdrop = document.createElement('div');
+        backdrop.className = 'modal-backdrop fade show';
+        backdrop.id = 'paymentModalBackdrop';
+        document.body.appendChild(backdrop);
+        document.body.classList.add('modal-open');
+    }
+}
+
+// Close modal function for fallback
+function closePaymentModal() {
+    const modalElement = document.getElementById('paymentModal');
+    modalElement.classList.remove('show');
+    modalElement.style.display = 'none';
+    modalElement.setAttribute('aria-hidden', 'true');
+    modalElement.removeAttribute('aria-modal');
+
+    const backdrop = document.getElementById('paymentModalBackdrop');
+    if (backdrop) {
+        backdrop.remove();
+    }
+    document.body.classList.remove('modal-open');
 }
 
 // Validate payment amount
-document.getElementById('payment_amount').addEventListener('input', function() {
-    const maxAmount = parseFloat(document.getElementById('maxAmount').value.replace('LKR ', ''));
-    const enteredAmount = parseFloat(this.value);
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentAmountInput = document.getElementById('payment_amount');
+    if (paymentAmountInput) {
+        paymentAmountInput.addEventListener('input', function() {
+            const maxAmount = parseFloat(document.getElementById('maxAmount').value.replace('LKR ', ''));
+            const enteredAmount = parseFloat(this.value);
 
-    if (enteredAmount > maxAmount) {
-        this.setCustomValidity('Payment amount cannot exceed the due amount');
-    } else {
-        this.setCustomValidity('');
+            if (enteredAmount > maxAmount) {
+                this.setCustomValidity('Payment amount cannot exceed the due amount');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
     }
+
+    // ESC key to close modal
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' || e.keyCode === 27) {
+            const modalElement = document.getElementById('paymentModal');
+            if (modalElement && modalElement.classList.contains('show')) {
+                if (typeof bootstrap !== 'undefined') {
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    if (modal) modal.hide();
+                } else if (typeof $ !== 'undefined' && $.fn.modal) {
+                    $(modalElement).modal('hide');
+                } else {
+                    closePaymentModal();
+                }
+            }
+        }
+    });
 });
 </script>
 @endpush

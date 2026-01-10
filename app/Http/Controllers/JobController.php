@@ -123,6 +123,7 @@ class JobController extends Controller
     /** Display the specified job. */
     public function show(Job $job)
     {
+        $job->load(['customer', 'jobType', 'statusHistories.changedBy']);
         return view('jobs.show', compact('job'));
     }
 
@@ -132,6 +133,7 @@ class JobController extends Controller
     public function showReceipt(Job $job)
     {
         $job->load(['customer', 'jobType']);
+        $shop = auth()->user()->shop ?? \App\Models\Shop::first();
 
         // Return a simple JSON structure the frontend can use to build the printable receipt
         return response()->json([
@@ -154,6 +156,12 @@ class JobController extends Controller
                     'name' => $job->jobType->name ?? $job->jobType->type ?? null,
                     'default_days' => $job->jobType->default_days ?? null,
                 ] : null,
+                'shop' => $shop ? [
+                    'name' => $shop->name,
+                    'address' => $shop->address,
+                    'phone' => $shop->phone,
+                    'email' => $shop->email,
+                ] : null,
             ],
         ]);
     }
@@ -170,14 +178,27 @@ class JobController extends Controller
     public function update(Request $request, Job $job)
     {
         // Quick status update (from dropdown in list)
-        if ($request->has('status') && count($request->all()) <= 2) {
-            $request->validate([
+        // Get all input except Laravel's internal fields
+        $actualInput = $request->except(['_token', '_method']);
+
+        // If ONLY status is present, it's a quick status update
+        if (count($actualInput) === 1 && isset($actualInput['status'])) {
+            $validated = $request->validate([
                 'status' => 'required|in:' . implode(',', Job::statuses()),
             ]);
 
-            $job->update(['status' => $request->status]);
+            $oldStatus = $job->status;
+            $job->update(['status' => $validated['status']]);
 
-            return redirect()->route('jobs.index')->with('success', 'Job status updated to ' . ucfirst(str_replace('_', ' ', $request->status)));
+            // Save status history
+            \App\Models\JobStatusHistory::create([
+                'job_id' => $job->id,
+                'old_status' => $oldStatus,
+                'new_status' => $validated['status'],
+                'changed_by' => auth()->id(),
+            ]);
+
+            return redirect()->route('jobs.list')->with('success', 'Job status updated to ' . ucfirst(str_replace('_', ' ', $validated['status'])));
         }
 
         // Full job update

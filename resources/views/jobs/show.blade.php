@@ -1,6 +1,45 @@
 @extends('layouts.nexora')
 
 @section('content')
+<style>
+.timeline {
+    position: relative;
+    padding: 20px 0;
+}
+.timeline-item {
+    position: relative;
+    padding-left: 40px;
+    padding-bottom: 20px;
+}
+.timeline-item:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 30px;
+    bottom: -10px;
+    width: 2px;
+    background: #e9ecef;
+}
+.timeline-badge {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    z-index: 1;
+}
+.timeline-content {
+    padding: 12px 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 3px solid #dee2e6;
+}
+</style>
 <div class="page-wrapper">
     <div class="container-fluid py-4">
 
@@ -18,9 +57,9 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"/><path d="M9 17h6"/><path d="M9 13h6"/></svg>
                                 Download PDF
                             </a>
-                            <button type="button" class="btn btn-white" title="View & Print" onclick="viewJobInModal({{ $job->id }})" data-bs-toggle="modal" data-bs-target="#jobReceiptModal">
+                            <button type="button" class="btn btn-white" title="POS Print" onclick="posPrintJobReceipt({{ $job->id }})">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17 17h2a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-14a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h2"/><path d="M17 9v-4a2 2 0 0 0-2-2h-6a2 2 0 0 0-2 2v4"/><rect x="7" y="13" width="10" height="8" rx="2"/></svg>
-                                Print
+                                POS Print
                             </button>
                             <a href="{{ route('jobs.edit', $job) }}" class="btn btn-primary">Edit Job</a>
                         </div>
@@ -92,24 +131,74 @@
                                     Timeline
                                 </h3>
                             </div>
-                            <div class="list-group list-group-flush">
-                                <div class="list-group-item">
-                                    <div class="row align-items-center">
-                                        <div class="col">
-                                            <div class="text-truncate">
-                                                <strong>Created</strong>
+                            <div class="card-body p-3">
+                                <div class="timeline">
+                                    <!-- Status History -->
+                                    @if($job->statusHistories && $job->statusHistories->count() > 0)
+                                        @foreach($job->statusHistories as $history)
+                                        <div class="timeline-item">
+                                            <div class="timeline-badge
+                                                @if($history->new_status === 'completed') bg-success
+                                                @elseif($history->new_status === 'in_progress') bg-info
+                                                @elseif($history->new_status === 'on_hold') bg-warning
+                                                @elseif($history->new_status === 'cancelled') bg-danger
+                                                @else bg-secondary
+                                                @endif">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="9 11 12 14 20 6" /><path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" /></svg>
                                             </div>
-                                            <div class="text-muted small">{{ $job->created_at->format('M d, Y h:i A') }}</div>
+                                            <div class="timeline-content">
+                                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                                    <div>
+                                                        <strong>Status changed</strong>
+                                                        @if($history->old_status)
+                                                        <span class="text-muted">from</span>
+                                                        <span class="badge bg-secondary-lt">{{ ucfirst(str_replace('_', ' ', $history->old_status)) }}</span>
+                                                        @endif
+                                                        <span class="text-muted">to</span>
+                                                        <span class="badge
+                                                            @if($history->new_status === 'completed') bg-success
+                                                            @elseif($history->new_status === 'in_progress') bg-info
+                                                            @elseif($history->new_status === 'on_hold') bg-warning
+                                                            @elseif($history->new_status === 'cancelled') bg-danger
+                                                            @else bg-secondary
+                                                            @endif">
+                                                            {{ ucfirst(str_replace('_', ' ', $history->new_status)) }}
+                                                        </span>
+                                                    </div>
+                                                    <small class="text-muted">{{ $history->created_at->diffForHumans() }}</small>
+                                                </div>
+                                                @if($history->changedBy)
+                                                <div class="text-muted small">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm" width="14" height="14" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="7" r="4" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg>
+                                                    By {{ $history->changedBy->name ?? 'Unknown' }} • {{ $history->created_at->format('M d, Y h:i A') }}
+                                                </div>
+                                                @else
+                                                <div class="text-muted small">{{ $history->created_at->format('M d, Y h:i A') }}</div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                    @endif
+
+                                    <!-- Last Updated -->
+                                    <div class="timeline-item">
+                                        <div class="timeline-badge bg-blue">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 8l0 4l2 2" /><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" /></svg>
+                                        </div>
+                                        <div class="timeline-content">
+                                            <strong>Last Updated</strong>
+                                            <div class="text-muted small">{{ $job->updated_at->format('M d, Y h:i A') }}</div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="list-group-item">
-                                    <div class="row align-items-center">
-                                        <div class="col">
-                                            <div class="text-truncate">
-                                                <strong>Last Updated</strong>
-                                            </div>
-                                            <div class="text-muted small">{{ $job->updated_at->format('M d, Y h:i A') }}</div>
+
+                                    <!-- Created -->
+                                    <div class="timeline-item">
+                                        <div class="timeline-badge bg-primary">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                                        </div>
+                                        <div class="timeline-content">
+                                            <strong>Job Created</strong>
+                                            <div class="text-muted small">{{ $job->created_at->format('M d, Y h:i A') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -194,7 +283,7 @@
                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"/><path d="M9 17h6"/><path d="M9 13h6"/></svg>
                                             PDF
                                         </a>
-                                        <button type="button" class="btn btn-white" onclick="viewJobInModal({{ $job->id }})" data-bs-toggle="modal" data-bs-target="#jobReceiptModal">
+                                        <button type="button" class="btn btn-white" onclick="viewJobInModal({{ $job->id }})">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17 17h2a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-14a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h2"/><path d="M17 9v-4a2 2 0 0 0-2-2h-6a2 2 0 0 0-2 2v4"/><rect x="7" y="13" width="10" height="8" rx="2"/></svg>
                                             Print
                                         </button>

@@ -120,10 +120,10 @@ class CreditSale extends Model
         $this->paid_amount += $amount;
         $this->due_amount -= $amount;
 
-        // Update status
+        // Update status - ensure PAID when due_amount is 0 or less
         if ($this->due_amount <= 0) {
             $this->status = CreditStatus::PAID;
-            $this->due_amount = 0;
+            $this->due_amount = 0; // Ensure it's exactly 0, not negative
         } elseif ($this->paid_amount > 0) {
             $this->status = CreditStatus::PARTIAL;
         }

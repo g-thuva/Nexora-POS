@@ -209,10 +209,10 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <form action="{{ route('jobs.update', $job) }}" method="POST" class="d-inline-block" onchange="this.submit()">
+                                            <form action="{{ route('jobs.update', $job) }}" method="POST" class="d-inline-block status-update-form" id="status-form-{{ $job->id }}">
                                                 @csrf
                                                 @method('PUT')
-                                                <select name="status" class="form-select form-select-sm" style="width: auto; min-width: 130px;">
+                                                <select name="status" class="form-select form-select-sm status-dropdown" style="width: auto; min-width: 130px;" data-job-id="{{ $job->id }}" data-form-id="status-form-{{ $job->id }}">
                                                     <option value="pending" {{ $job->status === 'pending' ? 'selected' : '' }}>Pending</option>
                                                     <option value="in_progress" {{ $job->status === 'in_progress' ? 'selected' : '' }}>In Progress</option>
                                                     <option value="completed" {{ $job->status === 'completed' ? 'selected' : '' }}>Completed</option>
@@ -286,5 +286,34 @@
     </div>
 </div>
 @include('partials._job_receipt_modal')
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle status dropdown changes
+    const statusDropdowns = document.querySelectorAll('.status-dropdown');
+
+    statusDropdowns.forEach(dropdown => {
+        dropdown.addEventListener('change', function(e) {
+            e.preventDefault();
+
+            const formId = this.dataset.formId;
+            const form = document.getElementById(formId);
+            const jobId = this.dataset.jobId;
+            const newStatus = this.value;
+
+            console.log('Status change:', { formId, jobId, newStatus, form });
+
+            if (form) {
+                // Make sure the select value is set
+                this.setAttribute('name', 'status');
+                console.log('Submitting form with status:', this.value);
+                form.submit();
+            } else {
+                console.error('Form not found:', formId);
+            }
+        });
+    });
+});
+</script>
 
 @endsection

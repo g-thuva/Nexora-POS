@@ -311,7 +311,7 @@
                                                     </option>
                                                 @endforeach
                                             </select>
-                                            <small class="form-hint">Manage job types in Settings → Job Types</small>
+                                            <small class="form-hint">Manage job types in <a href="{{ route('job-types.index') }}" class="text-primary">Jobs → Job Types</a></small>
                                             @error('job_type_id')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror

@@ -47,4 +47,9 @@ class Job extends Model
     {
         return $this->belongsTo(\App\Models\Customer::class, 'customer_id');
     }
+
+    public function statusHistories()
+    {
+        return $this->hasMany(JobStatusHistory::class)->orderBy('created_at', 'desc');
+    }
 }
