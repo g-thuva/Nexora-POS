@@ -55,8 +55,8 @@
 
                 <div class="row g-3">
                     <!-- LEFT SECTION: Product Search (60%) -->
-                    <div class="col-lg-7 col-xl-7">
-                        <div class="card" style="height: fit-content;">
+                    <div class="col-lg-7 col-xl-7 d-flex flex-column">
+                        <div class="card flex-fill" style="height: auto; min-height: 400px; max-height: none; display: flex; flex-direction: column;">
                             <div class="card-header">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
@@ -121,32 +121,32 @@
                                                     {{ $product->quantity <= 0 ? 'opacity: 0.6; cursor: not-allowed;' : '' }}">
                                                     <div class="card-body p-2" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
                                                         <div class="text-start">
-                                                            <div class="fw-bold {{ $product->quantity <= 0 ? 'text-muted' : 'text-dark' }} mb-1"
+                                                            <div class="fw-bold {{ $product->quantity <= 0 ? 'text-muted' : 'text-dark' }}"
                                                                 style="font-size: 13px; line-height: 1.3; word-wrap: break-word; min-height: 36px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                                                                 {{ $product->name }}
                                                                 @if ($product->quantity <= 0)
                                                                     <small class="text-danger ms-1 d-block">(Out of Stock)</small>
                                                                 @endif
                                                             </div>
-                                                            <div class="text-muted small mb-2" style="font-size: 10px;">
-                                                                {{ $product->code ?? 'N/A' }}
+                                                            @if($product->code)
+                                                            <div class="text-muted small" style="font-size: 10px;">
+                                                                {{ $product->code }}
                                                             </div>
+                                                            @endif
                                                         </div>
                                                         <div class="d-flex justify-content-between align-items-center gap-1"
-                                                            style="flex-wrap: wrap; margin-top: auto;">
+                                                            style="flex-wrap: wrap;">
                                                             <span
                                                                 class="fw-bold {{ $product->quantity <= 0 ? 'text-muted' : 'text-success' }}"
-                                                                style="font-size: 13px; white-space: nowrap;">LKR
-                                                                {{ number_format($product->selling_price, 0) }}</span>
+                                                                style="font-size: 13px; white-space: nowrap;">LKR {{ number_format($product->selling_price, 0) }}</span>
                                                             @if ($product->quantity > 0)
                                                                 <span class="badge rounded-pill"
                                                                     style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; font-size: 10px; font-weight: 600; padding: 4px 8px; white-space: nowrap; border-radius: 4px; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);">
                                                                     {{ $product->quantity }}</span>
                                                             @else
-                                                                <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); openQuickStockModal({{ $product->id }}, '{{ addslashes($product->name) }}', '{{ $product->code }}')"
-                                                                    style="font-size: 9px; padding: 3px 6px;">
-                                                                    + Stock
-                                                                </button>
+                                                                <span class="badge bg-danger" style="font-size: 9px; padding: 4px 6px; white-space: nowrap;">
+                                                                    Out of Stock
+                                                                </span>
                                                             @endif
                                                         </div>
                                                     </div>
@@ -160,8 +160,8 @@
                     </div>
 
                     <!-- RIGHT SECTION: Cart & Customer (40%) -->
-                    <div class="col-lg-5 col-xl-5">
-                        <div class="card" style="height: fit-content;">
+                    <div class="col-lg-5 col-xl-5 d-flex flex-column">
+                        <div class="card flex-fill" style="height: auto; min-height: 400px; max-height: none; display: flex; flex-direction: column;">
                             <div class="card-header">
                                 <h3 class="card-title" id="cart-title">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24"
@@ -213,8 +213,8 @@
                                 </div>
 
                                 <!-- Cart Items -->
-                                <div class="mb-4" style="height: auto; max-height: 400px; overflow-y: auto;">
-                                    <div class="text-center py-5" id="empty-cart">
+                                <div id="cart-items-wrapper" class="mb-2" style="height: 240px !important; min-height: 400px !important; max-height: 400px !important; flex: 0 0 400px;">
+                                    <div class="text-center py-2" id="empty-cart" style="display: align-items: center; justify-content: flex-start; gap: 8px; min-height: 120px; padding-top: 12px; padding-bottom: 12px;">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-muted mb-3"
                                             width="48" height="48" viewBox="0 0 24 24" stroke-width="1.5"
                                             stroke="currentColor" fill="none" stroke-linecap="round"
@@ -229,7 +229,7 @@
                                     </div>
                                     <!-- Cart items will be dynamically added here -->
                                     <div id="cart-items"
-                                        style="display: none; max-height: 350px; overflow-y: auto; overflow-x: hidden; padding-right: 5px;">
+                                        style="display: none; height: 100%; overflow-y: auto; overflow-x: hidden; padding-right: 5px;">
                                         <!-- Dynamic cart items -->
                                     </div>
                                 </div>
@@ -642,7 +642,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-bold" id="stock-product-name"></label>
-                        <p class="text-muted small mb-2" id="stock-product-code"></p>
+                        <p class="text-muted small" id="stock-product-code"></p>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Add Quantity</label>
@@ -736,6 +736,19 @@
                                     <input type="number" class="form-control" id="qp_stock_alert" name="quantity_alert" min="0" placeholder="0">
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="qp_warranty" class="form-label">Warranty <span class="text-muted">(Optional)</span></label>
+                                    <select class="form-select" id="qp_warranty" name="warranty_id">
+                                        <option value="">No warranty</option>
+                                        @foreach($warranties as $warranty)
+                                            <option value="{{ $warranty->id }}" {{ $warranty->slug == '3-years' ? 'selected' : '' }}>
+                                                {{ $warranty->name }} @if($warranty->duration)({{ $warranty->duration }})@endif
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                             <div class="col-md-12">
                                 <div class="mb-3">
                                     <label for="qp_notes" class="form-label">Notes <span class="text-muted">(Optional)</span></label>
@@ -787,7 +800,11 @@
         }
 
         #cart-items {
-            min-height: 400px;
+            height: 100% !important;
+            max-height: 100% !important;
+            min-height: 0 !important;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         /* Critical CSS - Prevent layout shifts */
@@ -857,20 +874,29 @@
             padding: 1rem !important;
         }
 
-        /* Fixed cart section dimensions */
-        .col-lg-5 .card {
-            height: auto;
-        }
-
         /* Prevent cart scrollable area from shifting */
         .overflow-auto {
-            min-height: 400px;
-            max-height: calc(100vh - 400px);
+            min-height: 0;
+            max-height: none;
         }
 
         #cart-items {
-            min-height: 300px;
+            height: 100% !important;
+            max-height: 100% !important;
+            min-height: 0 !important;
             contain: layout;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-bottom: 0 !important;
+        }
+
+        #cart-items {
+            height: 100% !important;
+            max-height: 100% !important;
+            min-height: 0 !important;
+            contain: layout;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .cart-title {
@@ -881,8 +907,8 @@
         /* Enhanced cart-item with fixed dimensions to prevent sizing shifts */
         .cart-item {
             border-bottom: 1px solid #e9ecef;
-            padding: 12px !important;
-            min-height: 95px !important;
+            padding: 10px !important;
+            min-height: 90px !important;
             height: auto;
             display: flex;
             flex-direction: column;
@@ -899,7 +925,7 @@
 
         /* Fixed dimensions for cart item children */
         .cart-item .row {
-            min-height: 75px;
+            min-height: 68px;
         }
 
         .cart-item .form-control,
@@ -1125,14 +1151,14 @@
         /* Product grid responsiveness */
         .product-card {
             min-height: 120px;
-            transition: all 0.2s ease-in-out;
             background: white;
         }
 
+        /* Disable hover lift to avoid any perceived size change on selection */
         .product-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-            border-color: #3b82f6 !important;
+            transform: none !important;
+            box-shadow: none !important;
+            border-color: inherit !important;
         }
 
         /* Cart item styling */
@@ -2128,45 +2154,50 @@
                 const isLowStock = product.stock > 0 && product.stock <= 5;
 
                 const col = document.createElement('div');
-                col.className = 'col-md-6 col-lg-4';
+                col.className = 'col-6 col-sm-6 col-md-4 col-lg-3';
                 col.style.padding = '0.25rem';
 
                 const card = document.createElement('div');
                 card.className = `card product-card ${isOutOfStock ? 'out-of-stock' : 'cursor-pointer hover-shadow'}`;
                 card.dataset.productId = product.id;
+                card.dataset.id = product.id;
+                card.dataset.code = product.code || '';
                 card.dataset.stock = product.stock;
                 card.dataset.warrantyId = product.warranty_id || '';
                 card.dataset.warrantyName = product.warranty_name || '';
                 card.dataset.warrantyDuration = product.warranty_duration || '';
+                card.dataset.productName = product.name;
+                card.dataset.productCode = product.code || '';
                 card.style.border = isOutOfStock ? '2px solid #ef4444' : '1px solid #e9ecef';
                 card.style.borderRadius = '8px';
-                card.style.minHeight = '50px';
+                card.style.minHeight = '120px';
+                card.style.height = '100%';
                 card.style.width = '100%';
+                card.style.transition = 'all 0.2s ease';
                 if (isOutOfStock) {
                     card.style.opacity = '0.6';
                     card.style.cursor = 'not-allowed';
                 }
 
                 card.innerHTML = `
-                    <div class="card-body p-3">
+                    <div class="card-body p-2" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
                         <div class="text-start">
-                            <div class="fw-bold ${isOutOfStock ? 'text-muted' : 'text-dark'} mb-1"
-                                style="font-size: 14px; line-height: 1.2; word-wrap: break-word;">
+                            <div class="fw-bold ${isOutOfStock ? 'text-muted' : 'text-dark'}"
+                                style="font-size: 13px; line-height: 1.3; word-wrap: break-word; min-height: 36px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                                 ${product.name}
-                                ${isOutOfStock ? '<small class="text-danger ms-1">(Out of Stock)</small>' : ''}
+                                ${isOutOfStock ? '<small class="text-danger ms-1 d-block">(Out of Stock)</small>' : ''}
                             </div>
-                            <div class="text-muted small mb-2" style="font-size: 11px;">
-                                PRD-${String(product.id).padStart(6, '0')}
-                            </div>
+                            ${product.code ? `<div class="text-muted small" style="font-size: 10px;">
+                                ${product.code}
+                            </div>` : ''}
                         </div>
-                        <div class="d-flex justify-content-between align-items-center" style="flex-wrap: wrap;">
+                        <div class="d-flex justify-content-between align-items-center gap-1" style="flex-wrap: wrap;">
                             <span class="fw-bold ${isOutOfStock ? 'text-muted' : 'text-success'}"
-                                style="font-size: 14px; white-space: nowrap;">LKR ${Number(product.price).toFixed(0)}</span>
+                                style="font-size: 13px; white-space: nowrap;">LKR ${Number(product.price).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</span></span>
                             ${product.stock > 0 ?
                                 `<span class="badge rounded-pill"
-                                    style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; font-size: 11px; font-weight: 600; padding: 6px 10px; white-space: nowrap; border-radius: 4px; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);">Stock: ${product.stock}</span>` :
-                                `<span class="badge rounded-pill"
-                                    style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; font-size: 11px; font-weight: 600; padding: 6px 10px; white-space: nowrap; border-radius: 4px; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);">Out of Stock</span>`
+                                    style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; font-size: 10px; font-weight: 600; padding: 4px 8px; white-space: nowrap; border-radius: 4px; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);">${product.stock}</span>` :
+                                `<span class="badge bg-danger" style="font-size: 9px; padding: 4px 6px; white-space: nowrap;">Out of Stock</span>`
                             }
                         </div>
                     </div>
@@ -3089,9 +3120,12 @@
                     labelField: 'name',
                     searchField: ['name', 'code'],
                     load: function(query, callback) {
-                        const url = query.length
-                            ? `/api/products?search=${encodeURIComponent(query)}`
-                            : '/api/products';
+                        if (!query.length) {
+                            callback();
+                            return;
+                        }
+
+                        const url = `/api/products?search=${encodeURIComponent(query)}`;
 
                         console.log('Fetching products from:', url);
 

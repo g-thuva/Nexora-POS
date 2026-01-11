@@ -138,7 +138,7 @@ class OrderController extends Controller
 
         return view('orders.create', [
             'customers' => Customer::all(['id', 'name', 'phone']),
-            'products' => Product::with(['category', 'unit', 'warranty'])->get(),
+            'products' => Product::with(['category', 'unit', 'warranty'])->limit(20)->get(),
             'products_count' => Product::count(),
             'warranties' => \App\Models\Warranty::all(['id', 'name', 'duration']),
             'categories' => \App\Models\Category::all(['id', 'name']),
@@ -1701,11 +1701,13 @@ class OrderController extends Controller
     public function getProducts()
     {
         $products = Product::with(['category', 'unit', 'warranty'])
+            ->limit(20)
             ->get()
             ->map(function($product) {
                 return [
                     'id' => $product->id,
                     'name' => $product->name,
+                    'code' => $product->code,
                     'price' => $product->selling_price,
                     'stock' => $product->quantity,
                     'warranty_id' => $product->warranty_id,
@@ -1716,7 +1718,7 @@ class OrderController extends Controller
 
         return response()->json([
             'products' => $products,
-            'count' => $products->count(),
+            'count' => Product::count(),
         ]);
     }
 
