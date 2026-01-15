@@ -496,7 +496,7 @@ class LetterheadController extends Controller
             'preview_image' => null,
             'invoice_prefix' => 'INV',
             'invoice_starting_number' => 1,
-            'table_width' => 480,
+            'table_width' => 545,
             'merge_offset' => [
                 'x' => 0,
                 'y' => 0,

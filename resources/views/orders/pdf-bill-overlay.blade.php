@@ -113,21 +113,21 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 50%;">Product</th>
-                        <th class="text-center" style="width: 15%;">Qty</th>
-                        <th class="text-right" style="width: 17.5%;">Price</th>
-                        <th class="text-right" style="width: 17.5%;">Total</th>
+                        <th style="width: 65%;">Product</th>
+                        <th class="text-center" style="width: 10%;">Qty</th>
+                        <th class="text-right" style="width: 12%;">Price</th>
+                        <th class="text-right" style="width: 13%;">Total</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($order->details as $detail)
+                    @foreach($order->details as $index => $detail)
                     <tr>
-                        <td style="border-bottom: none;">{{ $detail->product->name }}</td>
+                        <td style="border-bottom: none;">{{ $index + 1 }}. {{ $detail->product ? $detail->product->name : $detail->product_name }}</td>
                         <td class="text-center" style="border-bottom: none;">{{ $detail->quantity }}</td>
                         <td class="text-right" style="border-bottom: none;">{{ number_format($detail->unitcost, 2) }}</td>
                         <td class="text-right" style="border-bottom: none;">{{ number_format($detail->total, 2) }}</td>
                     </tr>
-                    @if($detail->serial_number || $detail->warranty_name || ($detail->product && $detail->product->warranty_years))
+                    @if($detail->serial_number || $detail->warranty_name || $detail->warranty_years)
                     <tr>
                         <td colspan="4" style="font-size: 8pt; color: #888; padding: 2px 2px 3px 2px; border-bottom: none;">
                             @if($detail->serial_number)
@@ -135,8 +135,8 @@
                             @endif
                             @if($detail->warranty_name)
                                 <span>Warranty: {{ $detail->warranty_name }}</span>
-                            @elseif($detail->product && $detail->product->warranty_years)
-                                <span>Warranty: {{ $detail->product->warranty_years }} {{ $detail->product->warranty_years == 1 ? 'Year' : 'Years' }}</span>
+                            @elseif($detail->warranty_years)
+                                <span>Warranty: {{ $detail->warranty_years }} {{ $detail->warranty_years == 1 ? 'Year' : 'Years' }}</span>
                             @endif
                         </td>
                     </tr>

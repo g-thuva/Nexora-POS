@@ -139,13 +139,62 @@
 
         /* Brand styling */
         .navbar-brand-text {
-            color: #1f2937 !important;
+            color: #000000 !important;
             text-decoration: none !important;
         }
 
         .navbar-brand:hover .navbar-brand-text {
-            color: #1f2937 !important;
+            color: #000000 !important;
             text-decoration: none !important;
+        }
+
+        /* Enhanced navbar link styling */
+        .navbar .nav-link-title {
+            font-size: 1rem !important;
+            font-weight: 400 !important;
+            letter-spacing: -0.02em !important;
+            color: #000000 !important;
+            transition: color 0.2s ease !important;
+        }
+
+        .navbar .nav-link:hover .nav-link-title {
+            color: #000000 !important;
+        }
+
+        .navbar .nav-item.active .nav-link-title {
+            color: #000000 !important;
+            font-weight: 400 !important;
+        }
+
+        /* Enhanced dropdown text styling */
+        .navbar .dropdown-item {
+            font-size: 0.9375rem !important;
+            font-weight: 400 !important;
+            letter-spacing: -0.01em !important;
+            color: #000000 !important;
+            padding: 0.5rem 1rem !important;
+            transition: all 0.15s ease !important;
+        }
+
+        .navbar .dropdown-item:hover {
+            background-color: #f1f5f9 !important;
+            color: #000000 !important;
+            font-weight: 400 !important;
+        }
+
+        .navbar .dropdown-item.active {
+            background-color: #dbeafe !important;
+            color: #000000 !important;
+            font-weight: 400 !important;
+        }
+
+        .navbar .dropdown-header {
+            font-size: 0.75rem !important;
+            font-weight: 400 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+            color: #000000 !important;
+            padding: 0.5rem 1rem !important;
         }
 
         /* Fix navbar dropdown visibility */
@@ -275,7 +324,7 @@
             margin-top: 20px;
             color: #6b7280;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 400;
         }
 
         /* Prevent content from showing during load */

@@ -219,11 +219,27 @@
                             </span>
                         </a>
                         <div class="dropdown-menu">
+                            <div class="dropdown-header">Master Data</div>
+                            <a class="dropdown-item" href="{{ route('customers.index') }}">
+                                {{ __('Customers') }}
+                            </a>
                             @if(Auth::user()->hasInventoryAccess())
                             <a class="dropdown-item" href="{{ route('categories.index') }}">
                                 {{ __('Categories') }}
                             </a>
                             @endif
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-header">Data Import</div>
+                            <a class="dropdown-item" href="{{ route('orders.import.manual') }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"/><path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>
+                                {{ __('Import Single Order') }}
+                            </a>
+                            <a class="dropdown-item" href="{{ route('orders.import.bulk') }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"/><path d="M12 11v6"/><path d="M9.5 13.5l2.5 -2.5l2.5 2.5"/></svg>
+                                {{ __('Import Bulk Orders (CSV)') }}
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-header">Configuration</div>
                             @if(Auth::user()->isShopOwner() || (method_exists(Auth::user(), 'isManagerRole') && Auth::user()->isManagerRole()) || (method_exists(Auth::user(), 'isManager') && Auth::user()->isManager()))
                             <a class="dropdown-item" href="{{ route('letterhead.index') }}">
                                 {{ __('Letterhead') }}

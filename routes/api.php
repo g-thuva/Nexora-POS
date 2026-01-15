@@ -19,8 +19,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Apply rate limiting to public API endpoints
-Route::middleware(['api.rate.limit'])->group(function () {
+// Apply rate limiting and authentication to API endpoints
+Route::middleware(['auth:sanctum', 'web'])->group(function () {
     Route::get('products/', [ProductController::class, 'index'])->name('api.product.index');
 });
 

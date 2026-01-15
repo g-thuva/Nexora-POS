@@ -1151,25 +1151,21 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Editor element:', editor);
         console.log('Container element:', container);
 
-        // Essential elements to always include
-        const essentialElements = [
-            {field: 'invoice_no', x: 400, y: 50, font_size: 14, font_weight: 'bold'},
-            {field: 'invoice_date', x: 400, y: 80, font_size: 14, font_weight: 'normal'},
-            {field: 'product_name', x: 50, y: 130, font_size: 13, font_weight: 'bold'},
-            {field: 'customer_name', x: 50, y: 150, font_size: 14, font_weight: 'bold'},
-            {field: 'customer_phone', x: 50, y: 170, font_size: 13, font_weight: 'normal'},
-            {field: 'customer_address', x: 50, y: 190, font_size: 12, font_weight: 'normal'}
-        ];
+        // If we have stored positions, use them directly
+        let elementsToCreate = positions && positions.length > 0 ? positions : [];
 
-        let elementsToCreate = positions && positions.length > 0 ? positions : essentialElements;
-
-        // Always ensure we have the essential elements
-        essentialElements.forEach(essential => {
-            const exists = elementsToCreate.find(pos => pos.field === essential.field);
-            if (!exists) {
-                elementsToCreate.push(essential);
-            }
-        });
+        // Only add default elements if no positions exist at all
+        if (elementsToCreate.length === 0) {
+            const essentialElements = [
+                {field: 'invoice_no', x: 505, y: 79, font_size: 10, font_weight: 'normal'},
+                {field: 'invoice_date', x: 505, y: 65, font_size: 10, font_weight: 'normal'},
+                {field: 'customer_name', x: 23, y: 110, font_size: 11, font_weight: 'bold'},
+                {field: 'customer_phone', x: 23, y: 126, font_size: 11, font_weight: 'normal'},
+                {field: 'customer_address', x: 23, y: 142, font_size: 11, font_weight: 'normal'},
+                {field: 'product_name', x: 23, y: 165, font_size: 11, font_weight: 'normal'}
+            ];
+            elementsToCreate = essentialElements;
+        }
 
         console.log('Elements to create:', elementsToCreate);
 

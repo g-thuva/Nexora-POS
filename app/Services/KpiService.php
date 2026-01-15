@@ -81,9 +81,10 @@ class KpiService
             $returns = DB::table('return_sales')->where('shop_id', $shopId);
             $thirtyDaysAgo = now()->subDays(30);
 
+            // Schema uses `total` (not `total_amount`), so aggregate that column
             return (object) [
-                'total_returns' => $returns->sum('total_amount'),
-                'last_30_days_total' => $returns->where('return_date', '>=', $thirtyDaysAgo)->sum('total_amount'),
+                'total_returns' => $returns->sum('total'),
+                'last_30_days_total' => $returns->where('return_date', '>=', $thirtyDaysAgo)->sum('total'),
                 'items_returned' => DB::table('return_sale_items')
                     ->whereIn('return_sale_id', $returns->pluck('id'))
                     ->sum('quantity'),
@@ -103,10 +104,11 @@ class KpiService
             $expenses = DB::table('expenses')->where('shop_id', $shopId);
             $thirtyDaysAgo = now()->subDays(30);
 
+            // Schema uses `type` (not `expense_type`), so aggregate that column
             return (object) [
                 'total_expenses' => $expenses->sum('amount'),
                 'last_30_days_expenses' => $expenses->where('expense_date', '>=', $thirtyDaysAgo)->sum('amount'),
-                'types_count' => $expenses->distinct('expense_type')->count('expense_type'),
+                'types_count' => $expenses->distinct('type')->count('type'),
             ];
         });
     }
@@ -191,5 +193,22 @@ class KpiService
     public function categoriesCount()
     {
         return DB::table('categories')->count();
+    }
+
+    /**
+     * Total value of in-stock products (selling price * quantity) in currency units
+     */
+    public function inStockValue()
+    {
+        $key = $this->cacheKey('in_stock_value');
+        $ttl = $this->ttl('KPI_CACHE_TTL', 60);
+
+        $totalCents = Cache::remember($key, $ttl, function () {
+            return DB::table('products')
+                ->where('quantity', '>', 0)
+                ->sum(DB::raw('selling_price * quantity'));
+        });
+
+        return $this->centsToCurrency($totalCents);
     }
 }

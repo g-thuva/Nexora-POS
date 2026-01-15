@@ -58,7 +58,7 @@ Route::middleware(['auth', 'check.suspended'])->group(function () {
         Route::get('/products/import', [ProductImportController::class, 'create'])->name('products.import.view');
         Route::post('/products/import', [ProductImportController::class, 'store'])->name('products.import.store');
         Route::get('/products/export', [ProductExportController::class, 'create'])->name('products.export.store');
-        Route::post('/products/{product}/add-stock', [ProductController::class, 'addStock'])->name('products.add-stock');
+        Route::post('/products/{productSlug}/add-stock', [ProductController::class, 'addStock'])->name('products.add-stock');
         Route::resource('/products', ProductController::class);
     // Jobs - device repair jobs (shop tenant)
     Route::get('/jobs-list', [\App\Http\Controllers\JobController::class, 'list'])->name('jobs.list');
@@ -92,6 +92,13 @@ Route::middleware(['auth', 'check.suspended'])->group(function () {
         Route::put('/orders/update/{order}', [OrderController::class, 'update'])->name('orders.update');
         Route::post('/orders/items/{item}/update', [OrderController::class, 'updateOrderItem'])->name('orders.items.update');
     Route::get('/orders/{orderId}/download-pdf-bill', [OrderController::class, 'downloadPdfBill'])->name('orders.download-pdf-bill');
+
+        // Order Import Routes - for migrating data from other systems
+        Route::get('/manual', [\App\Http\Controllers\Order\OrderImportController::class, 'manualForm'])->name('orders.import.manual');
+        Route::post('/manual', [\App\Http\Controllers\Order\OrderImportController::class, 'storeManual'])->name('orders.import.store-manual');
+        Route::get('/orders/import/bulk', [\App\Http\Controllers\Order\OrderImportController::class, 'bulkForm'])->name('orders.import.bulk');
+        Route::post('/orders/import/bulk', [\App\Http\Controllers\Order\OrderImportController::class, 'processBulk'])->name('orders.import.process-bulk');
+        Route::get('/orders/import/template', [\App\Http\Controllers\Order\OrderImportController::class, 'downloadTemplate'])->name('orders.import.download-template');
 
         // API routes for real-time sync
         Route::get('/orders/api/products', [OrderController::class, 'getProducts'])->name('orders.products');
@@ -130,19 +137,23 @@ Route::middleware(['auth', 'check.suspended'])->group(function () {
 
     // Returns and Expenses
     Route::middleware(['shop.tenant'])->group(function () {
-        // Return sale creation (POS-like payload expected)
-        Route::post('/returns/store', [\App\Http\Controllers\ReturnSaleController::class, 'store'])->name('returns.store');
-
-        // Show create form for returns
+        // Return sale routes
+        Route::get('/returns', [\App\Http\Controllers\ReturnSaleController::class, 'index'])->name('returns.index');
         Route::get('/returns/create', [\App\Http\Controllers\ReturnSaleController::class, 'create'])->name('returns.create');
+        Route::post('/returns/store', [\App\Http\Controllers\ReturnSaleController::class, 'store'])->name('returns.store');
+        Route::get('/returns/{returnSale}', [\App\Http\Controllers\ReturnSaleController::class, 'show'])->name('returns.show');
         Route::get('/returns/{returnSale}/edit', [\App\Http\Controllers\ReturnSaleController::class, 'edit'])->name('returns.edit');
         Route::put('/returns/{returnSale}', [\App\Http\Controllers\ReturnSaleController::class, 'update'])->name('returns.update');
+        Route::delete('/returns/{returnSale}', [\App\Http\Controllers\ReturnSaleController::class, 'destroy'])->name('returns.destroy');
 
         // Record expenses
+        Route::get('/expenses', [\App\Http\Controllers\ExpenseController::class, 'index'])->name('expenses.index');
         Route::post('/expenses/store', [\App\Http\Controllers\ExpenseController::class, 'store'])->name('expenses.store');
         Route::get('/expenses/create', [\App\Http\Controllers\ExpenseController::class, 'create'])->name('expenses.create');
+        Route::get('/expenses/{expense}', [\App\Http\Controllers\ExpenseController::class, 'show'])->name('expenses.show');
         Route::get('/expenses/{expense}/edit', [\App\Http\Controllers\ExpenseController::class, 'edit'])->name('expenses.edit');
         Route::put('/expenses/{expense}', [\App\Http\Controllers\ExpenseController::class, 'update'])->name('expenses.update');
+        Route::delete('/expenses/{expense}', [\App\Http\Controllers\ExpenseController::class, 'destroy'])->name('expenses.destroy');
     });
 
     // Credit Sales Routes

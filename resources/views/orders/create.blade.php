@@ -17,28 +17,45 @@
             @endif
 
             <!-- POS Header -->
-            <div class="row mb-3">
+            <div class="row mb-4">
                 <div class="col-12">
                     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
-                        <h1 class="page-title mb-0">
-                            {{ __('Point of Sale') }}
-                        </h1>
+                        <div>
+                            <div class="d-flex align-items-center mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M5 7l-2 0l8 -2l8 2l-2 0" />
+                                    <path d="M7 9l0 10a1 1 0 0 0 1 1l8 0a1 1 0 0 0 1 -1l0 -10" />
+                                    <path d="M13 17l0 .01" />
+                                    <path d="M10 14l0 .01" />
+                                    <path d="M10 11l0 .01" />
+                                    <path d="M13 11l0 .01" />
+                                    <path d="M16 11l0 .01" />
+                                    <path d="M16 14l0 .01" />
+                                </svg>
+                                <span style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; color: #64748b; text-transform: uppercase;">SALES MANAGEMENT</span>
+                            </div>
+                            <h1 class="page-title mb-1" style="font-size: 1.5rem; font-weight: 700; color: #1e293b;">
+                                {{ __('Point of Sale') }}
+                            </h1>
+                            <p class="text-muted mb-0" style="font-size: 0.875rem;">Fast checkout, inventory management, and sales processing</p>
+                        </div>
                         <div class="d-flex flex-wrap gap-2">
                             {{-- Quick actions on POS: Return & Expense --}}
-                            <a href="{{ route('returns.create') }}" class="btn btn-white" title="Create Return">
+                            <a href="{{ route('returns.create') }}" class="btn btn-white" title="Create Return" style="border: 1px solid #000;">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1"/></svg>
                                 Return
                             </a>
-                            <a href="{{ route('expenses.create') }}" class="btn btn-white" title="Record Expense">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg>
+                            <a href="{{ route('expenses.create') }}" class="btn btn-white" title="Record Expense" style="border: 1px solid #000;">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17 8v-3a1 1 0 0 0 -1 -1h-10a2 2 0 0 0 0 4h12a1 1 0 0 1 1 1v3m0 4v3a1 1 0 0 1 -1 1h-12a2 2 0 0 1 -2 -2v-12"/><path d="M20 12v4h-4a2 2 0 0 1 0 -4h4"/></svg>
                                 Expense
                             </a>
-                            <button type="button" class="btn btn-white" onclick="openQuickStockModalGlobal()" title="Quick Stock Update">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg>
+                            <button type="button" class="btn btn-white" onclick="openQuickStockModalGlobal()" title="Quick Stock Update" style="border: 1px solid #000;">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"/><line x1="12" y1="12" x2="20" y2="7.5"/><line x1="12" y1="12" x2="12" y2="21"/><line x1="12" y1="12" x2="4" y2="7.5"/></svg>
                                 Quick Stock
                             </button>
-                            <button type="button" class="btn btn-white" onclick="openQuickProductModal()" title="Add New Product">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="12" r="5"/><path d="M12 1l0 3"/><path d="M12 20l0 3"/><path d="M1 12l3 0"/><path d="M20 12l3 0"/></svg>
+                            <button type="button" class="btn btn-white" onclick="openQuickProductModal()" title="Add New Product" style="border: 1px solid #000;">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg>
                                 Quick Product
                             </button>
                         </div>
@@ -56,12 +73,12 @@
                 <div class="row g-3">
                     <!-- LEFT SECTION: Product Search (60%) -->
                     <div class="col-lg-7 col-xl-7 d-flex flex-column">
-                        <div class="card flex-fill" style="height: auto; min-height: 400px; max-height: none; display: flex; flex-direction: column;">
-                            <div class="card-header">
+                        <div class="card flex-fill shadow-sm" style="height: auto; min-height: 400px; max-height: none; display: flex; flex-direction: column; border: none; border-radius: 12px;">
+                            <div class="card-header" style="background: #ffffff; border-bottom: 2px solid #e2e8f0; border-radius: 12px 12px 0 0;">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h3 class="card-title mb-0">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24"
+                                        <h3 class="card-title mb-0" style="font-size: 1.125rem; font-weight: 700; color: #1e293b;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-primary" width="24"
                                                 height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                                                 fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -76,11 +93,8 @@
                                                 <path d="M12 15l0 .01" />
                                                 <path d="M16 15l0 .01" />
                                             </svg>
-                                            Product Search
+                                            Product Catalog
                                         </h3>
-                                    </div>
-                                    <div class="text-muted">
-
                                     </div>
                                 </div>
                             </div>
@@ -89,16 +103,35 @@
                                 <div class="mb-4">
                                     <div class="row g-3">
                                         <div class="col-12">
-                                            <input type="text" class="form-control form-control-lg"
-                                                placeholder="Search products by name, SKU, or scan barcode..."
-                                                autocomplete="off">
+                                            <div class="input-icon">
+                                                <span class="input-icon-addon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                        <circle cx="10" cy="10" r="7"/>
+                                                        <line x1="21" y1="21" x2="15" y2="15"/>
+                                                    </svg>
+                                                </span>
+                                                <input type="text" class="form-control form-control-lg"
+                                                    placeholder="Search products by name, SKU, or scan barcode..."
+                                                    autocomplete="off"
+                                                    style="padding-left: 3rem; font-size: 1rem; border: 2px solid #e2e8f0; border-radius: 8px; transition: all 0.2s ease;"
+                                                    onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
+                                                    onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Products Grid -->
                                 <div class="flex-1" style="overflow-y: auto; overflow-x: hidden;">
-                                    <h4 class="mb-3">Products (<span id="products-count">{{ $products_count ?? safe_count($products) }}</span> items)</h4>
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h4 class="mb-0" style="font-size: 1rem; font-weight: 700; color: #475569;">
+                                            Products
+                                        </h4>
+                                        <span class="badge bg-white" style="font-size: 0.875rem; padding: 0.375rem 0.75rem; font-weight: 600; color: #1e293b; border: 1px solid #e2e8f0;">
+                                            <span id="products-count">{{ $products_count ?? safe_count($products) }}</span> items
+                                        </span>
+                                    </div>
                                     <div id="products-grid" class="row g-2" style="margin: 0;">
                                         @foreach ($products as $product)
                                             <div class="col-6 col-sm-6 col-md-4 col-lg-3" style="padding: 0.25rem;">
@@ -122,7 +155,7 @@
                                                     <div class="card-body p-2" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
                                                         <div class="text-start">
                                                             <div class="fw-bold {{ $product->quantity <= 0 ? 'text-muted' : 'text-dark' }}"
-                                                                style="font-size: 13px; line-height: 1.3; word-wrap: break-word; min-height: 36px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                                                style="font-size: 13px; font-weight: 700; line-height: 1.3; word-wrap: break-word; min-height: 36px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                                                                 {{ $product->name }}
                                                                 @if ($product->quantity <= 0)
                                                                     <small class="text-danger ms-1 d-block">(Out of Stock)</small>
@@ -141,10 +174,10 @@
                                                                 style="font-size: 13px; white-space: nowrap;">LKR {{ number_format($product->selling_price, 0) }}</span>
                                                             @if ($product->quantity > 0)
                                                                 <span class="badge rounded-pill"
-                                                                    style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; font-size: 10px; font-weight: 600; padding: 4px 8px; white-space: nowrap; border-radius: 4px; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);">
+                                                                    style="background: #ffffff; color: #1e293b; font-size: 10px; font-weight: 600; padding: 4px 8px; white-space: nowrap; border-radius: 4px; border: 1px solid #e2e8f0;">
                                                                     {{ $product->quantity }}</span>
                                                             @else
-                                                                <span class="badge bg-danger" style="font-size: 9px; padding: 4px 6px; white-space: nowrap;">
+                                                                <span class="badge" style="background: #ffffff; color: #1e293b; font-size: 9px; padding: 4px 6px; white-space: nowrap; border: 1px solid #e2e8f0;">
                                                                     Out of Stock
                                                                 </span>
                                                             @endif
@@ -161,10 +194,10 @@
 
                     <!-- RIGHT SECTION: Cart & Customer (40%) -->
                     <div class="col-lg-5 col-xl-5 d-flex flex-column">
-                        <div class="card flex-fill" style="height: auto; min-height: 400px; max-height: none; display: flex; flex-direction: column;">
-                            <div class="card-header">
-                                <h3 class="card-title" id="cart-title">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24"
+                        <div class="card flex-fill shadow-sm" style="height: auto; min-height: 400px; max-height: none; display: flex; flex-direction: column; border: none; border-radius: 12px;">
+                            <div class="card-header" style="background: #ffffff; border-bottom: 2px solid #e2e8f0; border-radius: 12px 12px 0 0;">
+                                <h3 class="card-title" id="cart-title" style="font-size: 1.125rem; font-weight: 700; color: #1e293b;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-dark" width="24" height="24"
                                         viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                         stroke-linecap="round" stroke-linejoin="round">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -173,18 +206,28 @@
                                         <path d="M17 17h-11v-14h-2" />
                                         <path d="M6 5l14 1l-1 7h-13" />
                                     </svg>
-                                    Cart (<span id="cart-count">0</span>)
+                                    Shopping Cart
+                                    <span class="badge bg-white ms-2" style="font-weight: 600; color: #1e293b; border: 1px solid #e2e8f0;"><span id="cart-count">0</span></span>
                                 </h3>
                                 <div class="card-actions">
-                                    <button type="button" class="btn btn-outline-secondary btn-sm">Clear</button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" style="font-weight: 600;">Clear All</button>
                                 </div>
                             </div>
                             <div class="card-body p-3" style="display: flex; flex-direction: column;">
                                 <!-- Customer Selection -->
                                 <div class="mb-4">
+                                    <label class="form-label fw-bold text-dark mb-2" style="font-size: 0.875rem;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1 text-dark" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <circle cx="12" cy="7" r="4"/>
+                                            <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/>
+                                        </svg>
+                                        Customer
+                                    </label>
                                     <div class="input-group">
                                         <select id="customer_id" name="customer_id"
-                                            class="form-select @error('customer_id') is-invalid @enderror">
+                                            class="form-select @error('customer_id') is-invalid @enderror"
+                                            style="border: 2px solid #e2e8f0; font-weight: 500;">
                                             <option value="">Walk-In Customer</option>
                                             @foreach ($customers as $customer)
                                                 <option value="{{ $customer->id }}" @selected(old('customer_id') == $customer->id)>
@@ -196,7 +239,8 @@
                                         </select>
                                         <button type="button" class="btn btn-primary btn-icon"
                                             id="addCustomerBtn"
-                                            title="Add New Customer">
+                                            title="Add New Customer"
+                                            style="border-width: 2px;">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
                                                 height="24" viewBox="0 0 24 24" stroke-width="2"
                                                 stroke="currentColor" fill="none" stroke-linecap="round"
@@ -213,19 +257,21 @@
                                 </div>
 
                                 <!-- Cart Items -->
-                                <div id="cart-items-wrapper" class="mb-2" style="height: 240px !important; min-height: 400px !important; max-height: 400px !important; flex: 0 0 400px;">
-                                    <div class="text-center py-2" id="empty-cart" style="display: align-items: center; justify-content: flex-start; gap: 8px; min-height: 120px; padding-top: 12px; padding-bottom: 12px;">
+                                <div id="cart-items-wrapper" class="mb-3" style="height: 240px !important; min-height: 400px !important; max-height: 400px !important; flex: 0 0 400px; background-color: #ffffff; border-radius: 8px;">
+                                    <div class="text-center py-5" id="empty-cart" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px;">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-muted mb-3"
-                                            width="48" height="48" viewBox="0 0 24 24" stroke-width="1.5"
+                                            width="64" height="64" viewBox="0 0 24 24" stroke-width="1.5"
                                             stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
+                                            stroke-linejoin="round"
+                                            style="opacity: 0.4;">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                             <path d="M6 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
                                             <path d="M17 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
                                             <path d="M17 17h-11v-14h-2" />
                                             <path d="M6 5l14 1l-1 7h-13" />
                                         </svg>
-                                        <p class="text-muted">Cart is empty</p>
+                                        <p class="text-muted mb-1" style="font-size: 1rem; font-weight: 600;">Your cart is empty</p>
+                                        <p class="text-muted small" style="font-size: 0.875rem;">Click on products to add them to cart</p>
                                     </div>
                                     <!-- Cart items will be dynamically added here -->
                                     <div id="cart-items"
@@ -253,33 +299,47 @@
                                 </div>
 
                                 <!-- Order Summary -->
-                                <div class="border-top pt-3">
-                                    <div class="row mb-2">
-                                        <div class="col">Subtotal:</div>
-                                        <div class="col-auto fw-bold" id="subtotal-amount">LKR 0.00</div>
+                                <div class="border-top pt-3" style="border-color: #e2e8f0 !important; border-width: 2px !important;">
+                                    <div class="p-3 rounded" style="background-color: #ffffff !important;">
+                                        <div class="row mb-2">
+                                            <div class="col" style="font-size: 0.9375rem; font-weight: 500; color: #64748b;">Subtotal:</div>
+                                            <div class="col-auto fw-bold" id="subtotal-amount" style="font-size: 1rem; color: #1e293b;">LKR 0.00</div>
+                                        </div>
+                                        <div class="row mb-2" id="discount-row" style="display: none;">
+                                            <div class="col text-danger" style="font-size: 0.9375rem; font-weight: 500;">Discount:</div>
+                                            <div class="col-auto fw-bold text-danger" id="discount-display" style="font-size: 1rem;">-LKR 0.00</div>
+                                        </div>
+                                        <div class="row mb-2" id="service-row" style="display: none;">
+                                            <div class="col text-info" style="font-size: 0.9375rem; font-weight: 500;">Service Charges:</div>
+                                            <div class="col-auto fw-bold text-info" id="service-display" style="font-size: 1rem;">+LKR 0.00</div>
+                                        </div>
+                                        <hr class="my-2" style="border-color: #cbd5e1;">
+                                        <div class="row">
+                                            <div class="col"><strong style="font-size: 1.125rem; color: #1e293b;">Total:</strong></div>
+                                            <div class="col-auto"><strong id="total-amount" class="h3 text-dark mb-0" style="font-weight: 700;">LKR 0.00</strong></div>
+                                        </div>
                                     </div>
-                                    <div class="row mb-2" id="discount-row" style="display: none;">
-                                        <div class="col text-danger">Discount:</div>
-                                        <div class="col-auto fw-bold text-danger" id="discount-display">-LKR 0.00</div>
-                                    </div>
-                                    <div class="row mb-2" id="service-row" style="display: none;">
-                                        <div class="col text-info">Service Charges:</div>
-                                        <div class="col-auto fw-bold text-info" id="service-display">+LKR 0.00</div>
-                                    </div>
-                                    <div class="row mb-3">
-                                        <div class="col"><strong>Total:</strong></div>
-                                        <div class="col-auto"><strong id="total-amount" class="h4 text-primary">LKR
-                                                0.00</strong></div>
-                                    </div>
+                                </div>
+
+                                <div class="mt-3">
 
                                     <!-- Payment Method -->
                                     <div class="mb-3">
-                                        <label class="form-label">Payment Method</label>
-                                        <select class="form-select" name="payment_type" id="payment_type">
-                                            <option value="Cash">Cash</option>
-                                            <option value="Card">Card</option>
-                                            <option value="Bank Transfer">Bank Transfer</option>
-                                            <option value="Credit Sales">Credit Sales</option>
+                                        <label class="form-label fw-bold text-dark mb-2" style="font-size: 0.875rem;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1 text-success" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                <rect x="3" y="5" width="18" height="14" rx="3"/>
+                                                <line x1="3" y1="10" x2="21" y2="10"/>
+                                                <line x1="7" y1="15" x2="7.01" y2="15"/>
+                                                <line x1="11" y1="15" x2="13" y2="15"/>
+                                            </svg>
+                                            Payment Method
+                                        </label>
+                                        <select class="form-select" name="payment_type" id="payment_type" style="padding-right: 2.5rem; min-height: 42px; border: 2px solid #e2e8f0; font-weight: 500; font-size: 0.9375rem;">
+                                            <option value="Cash">💵 Cash</option>
+                                            <option value="Card">💳 Card</option>
+                                            <option value="Bank Transfer">🏦 Bank Transfer</option>
+                                            <option value="Credit Sales">📝 Credit Sales</option>
                                         </select>
                                     </div>
 
@@ -482,16 +542,17 @@
                                     <div class="row g-2">
                                         <div class="col">
                                             <button type="button" id="complete-payment-btn"
-                                                class="btn btn-primary w-100 btn-lg enhanced-primary-btn" onclick="submitOrder()" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border: none; font-weight: 600; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); transition: all 0.3s ease;">
+                                                class="btn w-100 btn-lg" onclick="submitOrder()"
+                                                style="background: #ffffff; border: 2px solid #1e293b; color: #1e293b; font-weight: 700; font-size: 1.125rem; transition: all 0.3s ease; min-height: 56px; border-radius: 8px;"
+                                                onmouseover="this.style.transform='translateY(-2px)'"
+                                                onmouseout="this.style.transform='translateY(0)'">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24"
                                                     height="24" viewBox="0 0 24 24" stroke-width="2"
                                                     stroke="currentColor" fill="none" stroke-linecap="round"
                                                     stroke-linejoin="round">
                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path
-                                                        d="M12 19h-7a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2h4l3 3h7a2 2 0 0 1 2 2v2" />
-                                                    <path d="M16 19h6" />
-                                                    <path d="M19 16v6" />
+                                                    <circle cx="12" cy="12" r="9"/>
+                                                    <path d="M9 12l2 2l4 -4"/>
                                                 </svg>
                                                 Complete Payment
                                             </button>
@@ -1137,6 +1198,22 @@
         .card-body {
             word-wrap: break-word;
             overflow-wrap: break-word;
+        }
+
+        /* Payment Method Dropdown Fix */
+        #payment_type {
+            padding: 0.5rem 2.5rem 0.5rem 0.75rem !important;
+            min-height: 40px !important;
+            height: 40px !important;
+            font-size: 1rem;
+            line-height: 1.5;
+            background-size: 16px 12px !important;
+            background-position: right 0.75rem center !important;
+        }
+
+        #payment_type option {
+            padding: 10px;
+            margin: 5px 0;
         }
 
         /* Make the POS layout responsive */
@@ -2342,6 +2419,13 @@
         const searchInput = document.querySelector('input[placeholder*="Search products"]');
         if (searchInput) {
             searchInput.addEventListener('input', filterProducts);
+            // Barcode scanners typically send the code and finish with Enter
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addToCartByCode(e.target.value);
+                }
+            });
         }
 
         // Discount and service charges event listeners
@@ -2357,6 +2441,92 @@
         }
 
         // addToCart function is now defined earlier, before updateProductsGrid
+
+        // Add to cart by exact product code (supports barcode scanners finishing with Enter)
+        async function addToCartByCode(rawCode) {
+            try {
+                const code = (rawCode || '').trim();
+                if (!code) return;
+
+                // Try local grid match first
+                const matchCard = Array.from(document.querySelectorAll('.product-card'))
+                    .find(card => (card.dataset.code || '').toLowerCase() === code.toLowerCase());
+
+                if (matchCard && !matchCard.classList.contains('out-of-stock')) {
+                    const pid = matchCard.dataset.productId || matchCard.dataset.id;
+                    if (pid) {
+                        addToCart(pid, matchCard);
+                        const si = document.querySelector('input[placeholder*="Search products"]');
+                        if (si) si.value = '';
+                        return;
+                    }
+                }
+                // If the scanned code matches an out-of-stock item in the grid, alert and stop
+                if (matchCard && matchCard.classList.contains('out-of-stock')) {
+                    const nameEl = matchCard.querySelector('.fw-bold');
+                    const pname = nameEl ? nameEl.textContent.replace('(Out of Stock)', '').trim() : 'This product';
+                    if (typeof showToast === 'function') {
+                        showToast(`"${pname}" is out of stock and cannot be added`, 'error');
+                    } else {
+                        alert(`${pname} is out of stock and cannot be added`);
+                    }
+                    const si = document.querySelector('input[placeholder*="Search products"]');
+                    if (si) si.value = '';
+                    return;
+                }
+
+                // Fallback to API search
+                const resp = await fetch(`/api/products?search=${encodeURIComponent(code)}`, { cache: 'no-store' });
+                if (!resp.ok) throw new Error(`API error ${resp.status}`);
+                const products = await resp.json();
+
+                const p = Array.isArray(products)
+                    ? products.find(pr => (pr.code || '').toLowerCase() === code.toLowerCase())
+                    : null;
+
+                if (!p) {
+                    if (typeof showToast === 'function') showToast(`No product found for code ${code}`, 'error');
+                    return;
+                }
+
+                if ((p.quantity ?? 0) <= 0) {
+                    if (typeof showToast === 'function') showToast(`"${p.name}" is out of stock`, 'error');
+                    return;
+                }
+
+                // Push item directly to cart
+                const lineId = (typeof crypto !== 'undefined' && crypto.randomUUID)
+                    ? crypto.randomUUID()
+                    : (Date.now().toString(36) + Math.random().toString(36).slice(2));
+
+                const unitPrice = parseFloat(p.selling_price ?? p.price ?? 0) || 0;
+                const stockQty = parseInt(p.quantity ?? p.stock ?? 0) || 0;
+
+                const newItem = {
+                    lineId: lineId,
+                    id: p.id,
+                    name: p.name,
+                    price: unitPrice,
+                    quantity: 1,
+                    stock: stockQty,
+                    total: unitPrice,
+                    serial_number: '',
+                    warranty_years: null,
+                    warranty_id: null,
+                    warranty_name: '',
+                    warranty_duration: ''
+                };
+
+                cart.push(newItem);
+                updateCartDisplay();
+                if (typeof showToast === 'function') showToast(`Added "${p.name}" via barcode`, 'success');
+
+                const si = document.querySelector('input[placeholder*="Search products"]');
+                if (si) si.value = '';
+            } catch (err) {
+                console.error('addToCartByCode error:', err);
+            }
+        }
 
         function updateCartDisplay() {
             const emptyCart = document.getElementById('empty-cart');
@@ -3120,27 +3290,37 @@
                     labelField: 'name',
                     searchField: ['name', 'code'],
                     load: function(query, callback) {
-                        if (!query.length) {
-                            callback();
-                            return;
-                        }
+                        // Load all products if no search query, or search for specific products
+                        const url = query.length
+                            ? `{{ route('orders.products') }}?search=${encodeURIComponent(query)}`
+                            : `{{ route('orders.products') }}`;
 
-                        const url = `/api/products?search=${encodeURIComponent(query)}`;
+                        console.log('TomSelect loading from:', url);
 
-                        console.log('Fetching products from:', url);
-
-                        fetch(url)
+                        fetch(url, {
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            credentials: 'same-origin'
+                        })
                             .then(response => {
-                                console.log('Response status:', response.status);
+                                console.log('API Response status:', response.status);
+                                if (!response.ok) {
+                                    throw new Error('HTTP error! status: ' + response.status);
+                                }
                                 return response.json();
                             })
                             .then(json => {
-                                console.log('Products received:', json);
-                                callback(json);
+                                console.log('API Response data:', json);
+                                // Handle both array and object responses
+                                const products = Array.isArray(json) ? json : (json.products || json.data || []);
+                                console.log('Processed products:', products);
+                                callback(products);
                             })
                             .catch(error => {
                                 console.error('Error loading products:', error);
-                                callback();
+                                callback([]);
                             });
                     },
                     render: {
@@ -3148,7 +3328,7 @@
                             return `<div>
                                 <span class="fw-bold">${escape(item.name)}</span>
                                 <span class="text-muted ms-2">(${escape(item.code || 'N/A')})</span>
-                                <br><small class="text-muted">Current Stock: ${escape(item.quantity || 0)}</small>
+                                <br><small class="text-muted">Current Stock: ${escape(item.stock || item.quantity || 0)}</small>
                             </div>`;
                         },
                         item: function(item, escape) {
@@ -3213,7 +3393,9 @@
         }
 
         window.submitGlobalQuickStock = async function() {
-            const productId = window.globalProductTomSelect.getValue();
+            const productSelect = window.globalProductTomSelect.getValue();
+            const selectedItem = window.globalProductTomSelect.options[productSelect];
+            const productSlug = selectedItem ? selectedItem.slug : null;
             const quantity = parseInt(document.getElementById('global_stock_quantity').value);
 
             // Reset errors
@@ -3228,7 +3410,7 @@
 
             // Validate
             let hasError = false;
-            if (!productId) {
+            if (!productSlug) {
                 document.getElementById('global_product_error').textContent = 'Please select a product';
                 document.getElementById('global_product_error').style.display = 'block';
                 document.getElementById('global_stock_product').closest('.ts-wrapper').classList.add('is-invalid');
@@ -3253,7 +3435,7 @@
             spinner.classList.remove('d-none');
 
             try {
-                const response = await fetch(`/products/${productId}/add-stock`, {
+                const response = await fetch(`/products/${productSlug}/add-stock`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

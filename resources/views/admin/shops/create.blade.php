@@ -13,7 +13,7 @@
     </div>
 </div>
 
-<div class="page-body">
+<div class="page-body" style="min-height: auto; padding-bottom: 1rem;">
     <div class="container-fluid">
         <x-alert/>
 

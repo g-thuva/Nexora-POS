@@ -10,6 +10,7 @@ class Expense extends Model
 
     protected $casts = [
         'expense_date' => 'date',
+        'details' => 'array',
     ];
 
     // Amount is stored in cents (integer)

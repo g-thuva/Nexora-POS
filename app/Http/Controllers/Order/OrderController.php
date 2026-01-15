@@ -138,7 +138,7 @@ class OrderController extends Controller
 
         return view('orders.create', [
             'customers' => Customer::all(['id', 'name', 'phone']),
-            'products' => Product::with(['category', 'unit', 'warranty'])->limit(20)->get(),
+            'products' => Product::with(['category', 'unit', 'warranty'])->get(),
             'products_count' => Product::count(),
             'warranties' => \App\Models\Warranty::all(['id', 'name', 'duration']),
             'categories' => \App\Models\Category::all(['id', 'name']),
@@ -501,12 +501,19 @@ class OrderController extends Controller
                             'quantity' => $detail->quantity,
                             'unitcost' => $detail->unitcost,
                             'total' => $detail->total,
-                            'product' => [
-                                'id' => $detail->product->id,
-                                'name' => $detail->product->name,
-                                'serial_number' => $detail->product->serial_number ?? null,
-                                'warranty_years' => $detail->product->warranty_years ?? null,
-                            ]
+                            'product' => $detail->product
+                                ? [
+                                    'id' => $detail->product->id,
+                                    'name' => $detail->product->name,
+                                    'serial_number' => $detail->product->serial_number ?? null,
+                                    'warranty_years' => $detail->product->warranty_years ?? null,
+                                ]
+                                : [
+                                    'id' => null,
+                                    'name' => $detail->product_name,
+                                    'serial_number' => $detail->serial_number ?? null,
+                                    'warranty_years' => $detail->warranty_years ?? null,
+                                ],
                         ];
                     })
                 ]
@@ -1441,14 +1448,69 @@ class OrderController extends Controller
         $activeShop = $user->getActiveShop();
 
         if (!$activeShop) {
-            return [];
+            return $this->getDefaultLetterheadConfig();
         }
 
         $configPath = storage_path('app/letterhead_config_shop_' . $activeShop->id . '.json');
         if (File::exists($configPath)) {
-            return json_decode(File::get($configPath), true);
+            $config = json_decode(File::get($configPath), true);
+            // Merge with defaults to ensure all fields have values
+            return array_merge($this->getDefaultLetterheadConfig(), $config);
         }
-        return [];
+        return $this->getDefaultLetterheadConfig();
+    }
+
+    /**
+     * Get default letterhead configuration with standard positions
+     */
+    private function getDefaultLetterheadConfig()
+    {
+        return [
+            'positions' => [
+                [
+                    'field' => 'invoice_no',
+                    'x' => 505,
+                    'y' => 79,
+                    'font_size' => 10,
+                    'font_weight' => 'normal'
+                ],
+                [
+                    'field' => 'invoice_date',
+                    'x' => 505,
+                    'y' => 65,
+                    'font_size' => 10,
+                    'font_weight' => 'normal'
+                ],
+                [
+                    'field' => 'product_name',
+                    'x' => 23,
+                    'y' => 165,
+                    'font_size' => 11,
+                    'font_weight' => 'normal'
+                ],
+                [
+                    'field' => 'customer_address',
+                    'x' => 23,
+                    'y' => 142,
+                    'font_size' => 11,
+                    'font_weight' => 'normal'
+                ],
+                [
+                    'field' => 'customer_phone',
+                    'x' => 23,
+                    'y' => 126,
+                    'font_size' => 11,
+                    'font_weight' => 'normal'
+                ],
+                [
+                    'field' => 'customer_name',
+                    'x' => 23,
+                    'y' => 110,
+                    'font_size' => 11,
+                    'font_weight' => 'bold'
+                ]
+            ]
+        ];
     }
 
     /**
@@ -1562,6 +1624,7 @@ class OrderController extends Controller
 
         return view('letterheads.position', [
             'letterheadPdf' => $letterheadPdf,
+
             'previewImage' => $previewImage,
             'config' => $config,
         ]);
@@ -1698,16 +1761,30 @@ class OrderController extends Controller
     /**
      * Get products data for real-time sync
      */
-    public function getProducts()
+    public function getProducts(Request $request)
     {
-        $products = Product::with(['category', 'unit', 'warranty'])
-            ->limit(20)
-            ->get()
+        $shopId = auth()->user()?->getActiveShop()?->id;
+        $search = $request->get('search', '');
+
+        $query = Product::with(['category', 'unit', 'warranty'])
+            ->when($shopId, fn($q) => $q->where('shop_id', $shopId));
+
+        // Add search filter if provided
+        if (!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('code', 'like', "%{$search}%")
+                  ->orWhere('id', 'like', "%{$search}%");
+            });
+        }
+
+        $products = $query->get()
             ->map(function($product) {
                 return [
                     'id' => $product->id,
                     'name' => $product->name,
                     'code' => $product->code,
+                    'slug' => $product->slug,
                     'price' => $product->selling_price,
                     'stock' => $product->quantity,
                     'warranty_id' => $product->warranty_id,
@@ -1718,7 +1795,7 @@ class OrderController extends Controller
 
         return response()->json([
             'products' => $products,
-            'count' => Product::count(),
+            'count' => Product::when($shopId, fn($q) => $q->where('shop_id', $shopId))->count(),
         ]);
     }
 

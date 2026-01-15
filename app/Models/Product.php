@@ -45,30 +45,33 @@ class Product extends Model
 
         static::creating(function ($product) {
             if (empty($product->code)) {
-                $product->code = static::generateSku();
+                // Generate a shop-scoped SKU so each shop has its own sequence
+                $product->code = static::generateSku($product->shop_id);
             }
         });
     }
 
     /**
-     * Generate unique code in format PRD00001, PRD00002, ...
+     * Generate unique SKU in format APFPRD0001, APFPRD0002, etc.
      */
-    public static function generateSku(): string
+    public static function generateSku($shopId = null): string
     {
         $prefix = 'PRD';
 
-        // Find the latest PRD code and increment its numeric part
-        $lastWithPrefix = static::where('code', 'like', $prefix . '%')
-            ->orderBy('code', 'desc')
-            ->first();
+        // Resolve shop id: prefer explicit value, then active shop from auth
+        $shopId = $shopId ?? auth()->user()?->getActiveShop()?->id;
+
+        // Find last code for this shop and increment the numeric tail
+        $lastCode = static::where('shop_id', $shopId)
+            ->orderByDesc('id')
+            ->value('code');
 
         $nextNumber = 1;
-        if ($lastWithPrefix && isset($lastWithPrefix->code)) {
-            // Extract numeric part (last 5 digits)
-            $number = (int) substr($lastWithPrefix->code, strlen($prefix));
-            $nextNumber = $number + 1;
+        if ($lastCode && preg_match('/^PRD(\d+)/', $lastCode, $matches)) {
+            $nextNumber = ((int)$matches[1]) + 1;
         }
 
+        // Format: PRD00001 (5-digit, per shop)
         return $prefix . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
     }
 

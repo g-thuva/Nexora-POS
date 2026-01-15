@@ -33,6 +33,8 @@ class Order extends Model
         'created_by',
         'discount_amount',
         'service_charges',
+        'is_imported',
+        'import_notes',
     ];
 
     /**
@@ -71,7 +73,8 @@ class Order extends Model
         'order_date'    => 'date',
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime',
-        'order_status'  => OrderStatus::class
+        'order_status'  => OrderStatus::class,
+        'is_imported'   => 'boolean',
     ];
 
     public function customer(): BelongsTo

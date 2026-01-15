@@ -11,6 +11,61 @@ use Illuminate\Support\Facades\DB;
 class ReturnSaleController extends Controller
 {
     /**
+     * Display a listing of returns.
+     */
+    public function index(Request $request)
+    {
+        $shopId = $request->user()->shop_id ?? null;
+
+        $base = ReturnSale::query();
+        if ($shopId) {
+            $base->where('shop_id', $shopId);
+        }
+
+        // Get all returns ordered by date descending
+        $allReturns = $base->with(['customer', 'order', 'items.product'])
+            ->orderBy('return_date', 'desc')
+            ->get();
+
+        // Group by month-year
+        $returnsByMonth = $allReturns->groupBy(function($return) {
+            return $return->return_date ? $return->return_date->format('F Y') : 'No Date';
+        });
+
+        // Calculate totals
+        $totalReturns = $allReturns->sum('total');
+        $totalRecords = $allReturns->count();
+        $totalItems = $allReturns->sum(function($return) {
+            return $return->items->sum('quantity');
+        });
+
+        return view('returns.index', [
+            'returnsByMonth' => $returnsByMonth,
+            'totalReturns' => $totalReturns,
+            'totalRecords' => $totalRecords,
+            'totalItems' => $totalItems,
+        ]);
+    }
+
+    /**
+     * Display a specific return.
+     */
+    public function show(ReturnSale $returnSale)
+    {
+        $returnSale->load(['customer', 'order', 'items.product', 'createdBy']);
+        return view('returns.show', compact('returnSale'));
+    }
+
+    /**
+     * Delete a return sale.
+     */
+    public function destroy(ReturnSale $returnSale)
+    {
+        $returnSale->delete();
+        return redirect()->route('returns.index')->with('success', 'Return deleted successfully');
+    }
+
+    /**
      * Store a return sale and adjust stock quantities.
      * Expected payload:
      * - order_id (optional)

@@ -27,6 +27,7 @@ class ProductController extends Controller
         $cards = [
             'total_products' => $kpi->totalProducts(),
             'in_stock' => $kpi->inStockCount(10),
+            'stock_value' => $kpi->inStockValue(),
             'low_stock' => $kpi->lowStockCount(),
             'categories' => $kpi->categoriesCount(),
         ];
@@ -192,11 +193,11 @@ class ProductController extends Controller
             ->with('success', 'Product has been updated!');
     }
 
-    public function addStock(Request $request, $product)
+    public function addStock(Request $request, $productSlug)
     {
         try {
-            // Manually find the product by ID to avoid route model binding issues
-            $product = Product::findOrFail($product);
+            // Find the product by slug instead of ID
+            $product = Product::where('slug', $productSlug)->firstOrFail();
 
             $validated = $request->validate([
                 'add_quantity' => 'required|integer|min:1|max:10000',
@@ -212,21 +213,61 @@ class ProductController extends Controller
 
             $message = "Stock updated successfully! Added {$addQuantity} units. New stock: {$newQuantity}";
 
-            return response()->json([
-                'success' => true,
-                'message' => $message,
-                'new_quantity' => $newQuantity
-            ]);
-        } catch (\Exception $e) {
-            \Log::error('Stock update failed', [
-                'product_id' => $product ?? null,
+            // Always return JSON for AJAX requests
+            if ($request->expectsJson() || $request->isJson() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'new_quantity' => $newQuantity
+                ]);
+            }
+
+            // Fallback for non-AJAX requests
+            return redirect()
+                ->route('products.index')
+                ->with('success', $message);
+                
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \Log::error('Product not found', [
+                'product_slug' => $productSlug ?? null,
                 'error' => $e->getMessage()
             ]);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to update stock'
-            ], 500);
+            if ($request->expectsJson() || $request->isJson() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Product not found'
+                ], 404);
+            }
+
+            return redirect()->back()->with('error', 'Product not found');
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->expectsJson() || $request->isJson() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $e->errors()
+                ], 422);
+            }
+
+            return redirect()->back()->withErrors($e->errors());
+            
+        } catch (\Exception $e) {
+            \Log::error('Stock update failed', [
+                'product_slug' => $productSlug ?? null,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            if ($request->expectsJson() || $request->isJson() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to update stock: ' . $e->getMessage()
+                ], 500);
+            }
+
+            return redirect()->back()->with('error', 'Failed to update stock');
         }
     }
 

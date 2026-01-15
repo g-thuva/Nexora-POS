@@ -14,6 +14,7 @@ class OrderDetails extends Model
     protected $fillable = [
         'order_id',
         'product_id',
+        'product_name',
         'serial_number',
         'warranty_years',
         'warranty_id',
@@ -22,12 +23,14 @@ class OrderDetails extends Model
         'quantity',
         'unitcost',
         'total',
+        'is_imported',
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'warranty_years' => 'integer',
+        'is_imported' => 'boolean',
     ];
 
     protected $with = ['product'];

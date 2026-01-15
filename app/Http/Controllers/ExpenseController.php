@@ -8,6 +8,47 @@ use Illuminate\Http\Request;
 class ExpenseController extends Controller
 {
     /**
+     * Display a listing of expenses.
+     */
+    public function index(Request $request)
+    {
+        $shopId = $request->user()->shop_id ?? null;
+
+        $base = Expense::query();
+        if ($shopId) {
+            $base->where('shop_id', $shopId);
+        }
+
+        // Get all expenses ordered by date descending
+        $allExpenses = $base->orderBy('expense_date', 'desc')->get();
+
+        // Group by month-year
+        $expensesByMonth = $allExpenses->groupBy(function($expense) {
+            return $expense->expense_date->format('F Y');
+        });
+
+        // Calculate totals
+        $totalExpenses = $allExpenses->sum(function($exp) {
+            return $exp->amount * 100; // amount is already divided by 100 in model accessor
+        });
+        $totalRecords = $allExpenses->count();
+
+        return view('expenses.index', [
+            'expensesByMonth' => $expensesByMonth,
+            'totalExpenses' => $totalExpenses,
+            'totalRecords' => $totalRecords,
+        ]);
+    }
+
+    /**
+     * Display a specific expense.
+     */
+    public function show(Expense $expense)
+    {
+        return view('expenses.show', compact('expense'));
+    }
+
+    /**
      * Show expense create form.
      */
     public function create(Request $request)
@@ -57,6 +98,7 @@ class ExpenseController extends Controller
             'amount' => 'required|numeric|min:0',
             'expense_date' => 'nullable|date',
             'notes' => 'nullable|string',
+            'details' => 'nullable|array',
         ]);
 
         $expense->update([
@@ -64,13 +106,14 @@ class ExpenseController extends Controller
             'amount' => (int)round($data['amount'] * 100),
             'expense_date' => $data['expense_date'] ?? $expense->expense_date,
             'notes' => $data['notes'] ?? $expense->notes,
+            'details' => isset($data['details']) ? array_filter($data['details']) : $expense->details,
         ]);
 
         return redirect()->route('expenses.edit', $expense)->with('status', 'Expense updated');
     }
     /**
      * Store an expense record.
-     * Expected payload: type, amount (decimal), expense_date, notes
+     * Expected payload: type, amount (decimal), expense_date, notes, details
      */
     public function store(Request $request)
     {
@@ -79,6 +122,7 @@ class ExpenseController extends Controller
             'amount' => 'required|numeric|min:0',
             'expense_date' => 'nullable|date',
             'notes' => 'nullable|string',
+            'details' => 'nullable|array',
         ]);
 
         $expense = Expense::create([
@@ -86,18 +130,31 @@ class ExpenseController extends Controller
             'amount' => (int)round($data['amount'] * 100),
             'expense_date' => $data['expense_date'] ?? now(),
             'notes' => $data['notes'] ?? null,
+            'details' => !empty($data['details']) ? array_filter($data['details']) : null,
             'shop_id' => $request->user()->shop_id ?? null,
             'created_by' => $request->user()->id ?? null,
         ]);
 
         // If the client expects JSON (API or AJAX), return JSON. Otherwise redirect
-        // to the expense edit/view page so the user can see the created record in the UI.
+        // to the expense create page so the user can add more records.
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json(['status' => 'ok', 'expense_id' => $expense->id], 201);
         }
 
         return redirect()
-            ->route('expenses.edit', $expense)
+            ->route('expenses.create')
             ->with('success', 'Expense recorded successfully');
+    }
+
+    /**
+     * Delete an expense.
+     */
+    public function destroy(Expense $expense)
+    {
+        $expense->delete();
+
+        return redirect()
+            ->route('expenses.index')
+            ->with('success', 'Expense deleted successfully');
     }
 }

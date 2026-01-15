@@ -36,10 +36,10 @@
             <hr style="border:none;border-top:1px dashed #000;margin:6px 0;" />
 
             <div style="font-size:11px;">
-                @foreach($order->details as $d)
+                @foreach($order->details as $index => $d)
                     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
                         <div style="width:62%;">
-                            <div style="font-weight:600;">{{ Str::limit($d->product->name ?? '', 36) }}</div>
+                            <div style="font-weight:600;">{{ $index + 1 }}. {{ Str::limit($d->product->name ?? '', 36) }}</div>
                             <div style="font-size:10px;color:#000;">
                                 @if(!empty($d->serial_number))
                                     S/N: {{ $d->serial_number }}

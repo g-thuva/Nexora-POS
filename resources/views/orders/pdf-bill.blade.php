@@ -269,17 +269,17 @@
                 <table class="items-table" style="width: {{ $tableWidth }}px; border-collapse: collapse;">
                     <thead>
                         <tr>
-                            <th style="width: {{ $tableWidth * 0.56 }}px; text-align: left; padding: 8px; background: #f5f5f5; border: 1px solid #ddd; font-size: 18px; font-weight: bold; color: #ff0000;">*** NEXORA TEST *** Item Details</th>
-                            <th style="width: {{ $tableWidth * 0.12 }}px; text-align: center; padding: 8px; background: #f5f5f5; border: 1px solid #ddd;">Qty</th>
-                            <th style="width: {{ $tableWidth * 0.16 }}px; text-align: right; padding: 8px; background: #f5f5f5; border: 1px solid #ddd;">Unit Price(LKR)</th>
-                            <th style="width: {{ $tableWidth * 0.16 }}px; text-align: right; padding: 8px; background: #f5f5f5; border: 1px solid #ddd;">Total(LKR)</th>
+                            <th style="width: {{ $tableWidth * 0.55 }}px; text-align: left; padding: 8px; background: #f5f5f5; border: 1px solid #ddd; font-size: 18px; font-weight: bold; color: #ff0000;">*** NEXORA TEST *** Item Details</th>
+                            <th style="width: {{ $tableWidth * 0.15 }}px; text-align: center; padding: 8px; background: #f5f5f5; border: 1px solid #ddd;">Qty</th>
+                            <th style="width: {{ $tableWidth * 0.15 }}px; text-align: right; padding: 8px; background: #f5f5f5; border: 1px solid #ddd;">Unit Price(LKR)</th>
+                            <th style="width: {{ $tableWidth * 0.15 }}px; text-align: right; padding: 8px; background: #f5f5f5; border: 1px solid #ddd;">Total(LKR)</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($order->details as $item)
+                        @foreach($order->details as $index => $item)
                         <tr>
                             <td style="text-align: left; padding: 6px; vertical-align: top;">
-                                <div style="font-weight: bold; margin-bottom: 2px;">{{ $item->product->name }}</div>
+                                <div style="font-weight: bold; margin-bottom: 2px;">{{ $index + 1 }}. {{ $item->product ? $item->product->name : $item->product_name }}</div>
                                 @if($item->serial_number || $item->warranty_name || $item->warranty_years)
                                     <div style="font-size: 10px; color: #2c3e50; font-weight: 500;">
                                         @if($item->serial_number)
@@ -392,17 +392,17 @@
                 <table class="items-table" style="width: {{ $perfectTableWidth }}px; margin-bottom: 20px; border-collapse: collapse;">
                     <thead>
                         <tr>
-                            <th style="width: 305px; text-align: left; padding: 10px; background: #f5f5f5; border: 1px solid #ddd; font-size: 16px; font-weight: bold; color: #ff0000;">*** NEXORA *** Item Details</th>
-                            <th style="width: 65px; text-align: center; padding: 10px; background: #f5f5f5; border: 1px solid #ddd; font-size: 13px;">Qty</th>
-                            <th style="width: 87px; text-align: right; padding: 10px; background: #f5f5f5; border: 1px solid #ddd; font-size: 13px;">Unit Price(LKR)</th>
-                            <th style="width: 88px; text-align: right; padding: 10px; background: #f5f5f5; border: 1px solid #ddd; font-size: 13px;">Total(LKR)</th>
+                            <th style="width: 290px; text-align: left; padding: 10px; background: #f5f5f5; border: 1px solid #ddd; font-size: 16px; font-weight: bold; color: #ff0000;">*** NEXORA *** Item Details</th>
+                            <th style="width: 60px; text-align: center; padding: 10px; background: #f5f5f5; border: 1px solid #ddd; font-size: 13px;">Qty</th>
+                            <th style="width: 60px; text-align: right; padding: 10px; background: #f5f5f5; border: 1px solid #ddd; font-size: 13px;">Unit Price(LKR)</th>
+                            <th style="width: 75px; text-align: right; padding: 10px; background: #f5f5f5; border: 1px solid #ddd; font-size: 13px;">Total(LKR)</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($order->details as $item)
+                        @foreach($order->details as $index => $item)
                         <tr>
                             <td style="text-align: left; padding: 8px; vertical-align: top;">
-                                <div style="font-weight: bold; margin-bottom: 3px;">{{ $item->product->name }}</div>
+                                <div style="font-weight: bold; margin-bottom: 3px;">{{ $index + 1 }}. {{ $item->product ? $item->product->name : $item->product_name }}</div>
                                 @if($item->serial_number || $item->warranty_name || $item->warranty_years)
                                     <div style="font-size: 10px; color: #2c3e50; font-weight: 500;">
                                         @if($item->serial_number)
@@ -419,8 +419,8 @@
                                     </div>
                                 @endif
                             </td>
-                            <td style="text-align: center; padding: 8px; vertical-align: middle;">{{ $item->quantity }}</td>
-                            <td style="text-align: right; padding: 8px; vertical-align: middle;">{{ number_format($item->unitcost, 2, '.', ',') }}</td>
+                            <td style="text-align: center; padding: 6px; vertical-align: middle;">{{ $item->quantity }}</td>
+                            <td style="text-align: right; padding: 6px; vertical-align: middle;">{{ number_format($item->unitcost, 2, '.', ',') }}</td>
                             <td style="text-align: right; padding: 8px; vertical-align: middle; font-weight: bold;">{{ number_format($item->total, 2, '.', ',') }}</td>
                         </tr>
                         @endforeach
