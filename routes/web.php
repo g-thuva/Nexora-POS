@@ -27,7 +27,12 @@ use Barryvdh\DomPDF\Facade\Pdf as PDF;
 |
 */
 
-Route::middleware(['auth', 'check.suspended'])->group(function () {
+Route::middleware(['auth', 'check.suspended', 'ensure.shop.selected'])->group(function () {
+
+    // Shop Selection Routes (for multi-shop owners)
+    Route::get('/shop/select', [App\Http\Controllers\ShopSelectionController::class, 'show'])->name('shop.select')->withoutMiddleware('ensure.shop.selected');
+    Route::post('/shop/select', [App\Http\Controllers\ShopSelectionController::class, 'select'])->name('shop.select.post')->withoutMiddleware('ensure.shop.selected');
+    Route::post('/shop/switch', [App\Http\Controllers\ShopSelectionController::class, 'switch'])->name('shop.switch')->withoutMiddleware('ensure.shop.selected');
 
     // User Dashboard at root
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');

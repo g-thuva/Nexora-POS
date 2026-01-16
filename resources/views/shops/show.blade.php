@@ -248,7 +248,7 @@
                                                 <tr>
                                                     <td>{{ $order->invoice_no }}</td>
                                                     <td>{{ $order->customer->name }}</td>
-                                                    <td>{{ $order->order_date->format('M d, Y') }}</td>
+                                                    <td>{{ $order->order_date ? $order->order_date->format('M d, Y') : 'N/A' }}</td>
                                                     <td>
                                                         <span class="badge bg-{{ $order->order_status->value === 'completed' ? 'success' : 'warning' }}">
                                                             {{ ucfirst($order->order_status->value) }}

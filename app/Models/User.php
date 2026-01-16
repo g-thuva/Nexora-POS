@@ -204,6 +204,11 @@ class User extends Authenticatable
         return $this->hasOne(Shop::class, 'owner_id');
     }
 
+    public function ownedShops()
+    {
+        return $this->hasMany(Shop::class, 'owner_id');
+    }
+
     // Suspension relationship
     public function suspendedBy()
     {
@@ -229,6 +234,19 @@ class User extends Authenticatable
         }
 
         if ($this->role === self::ROLE_SHOP_OWNER) {
+            // For multi-shop owners, check session first
+            $selectedShopId = session('selected_shop_id');
+            if ($selectedShopId) {
+                $selectedShop = $this->ownedShops()
+                    ->where('id', $selectedShopId)
+                    ->where('is_active', true)
+                    ->first();
+                if ($selectedShop) {
+                    return $selectedShop;
+                }
+            }
+
+            // Fallback to first owned shop or single shop
             return $this->ownedShop && $this->ownedShop->is_active ? $this->ownedShop : null;
         }
         return $this->shop && $this->shop->is_active ? $this->shop : null;
@@ -262,5 +280,27 @@ class User extends Authenticatable
         }
 
         return false;
+    }
+
+    /**
+     * Check if user owns multiple shops
+     */
+    public function ownsMultipleShops()
+    {
+        if (!$this->isShopOwner()) {
+            return false;
+        }
+        return $this->ownedShops()->where('is_active', true)->count() > 1;
+    }
+
+    /**
+     * Get all active shops owned by this user
+     */
+    public function getOwnedShops()
+    {
+        if (!$this->isShopOwner()) {
+            return collect();
+        }
+        return $this->ownedShops()->where('is_active', true)->get();
     }
 }

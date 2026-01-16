@@ -64,7 +64,7 @@
 
                                         <input id="order_date" name="order_date" type="date"
                                                class="form-control @error('order_date') is-invalid @enderror"
-                                               value="{{ old('order_date', $order->order_date->format('Y-m-d')) }}" required>
+                                               value="{{ old('order_date', $order->order_date ? $order->order_date->format('Y-m-d') : '') }}" required>
 
                                         @error('order_date')
                                         <div class="invalid-feedback">{{ $message }}</div>

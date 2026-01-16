@@ -48,7 +48,7 @@
                             <input type="text"
                                    id="order_date"
                                    class="form-control"
-                                   value="{{ $order->order_date->format('d-m-Y') }}"
+                                   value="{{ $order->order_date ? $order->order_date->format('d-m-Y') : 'N/A' }}"
                                    disabled
                             >
                         </div>

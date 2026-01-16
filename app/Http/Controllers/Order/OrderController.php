@@ -419,7 +419,7 @@ class OrderController extends Controller
                     'order' => [
                         'id' => $order->id,
                         'invoice_no' => $order->invoice_no,
-                        'order_date' => $order->order_date->format('d/m/Y, H:i:s'),
+                        'order_date' => ($order->order_date ? $order->order_date->toIso8601String() : 'N/A'),
                         'customer' => [
                             'name' => $order->customer->name,
                             'phone' => $order->customer->phone,
@@ -483,7 +483,7 @@ class OrderController extends Controller
                 'order' => [
                     'id' => $order->id,
                     'invoice_no' => $order->invoice_no,
-                    'order_date' => $order->order_date->format('Y-m-d H:i:s'),
+                    'order_date' => ($order->order_date ? $order->order_date->toIso8601String() : 'N/A'),
                     'sub_total' => $order->sub_total,
                     'discount' => $order->discount,
                     'service_charges' => $order->service_charges,
@@ -1013,7 +1013,7 @@ class OrderController extends Controller
         ]);
 
         // Generate filename
-        $filename = "Invoice_{$order->invoice_no}_{$order->order_date->format('Y-m-d')}.pdf";
+        $filename = "Invoice_{$order->invoice_no}_" . ($order->order_date ? $order->order_date->format('Y-m-d') : 'unknown') . ".pdf";
 
         try {
             // Clear any output buffers to prevent corruption
@@ -1246,7 +1246,7 @@ class OrderController extends Controller
                         \Log::info('Temp content PDF deleted', ['path' => $tempContentPath]);
                     }
 
-                    $filename = "Invoice_{$order->invoice_no}_{$order->order_date->format('Y-m-d')}.pdf";
+                    $filename = "Invoice_{$order->invoice_no}_" . ($order->order_date ? $order->order_date->format('Y-m-d') : 'unknown') . ".pdf";
 
                     // Clear any output buffers to prevent corruption
                     if (ob_get_length() > 0) {

@@ -29,6 +29,13 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $user = Auth::user();
+
+        // Check if shop owner has multiple shops
+        if ($user->isShopOwner() && $user->ownsMultipleShops()) {
+            return redirect()->route('shop.select');
+        }
+
         // All users redirect to the main dashboard (admin will see admin view)
         return redirect()->intended(route('dashboard'));
     }

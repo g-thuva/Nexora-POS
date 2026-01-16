@@ -151,7 +151,7 @@
                         {{ $order->customer->name }}
                     </td>
                     <td class="align-middle text-center">
-                        {{ $order->order_date->format('d-m-Y') }}
+                        {{ $order->order_date ? $order->order_date->format('d-m-Y') : 'N/A' }}
                     </td>
                     <td class="align-middle text-center">
                         {{ $order->payment_type }}

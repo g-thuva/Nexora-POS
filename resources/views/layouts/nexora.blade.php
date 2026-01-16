@@ -397,6 +397,60 @@
         <!-- TomSelect for product search -->
         <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 
+        <!-- Shop Switching Script -->
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle shop switching
+            document.querySelectorAll('.shop-switch-item').forEach(function(item) {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    const shopId = this.getAttribute('data-shop-id');
+
+                    // Don't switch if already active
+                    if (this.classList.contains('active')) {
+                        return;
+                    }
+
+                    // Show loading state
+                    const originalContent = this.innerHTML;
+                    this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Switching...';
+                    this.style.pointerEvents = 'none';
+
+                    // Send AJAX request to switch shop
+                    fetch('{{ route("shop.switch") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ shop_id: shopId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Reload page to apply new shop context
+                            window.location.reload();
+                        } else {
+                            // Restore original content and show error
+                            this.innerHTML = originalContent;
+                            this.style.pointerEvents = '';
+                            alert(data.message || 'Failed to switch shop');
+                        }
+                    })
+                    .catch(error => {
+                        // Restore original content and show error
+                        this.innerHTML = originalContent;
+                        this.style.pointerEvents = '';
+                        console.error('Shop switch error:', error);
+                        alert('An error occurred while switching shops');
+                    });
+                });
+            });
+        });
+        </script>
+
         {{--- Page Scripts ---}}
         @stack('page-scripts')
 

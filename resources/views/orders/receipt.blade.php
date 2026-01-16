@@ -30,7 +30,7 @@
             <hr style="border:none;border-top:1px dashed #000;margin:6px 0;" />
             <div style="display:flex;justify-content:space-between;font-size:11px;">
                 <div>Receipt #: {{ $order->invoice_no }}</div>
-                <div>{{ $order->order_date->format('d-m-Y') }}</div>
+                <div>{{ $order->order_date ? $order->order_date->format('d-m-Y') : 'N/A' }}</div>
             </div>
             <div style="font-size:11px;margin-top:6px;">Customer: {{ $order->customer->name ?? 'Walk-In' }}</div>
             <hr style="border:none;border-top:1px dashed #000;margin:6px 0;" />
@@ -144,7 +144,7 @@
                             <div class="text-end">
                                 <h5 class="mb-0">Receipt</h5>
                                 <div class="text-muted">#{{ $order->invoice_no }}</div>
-                                <div class="text-muted">{{ $order->order_date->format('d-m-Y H:i') }}</div>
+                                <div class="text-muted">{{ $order->order_date ? $order->order_date->format('d-m-Y H:i') : 'N/A' }}</div>
                             </div>
                         </div>
 

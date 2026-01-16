@@ -68,5 +68,6 @@ class Kernel extends HttpKernel
         'shop.tenant' => \App\Http\Middleware\ShopTenant::class,
         'api.rate.limit' => \App\Http\Middleware\ApiRateLimiter::class,
         'check.suspended' => \App\Http\Middleware\CheckSuspended::class,
+        'ensure.shop.selected' => \App\Http\Middleware\EnsureShopSelected::class,
     ];
 }
