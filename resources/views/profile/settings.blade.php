@@ -21,7 +21,89 @@
     @endif
 
     <div class="row">
-        <div class="col-lg-8">
+        <!-- Tips & Guidelines Panel -->
+        <div class="col-12 col-lg-4">
+            <!-- Password Tips Card -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="bg-primary text-white avatar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z"/>
+                                <path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0"/>
+                                <path d="M8 11v-4a4 4 0 1 1 8 0v4"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="mb-1">Strong Password</h4>
+                            <p class="text-muted small mb-0">Use at least 8 characters with a mix of uppercase, lowercase, numbers, and special characters.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unique Password Card -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="bg-success text-white avatar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/>
+                                <path d="M9 12l2 2l4 -4"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="mb-1">Unique Password</h4>
+                            <p class="text-muted small mb-0">Don't reuse passwords from other accounts. Each account should have its own unique password.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Avoid Personal Info Card -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="bg-warning text-white avatar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M12 9v4"/>
+                                <path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z"/>
+                                <path d="M12 16h.01"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="mb-1">Avoid Personal Info</h4>
+                            <p class="text-muted small mb-0">Don't use easily guessable information like your name, birthday, or common words.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regular Updates Card -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="bg-info text-white avatar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/>
+                                <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="mb-1">Regular Updates</h4>
+                            <p class="text-muted small mb-0">Change your password periodically to maintain security, especially if you suspect it has been compromised.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Change Password Form -->
+        <div class="col-12 col-lg-8">
             <div class="card mb-4">
                 <div class="card-header">
                     <div>
@@ -81,9 +163,8 @@
                     </div>
                 </x-form>
             </div>
-        </div>
 
-        <div class="col-lg-4">
+            <!-- Two-Factor Authentication Card -->
             <div class="card mb-4" style="opacity: 0.6;">
                 <div class="card-header">
                     Two-Factor Authentication
@@ -105,6 +186,7 @@
                 </div>
             </div>
 
+            <!-- Delete Account Card -->
             <div class="card mb-4" style="opacity: 0.6; pointer-events: none;">
                 <div class="card-header">
                     Delete Account
